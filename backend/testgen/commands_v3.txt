@@ -1,0 +1,30 @@
+# commands_v3.txt — 第三輪。v2 發現 count_unique 反升到 69%，因為 carry_kill
+# 輸出大多 set=answer。對策：保留所有 carry_kill 殺 no_reset_left，但大量
+# 增加 doubled_distinct（每筆都殺 count_unique）。
+
+# === 高鑑別度 random（v2 中 #3 catch 6/6 的關鍵）===
+random          --n 6  --seed 1   --alphabet abc
+random          --n 10 --seed 2   --alphabet abcde
+random          --n 20 --seed 3   --alphabet abcdef
+random          --n 15 --seed 4   --alphabet abcd
+random          --n 25 --seed 5   --alphabet abcde
+
+# === doubled_distinct（保證殺 count_unique + always_len）===
+doubled_distinct --n 4  --seed 11
+doubled_distinct --n 6  --seed 12
+doubled_distinct --n 8  --seed 13
+doubled_distinct --n 10 --seed 14
+doubled_distinct --n 12 --seed 15
+
+# === carry_kill（殺 no_reset_left）===
+carry_kill      --prefix_len 1 --tail_len 1 --seed 41
+carry_kill      --prefix_len 3 --tail_len 5 --seed 42
+carry_kill      --prefix_len 5 --tail_len 8 --seed 43
+
+# === late_window（殺 inner_return）===
+late_window     --prefix_repeat 3 --tail_len 10 --seed 31
+late_window     --prefix_repeat 5 --tail_len 15 --seed 32
+
+# === 邊界 + 壓力（只留有貢獻的）===
+no_repeat       --n 10
+stress_same     --n 50000

@@ -1,0 +1,32 @@
+# commands_v1.txt — 階段 2 第一輪命令清單。
+# 設計策略：丟掉 baseline 中『caught<=2』的低價值類型（空字串、單字元、
+# 純標點），加入專殺漏網 S- 的 KILLER 模式。
+#
+# 每條命令對應一筆測資。spec：mode + 參數。
+
+# === 高價值維持 ===
+random          --n 6  --seed 1   --alphabet abc
+random          --n 10 --seed 2   --alphabet abcde
+random          --n 20 --seed 3   --alphabet abcdef
+
+# === 殺 count_unique（doubled distinct）===
+doubled_distinct --n 4  --seed 11
+doubled_distinct --n 6  --seed 12
+doubled_distinct --n 8  --seed 13
+
+# === 殺 no_reset_left（abba 鏈）===
+abba_chain      --repeats 3 --seed 21
+abba_chain      --repeats 5 --seed 22
+
+# === 殺 inner_return（late window）===
+late_window     --prefix_repeat 3 --tail_len 10 --seed 31
+late_window     --prefix_repeat 5 --tail_len 15 --seed 32
+
+# === 經典邊界 ===
+all_same        --n 1
+all_same        --n 5
+no_repeat       --n 7
+alternating     --n 8
+
+# === 壓力測試 ===
+stress_same     --n 50000

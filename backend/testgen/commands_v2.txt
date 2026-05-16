@@ -1,0 +1,31 @@
+# commands_v2.txt — 第二輪。針對 v1 漏網的 no_reset_left（87% 通過率）
+# 加入 carry_kill 模式（XYXZ 模式，dvdf 的一般化版本）。
+# 同時微調 doubled_distinct 跟 late_window 的覆蓋密度。
+
+# === 高價值維持（v1 中 caught>=5/6）===
+random          --n 6  --seed 1   --alphabet abc
+random          --n 10 --seed 2   --alphabet abcde
+random          --n 20 --seed 3   --alphabet abcdef
+
+# === 殺 count_unique（doubled distinct）===
+doubled_distinct --n 4  --seed 11
+doubled_distinct --n 6  --seed 12
+doubled_distinct --n 8  --seed 13
+
+# === KILLER：carry_kill 殺 no_reset_left ===
+carry_kill      --prefix_len 1 --tail_len 1  --seed 41    # mini, 仿 dvdf
+carry_kill      --prefix_len 3 --tail_len 5  --seed 42
+carry_kill      --prefix_len 5 --tail_len 8  --seed 43
+carry_kill      --prefix_len 2 --tail_len 6  --seed 44
+
+# === 殺 inner_return（late window）===
+late_window     --prefix_repeat 3 --tail_len 10 --seed 31
+late_window     --prefix_repeat 5 --tail_len 15 --seed 32
+
+# === 經典邊界（精簡）===
+all_same        --n 5
+no_repeat       --n 10
+alternating     --n 8
+
+# === 壓力測試 ===
+stress_same     --n 50000
