@@ -2,7 +2,7 @@
 
 ## 專案概述
 
-給大一學生的 Python 程式學習平台（LeetCode 風格）。學生提交程式碼後，系統執行程式碼、比對 18 組測試案例，Groq AI 分析錯誤 pattern 並給予引導式提示（不直接給答案）。
+給大一學生的 Python 程式學習平台（LeetCode 風格）。學生提交程式碼後，系統執行程式碼、比對 17 組測試案例，Groq AI 分析錯誤 pattern 並給予引導式提示（不直接給答案）。
 
 目前只有一題：**Longest Substring Without Repeating Characters（LeetCode #3）**
 
@@ -12,40 +12,44 @@
 
 **後端（Terminal 1）：**
 ```bash
-cd /home/auxe/Desktop/畢業專題/backend
-uvicorn main:app --reload --port 8000
+cd backend
+python -m uvicorn main:app --reload --port 8000
 ```
 
 **前端（Terminal 2）：**
 ```bash
-cd /home/auxe/Desktop/畢業專題/frontend
+cd frontend
+npm install   # 第一次需要
 npm run dev
 # 通常在 http://localhost:5173 或 5174（若 5173 被占用）
 ```
 
+**Windows 注意：** executor.py 已改用 `ThreadPoolExecutor + subprocess.run`（跨平台相容），不再需要 ProactorEventLoop。
+
 ## 目錄結構
 
 ```
-畢業專題/
+python-learning-platform/
 ├── backend/
 │   ├── main.py          # FastAPI app，POST /submit（唯一 endpoint）
-│   ├── executor.py      # asyncio subprocess 執行學生程式碼 + AST 安全過濾
-│   ├── judge.py         # 18 組 test case 比對，回傳完整 results 陣列
-│   ├── ai.py            # Groq Cloud API（llama-3.1-8b-instant），3 種 prompt 分支
-│   ├── problem.py       # 題目定義 + 18 組 TEST_CASES
+│   ├── executor.py      # ThreadPoolExecutor 執行學生程式碼 + AST 安全過濾（跨平台）
+│   ├── judge.py         # 17 組 test case 比對，回傳完整 results 陣列
+│   ├── ai.py            # Groq / Gemini 自動切換，4 種 prompt 分支
+│   ├── problem.py       # 題目定義 + 17 組 TEST_CASES
 │   ├── requirements.txt
 │   ├── pytest.ini
-│   ├── .env             # GROQ_API_KEY=gsk_... （不 commit）
+│   ├── .env             # GROQ_API_KEY=gsk_... 或 GEMINI_API_KEY=AIza...（不 commit）
 │   └── tests/
 │       ├── test_executor.py
 │       ├── test_judge.py
 │       ├── test_ai.py
-│       └── test_main.py
+│       ├── test_main.py
+│       └── test_problem_quality.py  # 論文方法品質守門員
 ├── frontend/
 │   ├── index.html
 │   └── src/
 │       ├── App.vue          # 左右兩欄佈局，handleSubmit，全域樣式
-│       ├── api.js           # axios POST /submit
+│       ├── api.js           # axios POST /submit（DEV 自動指向 localhost:8000）
 │       └── components/
 │           ├── ProblemStatement.vue  # 題目 + 3 個範例卡片
 │           ├── CodeEditor.vue        # Monaco Editor（Python，vs-dark）
@@ -73,38 +77,43 @@ npm run dev
 ## 執行測試
 
 ```bash
-cd /home/auxe/Desktop/畢業專題/backend
-pytest -v        # 19 tests，約 3-4 秒
+cd backend
+pytest -v
 ```
 
 ## 關鍵架構決策
 
-- **後端跑全部 18 筆 test case**，前端只渲染到第一個失敗（含）為止
-- `judge.py` 用 `asyncio.gather` 並行跑 18 個 test case，單次 submission 回應時間縮短約一半
-- AI prompt 有 4 個分支：`syntax_error` → 強調「語法錯誤無法執行」；`runtime_error` → 強調「執行時錯誤」；`no_return` → 提醒 return；`wrong_answer`（error_type=None）→ 傳第一個失敗的 input/actual/expected + 其餘失敗 cases，並在分析前先提醒 AI 檢查 return 縮排層級與迴圈是否提早終止（小模型容易漏看）
-- wrong_answer prompt 的 failed_summary 會截斷超過 50 字元的字串，避免壓力測試 case（`"a"*50000`）讓 prompt 過大導致 Groq API 失敗
-- executor 用 AST 過濾禁止模組（os, sys, subprocess, socket 等），用 `start_new_session=True` + `os.killpg` 確保 timeout 時整個 process group 都被 kill
-- executor 在跑 subprocess 前先用 `compile()` 做語法檢查，語法錯誤直接 early return（避免在某些環境下 subprocess 卡住觸發 timeout），stderr 格式帶上問題那行原碼與 `^` 指針，給 AI 足夠 context 判斷具體錯誤
+- **後端跑全部 17 筆 test case**，前端只渲染到第一個失敗（含）為止
+- `judge.py` 用 `asyncio.gather` 並行跑 17 個 test case，單次 submission 回應時間縮短約一半
+- AI prompt 有 4 個分支：`syntax_error` → 強調「語法錯誤無法執行」；`runtime_error` → 強調「執行時錯誤」；`no_return` → 提醒 return；`wrong_answer`（error_type=None）→ 傳第一個失敗的 input/actual/expected + 其餘失敗 cases，並在分析前先提醒 AI 檢查 return 縮排層級與迴圈是否提早終止
+- wrong_answer prompt 的 failed_summary 會截斷超過 50 字元的字串，避免壓力測試 case（`"a"*50000`）讓 prompt 過大導致 AI API 失敗
+- executor 用 AST 過濾禁止模組（os, sys, subprocess, socket 等），用 `ThreadPoolExecutor + subprocess.run` 執行，跨平台相容（Windows / Linux）
+- executor 在跑 subprocess 前先用 `compile()` 做語法檢查，語法錯誤直接 early return，stderr 格式帶上問題那行原碼與 `^` 指針
 
 ## 環境設定
 
 ```bash
-# backend/.env（必填）
-GROQ_API_KEY=gsk_...  # 從 console.groq.com/keys 取得
+# backend/.env（二擇一）
+GROQ_API_KEY=gsk_...       # 從 console.groq.com/keys 取得（推薦，500k tokens/day 免費）
+GEMINI_API_KEY=AIza...     # 從 aistudio.google.com/apikey 取得（備用）
 
-# Python venv（若需要）
+# ai.py 自動偵測：有 GEMINI_API_KEY 優先用 Gemini，否則用 Groq
+
+# Python 套件
 cd backend && pip install -r requirements.txt
 
 # Frontend
 cd frontend && npm install
 ```
 
-## AI / Groq 設定
+## AI 設定
 
-- **Provider：** Groq Cloud（`https://api.groq.com/openai/v1`）
-- **Model：** `llama-3.1-8b-instant`（免費額度最多：500k tokens/day）
-- **SDK：** openai Python SDK（OpenAI 相容格式）
-- **注意：** openai SDK 的 `@required_args` decorator 會影響 mock，`ai.py` 用 `inspect.isawaitable` workaround
+| 選項 | Provider | Model | 端點 |
+|---|---|---|---|
+| 主要（推薦） | Groq Cloud | `llama-3.1-8b-instant` | `https://api.groq.com/openai/v1` |
+| 備用 | Google Gemini | `gemini-2.0-flash` | `https://generativelanguage.googleapis.com/v1beta/openai/` |
+
+`ai.py` 透過環境變數自動切換，兩者均使用 openai Python SDK（OpenAI 相容格式）。
 
 ## CORS
 
@@ -118,20 +127,16 @@ allow_origin_regex=r"http://localhost:\d+|https://.*\.vercel\.app"
 - **設計：** Warm Terminal 美學，IBM Plex Mono 統一全站字型
 - **配色：** CSS 變數定義在 App.vue `<style>`，amber accent（`--amber: #dfa050`）
 - **佈局：** 左欄（題目+編輯器+提交），右欄 sticky 500px（結果+AI 提示）
+- **開發/線上 URL 切換：** `api.js` 用 `import.meta.env.DEV` 自動判斷
 
 ## 部署
 
-- **GitHub：** https://github.com/Auxe512/python-learning-platform
-- **前端：** https://python-learning-platform-one.vercel.app/（Vercel，免費）
-- **後端：** https://python-learning-platform-quf0.onrender.com（Render，免費）
+- **GitHub：** https://github.com/yaoyao218/python-learning-platform
+- **前端：** https://python-learning-platform-chi.vercel.app/（Vercel，免費）
+- **後端：** https://python-learning-platform-88vh.onrender.com（Render，免費）
 - `git push` 自動觸發兩邊重新部署
 - Render 免費方案閒置 15 分鐘後休眠，前端有冷啟動提示（loading 超過 5 秒顯示警告）
 - `api.js` 的 axios timeout 設為 60 秒
-
-## 設計規格與計畫
-
-- Spec：`docs/superpowers/specs/2026-04-08-leetcode-learning-platform-design.md`
-- Plan：`docs/superpowers/plans/2026-04-09-learning-platform.md`
 
 ---
 
@@ -141,7 +146,7 @@ allow_origin_regex=r"http://localhost:\d+|https://.*\.vercel\.app"
 
 ### 為什麼存在
 
-原本 `problem.py` 的 18 筆測資是憑經驗挑的，沒有量化指標證明它能：
+原本 `problem.py` 的測資是憑經驗挑的，沒有量化指標證明它能：
 - 不誤殺正確解（**TPR**）
 - 真的抓得到常見 bug（**TNR**）
 
@@ -187,6 +192,9 @@ python -m testgen.play --file my_sol.py
 python -m testgen.play                           # 互動：貼完 Ctrl-D
 
 # 後端開 session logger 跑線上服務（前端用 Monaco）
+# Windows:
+set TESTGEN_SESSION_LOG=1 && python -m uvicorn main:app --reload --port 8000
+# Linux/Mac:
 TESTGEN_SESSION_LOG=1 uvicorn main:app --reload --port 8000
 
 # 看 session log
@@ -194,7 +202,7 @@ python -m testgen.view_session                   # 全部
 python -m testgen.view_session --last 5          # 最後 5 次
 python -m testgen.view_session --summary         # AC率、平均耗時、最常踩雷
 
-# 評估目前 problem.py 的 TPR/TNR（pytest 風格）
+# 評估目前 problem.py 的 TPR/TNR
 python -m testgen.run_eval --tests problem --label current
 
 # 跑既有 + 新 pytest（含品質守門員）
@@ -210,15 +218,15 @@ cp problem_old.py problem.py
 
 ```bash
 # 1. 新發現一個學生常犯的 bug
-vi backend/testgen/solutions_wrong/new_bug.py
+# 建立 backend/testgen/solutions_wrong/new_bug.py
 
 # 2. 看現在的 problem.py 抓不抓得到
 python -m testgen.run_eval --tests problem --label current
 # 若 new_bug.py 通過率 ≈ 100% → 漏網了，需要補測資
 
 # 3. 想新測資模式或調命令
-vi backend/testgen/gen.py                   # 加新 mode（選用）
-vi backend/testgen/commands_v5.txt          # 加命令或抄前一輪改
+# 編輯 backend/testgen/gen.py        加新 mode（選用）
+# 編輯 backend/testgen/commands_v5.txt  加命令或抄前一輪改
 
 # 4. 產測資 → 評估
 python -m testgen.synthesize \
@@ -282,9 +290,3 @@ if LOG_ENABLED:
 - `backend/testgen/PROGRESS.md` — 完整實驗紀錄、四輪迭代的洞察，可當畢業專題報告章節初稿
 - `backend/testgen/QUICKSTART.md` — 三道關卡的標準操作流程
 - `backend/testgen/TESTING_GUIDE.md` — 前端手動測試 6 段 bug 解的清單
-
----
-
-## 路徑備註（重要）
-
-CLAUDE.md 一開始給的範例路徑是舊機器（`/home/auxe/...`），實際路徑請以使用者目前的工作目錄為準。`backend/` 跟 `frontend/` 的相對結構不變。

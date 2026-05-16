@@ -71,7 +71,7 @@ class Solution:
         return best
 ```
 
-**預期：** 17/17 PASS，沒有 AI 提示框出現。
+**預期：** 17/17 PASS，沒有 AI 提示框出現。（後端跑完整 17 筆，前端全綠）
 
 ---
 
@@ -177,18 +177,14 @@ class Solution:
 如果以上 6 項全部如預期：
 
 ```bash
-# 移除備份（確認新版穩定後）
-rm backend/problem_old.py    # 或保留作為歷史
-
-# 加入 testgen 跟新 problem 進 git
-git add backend/testgen/ backend/problem.py backend/tests/test_problem_quality.py
+git add .
 git commit -m "feat: 套用論文方法重做測資集（TNR 0.49 → 0.88）"
 git push   # 自動觸發 Vercel/Render 重新部署
 ```
 
 ## 7. 線上驗證
 
-部署完成後到 https://python-learning-platform-one.vercel.app/ 重複 Test 4-A、4-B、4-C，確認線上跟本機行為一致。
+部署完成後到 https://python-learning-platform-chi.vercel.app/ 重複 Test 4-A、4-B、4-C，確認線上跟本機行為一致。
 
 ---
 

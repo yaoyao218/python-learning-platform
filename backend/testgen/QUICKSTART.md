@@ -72,7 +72,7 @@ python -m testgen.http_smoke_test
 **Terminal 1：**
 ```bash
 cd backend
-uvicorn main:app --reload --port 8000
+python -m uvicorn main:app --reload --port 8000
 ```
 
 看到 `Uvicorn running on http://0.0.0.0:8000`。
@@ -100,7 +100,7 @@ git commit -m "feat: 套用論文 feedback-driven 方法重做測資集 (TNR 0.4
 git push
 ```
 
-Render / Vercel 自動部署完成後到 https://python-learning-platform-one.vercel.app/
+Render / Vercel 自動部署完成後到 https://python-learning-platform-chi.vercel.app/
 重新測一次 #1-3 的劇本，確認線上行為一致。
 
 ## 邊寫邊紀錄（demo / 報告素材用）
@@ -113,6 +113,9 @@ Render / Vercel 自動部署完成後到 https://python-learning-platform-one.ve
 
 ```bash
 cd backend
+# Windows:
+set TESTGEN_SESSION_LOG=1 && python -m uvicorn main:app --reload --port 8000
+# Linux/Mac:
 TESTGEN_SESSION_LOG=1 uvicorn main:app --reload --port 8000
 ```
 
