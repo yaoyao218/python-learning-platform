@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from judge import judge
-from ai import get_hint, build_prompt
+from ai import get_hint, build_prompt, evaluate_selection
 
 # 可選 session logger：TESTGEN_SESSION_LOG=1 才啟用，預設不影響線上行為
 try:
@@ -33,6 +33,13 @@ class SubmitRequest(BaseModel):
     code: str
 
 
+class HintRequest(BaseModel):
+    code: str
+    results: list[dict]
+    selected_text: str
+    attempt: int = 1
+
+
 @app.post("/submit")
 async def submit(req: SubmitRequest):
     t0 = time.perf_counter()
@@ -49,3 +56,12 @@ async def submit(req: SubmitRequest):
             elapsed_ms=elapsed_ms,
         )
     return {"results": results, "hint": hint}
+
+
+@app.post("/hint")
+async def hint_endpoint(req: HintRequest):
+    """學生選完診斷選項後，評估是否正確並回傳提示或新選項。"""
+    result = await evaluate_selection(
+        req.code, req.results, req.selected_text, req.attempt
+    )
+    return result
