@@ -30,7 +30,7 @@
       </div>
 
       <div class="right-col">
-        <ResultPanel :results="results" :hint="hint" :code="code" />
+        <ResultPanel :results="results" :hint="hint" />
       </div>
     </div>
   </div>

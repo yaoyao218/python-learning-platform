@@ -1,6 +1,4 @@
-import json
 import os
-import re
 import inspect
 import openai
 from openai import AsyncOpenAI
@@ -19,54 +17,15 @@ client = AsyncOpenAI(
 _MODEL = "gemini-2.0-flash" if _use_gemini else "llama-3.1-8b-instant"
 
 
-# ── helpers ──────────────────────────────────────────────────────────────────
-
-def _truncate(v, n=50) -> str:
-    s = repr(v)
-    return s if len(s) <= n else s[:n] + "..."
-
-
-def _failed_lines(results: list[dict], limit: int = 5) -> str:
-    failed = [r for r in results if not r["passed"]]
-    return "\n".join(
-        f"- 輸入 {_truncate(r['input'])} → 預期 {r['expected']}，你的輸出 {_truncate(r['actual'])}"
-        for r in failed[:limit]
-    )
-
-
-def _extract_json(text: str) -> dict:
-    """從 AI 回應中擷取 JSON 物件，容錯處理 markdown code block。"""
-    text = text.strip()
-    try:
-        return json.loads(text)
-    except json.JSONDecodeError:
-        pass
-    match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
-    if match:
-        return json.loads(match.group(1))
-    match = re.search(r"\{.*\}", text, re.DOTALL)
-    if match:
-        return json.loads(match.group(0))
-    raise ValueError("No valid JSON found in AI response")
-
-
-async def _call_ai(prompt: str) -> str | None:
-    """呼叫 AI API，回傳原始文字。失敗時回傳 None。"""
-    try:
-        result = client.chat.completions.create(
-            model=_MODEL,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        resp = await result if inspect.isawaitable(result) else result
-        return resp.choices[0].message.content
-    except openai.OpenAIError:
-        return None
-
-
-# ── prompt builders ───────────────────────────────────────────────────────────
-
 def build_prompt(code: str, results: list[dict]) -> str | None:
-    """舊版 prompt（syntax / runtime / no_return 仍沿用）。"""
+    """
+    組裝 AI prompt。
+    - 全部通過 → 回傳 None
+    - 依 first_fail 的 error_type 選擇三種 prompt 分支：
+      * syntax_error / runtime_error → 簡化版，傳 stderr
+      * no_return → 簡化版，提醒 return
+      * None (wrong answer) → 完整版，傳所有失敗 cases 做 pattern 推斷
+    """
     failed = [r for r in results if not r["passed"]]
     if not failed:
         return None
@@ -121,119 +80,58 @@ def build_prompt(code: str, results: list[dict]) -> str | None:
 2. 用繁體中文回答，語氣友善鼓勵
 3. 回答控制在 100 字以內"""
 
-    return None  # wrong_answer 走新的診斷流程
+    # wrong_answer (error_type is None): use full pattern-analysis prompt
+    def truncate(v, n=50):
+        s = repr(v)
+        return s if len(s) <= n else s[:n] + '...'
 
+    failed_summary = "\n".join(
+        f"- Input: {truncate(r['input'])} / Expected: {r['expected']} / Actual: {truncate(r['actual'])}"
+        for r in failed
+    )
 
-def _build_diagnosis_prompt(code: str, results: list[dict]) -> str:
-    lines = _failed_lines(results)
-    return f"""你是程式學習助教，題目是 Longest Substring Without Repeating Characters。
+    return f"""你是一個程式學習助教，幫助大一學生學習 Python。
 
+題目：Longest Substring Without Repeating Characters
 學生程式碼：
 {code}
 
-失敗測資：
-{lines}
+目前學生看到的第一個失敗案例：
+- 輸入：{first_fail['input']!r}
+- 學生程式碼的輸出：{first_fail['actual']}
+- 正確答案：{first_fail['expected']}
 
-任務：分析程式碼找出真正的錯誤，設計 3 個選項讓學生自我診斷。
-選項用學生第一人稱描述他「以為自己做對的事」，其中一個是真正問題，另外兩個是同類題常見的干擾項。
+其他失敗案例（輔助參考）：
+{failed_summary}
 
-只回傳 JSON，不要其他文字：
-{{"intro":"一句引導語讓學生思考","options":[{{"id":"A","text":"我..."}},{{"id":"B","text":"我..."}},{{"id":"C","text":"我..."}}]}}"""
+分析前請先檢查這些常見 Python 問題：
+- return 語句的縮排層級是否正確（是在最內層迴圈內提早回傳，還是在正確位置）
+- 迴圈是否提早終止導致只處理了部分輸入
 
+請根據「這個輸入」和「學生程式碼實際給出的輸出」，找出最可能的根本原因，給學生一個引導式提示讓他能朝正確方向思考。
 
-def _build_followup_prompt(code: str, results: list[dict], selected_text: str, attempt: int) -> str:
-    lines = _failed_lines(results)
-    depth = "給一個方向性提示（不要太具體）" if attempt <= 1 else "給較具體提示（指出哪個邏輯要修改，但不給出程式碼）"
-    return f"""你是程式學習助教，題目是 Longest Substring Without Repeating Characters。
-
-程式碼：
-{code}
-
-失敗測資：
-{lines}
-
-學生認為他的問題是：「{selected_text}」
-
-判斷這個描述是否符合程式碼的實際錯誤：
-- 符合 → {depth}（繁體中文，150字內）
-- 不符合 → 簡短說明為何不對（50字內）+ 重新給 2 個更精準的選項
-
-只回傳 JSON，不要其他文字：
-符合：{{"correct":true,"hint":"提示文字"}}
-不符合：{{"correct":false,"message":"說明","options":[{{"id":"A","text":"我..."}},{{"id":"B","text":"我..."}}]}}"""
+要求：
+1. 不要直接給出正確程式碼
+2. 提示要具體，針對這個 input/output 的落差，不要泛泛而談
+3. 用繁體中文，語氣自然友善，像在跟學生說話
+4. 控制在 150 字以內"""
 
 
-# ── public API ────────────────────────────────────────────────────────────────
-
-async def get_hint(code: str, results: list[dict]) -> str | dict | None:
-    """
-    主要入口。依 error_type 決定回傳格式：
-    - syntax_error / runtime_error / no_return → str（舊版）
-    - wrong_answer → dict {type:"diagnosis", intro, options}
-    - 全部通過 → None
-    """
-    failed = [r for r in results if not r["passed"]]
-    if not failed:
+async def get_hint(code: str, results: list[dict]) -> str | None:
+    """呼叫 Grok API 取得 AI 提示。全部通過時回傳 None。API 失敗時回傳 None。"""
+    prompt = build_prompt(code, results)
+    if prompt is None:
         return None
 
-    error_type = failed[0]["error_type"]
-
-    # 語法 / 執行 / 沒 return → 直接給文字提示
-    if error_type in ("syntax_error", "runtime_error", "no_return"):
-        prompt = build_prompt(code, results)
-        text = await _call_ai(prompt)
-        return text  # str or None
-
-    # wrong_answer → 回傳診斷選項
-    prompt = _build_diagnosis_prompt(code, results)
-    text = await _call_ai(prompt)
-    if not text:
-        return None
     try:
-        data = _extract_json(text)
-        return {"type": "diagnosis", "intro": data["intro"], "options": data["options"]}
-    except Exception:
-        # fallback：如果 JSON 解析失敗，直接給文字提示
-        return text
-
-
-async def evaluate_selection(
-    code: str,
-    results: list[dict],
-    selected_text: str,
-    attempt: int,
-) -> dict:
-    """
-    評估學生選擇。回傳：
-    - {correct: True, hint: str}
-    - {correct: False, message: str, options: list}
-    """
-    prompt = _build_followup_prompt(code, results, selected_text, attempt)
-    text = await _call_ai(prompt)
-    if not text:
-        return {"correct": True, "hint": "系統暫時無法判斷，請重新提交程式碼再試。"}
-    try:
-        return _extract_json(text)
-    except Exception:
-        # fallback：視為正確並把回應當 hint
-        return {"correct": True, "hint": text[:300]}
-
-
-def build_prompt_for_log(code: str, results: list[dict]) -> str | None:
-    """給 session_logger 用，永遠回傳舊版 prompt（不走診斷流程）。"""
-    failed = [r for r in results if not r["passed"]]
-    if not failed:
+        result = client.chat.completions.create(
+            model=_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        response = await result if inspect.isawaitable(result) else result
+        content = response.choices[0].message.content
+        if content is None:
+            return None
+        return content
+    except openai.OpenAIError:
         return None
-    first_fail = failed[0]
-    error_type = first_fail["error_type"]
-
-    simple = build_prompt(code, results)
-    if simple:
-        return simple
-
-    # wrong_answer fallback
-    failed_summary = "\n".join(
-        f"- Input: {_truncate(r['input'])} / Expected: {r['expected']} / Actual: {_truncate(r['actual'])}"
-        for r in failed
-    )
-    return f"[wrong_answer] first_fail input={first_fail['input']!r}\n{failed_summary}"
