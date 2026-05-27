@@ -57,6 +57,10 @@ const problem = {
     { input: 'bbbbb',    output: 1, explanation: '最長子字串為 "b"，長度為 1' },
     { input: 'pwwkew',   output: 3, explanation: '最長不重複子字串為 "wke"，長度為 3' },
   ],
+  constraints: [
+    '0 ≤ s.length ≤ 5 × 10⁴',
+    's 只包含英文字母、數字、符號與空白字元',
+  ],
 }
 
 const code      = ref(STARTER_CODE)
