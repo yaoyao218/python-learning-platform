@@ -38,6 +38,17 @@
         </div>
       </div>
 
+      <!-- Success card (all passed, no hint) -->
+      <div v-if="allPassed && !hint" class="panel-section success-section">
+        <div class="section-header">
+          <span class="section-label success-label">全部通過</span>
+        </div>
+        <div class="success-body">
+          太棒了！你的解法通過了所有 {{ results.length }} 個測試案例。<br>
+          試試看能不能讓解法更有效率？
+        </div>
+      </div>
+
       <!-- AI Hint -->
       <div v-if="hint" class="panel-section hint-section">
         <div class="section-header">
@@ -65,6 +76,10 @@ const visibleResults = computed(() => {
 
 const passCount = computed(() =>
   props.results.filter((r) => r.passed).length
+)
+
+const allPassed = computed(() =>
+  props.results.length > 0 && props.results.every((r) => r.passed)
 )
 </script>
 
@@ -221,5 +236,23 @@ const passCount = computed(() =>
 @keyframes hint-in {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Success card */
+.success-section { border-bottom: none; }
+
+.success-label { color: var(--green); }
+
+.success-body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-2);
+  border-left: 2px solid var(--green);
+  margin: 16px 20px;
+  padding: 16px;
+  background: var(--green-dim);
+  border-radius: 0 4px 4px 0;
+  animation: hint-in 0.4s ease both;
 }
 </style>
