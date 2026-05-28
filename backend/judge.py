@@ -32,11 +32,11 @@ async def _run_one(code: str, tc: dict) -> dict:
 
 async def judge(code: str) -> list[dict]:
     """
-    對全部 18 組 test case 並行執行學生程式碼並比對結果。
+    對全部 17 組 test case 並行執行學生程式碼並比對結果。
     永遠跑完全部，不中途停止（停在第一個失敗是前端的責任）。
 
     Returns:
-        list[dict]: 18 筆結果（順序與 TEST_CASES 一致），每筆包含
+        list[dict]: 17 筆結果（順序與 TEST_CASES 一致），每筆包含
             index, input（截斷顯示）, expected, actual, passed, error_type, stderr
     """
     results = await asyncio.gather(*(_run_one(code, tc) for tc in TEST_CASES))

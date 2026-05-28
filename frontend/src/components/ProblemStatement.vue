@@ -24,6 +24,15 @@
         </div>
       </div>
     </div>
+
+    <div v-if="problem.constraints && problem.constraints.length" class="constraints">
+      <div class="constraints-header">限制條件</div>
+      <ul class="constraints-list">
+        <li v-for="(c, i) in problem.constraints" :key="i" class="constraint-item">
+          {{ c }}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -136,5 +145,42 @@ defineProps({
   margin-top: 10px;
   padding-top: 10px;
   border-top: 1px solid var(--border);
+}
+
+.constraints {
+  padding: 16px 32px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.constraints-header {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 10px;
+}
+
+.constraints-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.constraint-item {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-2);
+  padding-left: 14px;
+  position: relative;
+}
+
+.constraint-item::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--amber);
 }
 </style>

@@ -186,8 +186,8 @@ pytest -v
 
 | 服務 | 平台 | URL |
 |---|---|---|
-| 前端 | Vercel（自動部署） | https://python-learning-platform-one.vercel.app/ |
-| 後端 | Render（自動部署） | https://python-learning-platform-quf0.onrender.com |
+| 前端 | Vercel（自動部署） | https://python-learning-platform-chi.vercel.app/ |
+| 後端 | Render（自動部署） | https://python-learning-platform-88vh.onrender.com |
 
 `git push` 自動觸發兩邊重新部署。Render 免費方案閒置 15 分鐘後休眠，前端有冷啟動提示。
 
