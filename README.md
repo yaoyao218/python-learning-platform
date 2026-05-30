@@ -43,7 +43,7 @@
 
 | 元件 | 功能 |
 |---|---|
-| `App.vue` | 左右兩欄佈局、提交邏輯、冷啟動偵測 |
+| `App.vue` | 左右兩欄佈局、提交邏輯 |
 | `ProblemStatement.vue` | 題目描述 + 3 個範例卡片 |
 | `CodeEditor.vue` | Monaco Editor（Python, vs-dark theme） |
 | `ResultPanel.vue` | 測試結果（顯示到第一個失敗）+ AI 提示卡 |
@@ -108,8 +108,8 @@ error_type
 ├── syntax_error   → 解釋語法錯誤，引導找到問題行（150字）
 ├── runtime_error  → 解釋執行時錯誤訊息（150字）
 ├── no_return      → 提醒函式必須 return 值（100字）
-└── wrong_answer   → 傳入第一個失敗的 input/actual/expected
-                     特別提示 AI 先檢查：return 縮排層級、迴圈是否提早終止（150字）
+└── wrong_answer   → 傳所有失敗的 (input, expected, actual)，不讀學生程式碼
+                     AI 從數值 pattern 推斷 bug 類型，給蘇格拉底式引導提示（200字）
 ```
 
 ---
@@ -189,7 +189,7 @@ pytest -v
 | 前端 | Vercel（自動部署） | https://python-learning-platform-chi.vercel.app/ |
 | 後端 | Render（自動部署） | https://python-learning-platform-88vh.onrender.com |
 
-`git push` 自動觸發兩邊重新部署。Render 免費方案閒置 15 分鐘後休眠，前端有冷啟動提示。
+`git push` 自動觸發兩邊重新部署。Render 免費方案閒置 15 分鐘後休眠，首次請求需等待約 30 秒冷啟動。
 
 ---
 
