@@ -1,5 +1,4 @@
 import os
-import inspect
 import openai
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
@@ -17,14 +16,14 @@ client = AsyncOpenAI(
 _MODEL = "gemini-2.0-flash" if _use_gemini else "llama-3.1-8b-instant"
 
 
-def build_prompt(code: str, results: list[dict]) -> str | None:
+def build_prompt(results: list[dict]) -> str | None:
     """
-    組裝 AI prompt。
+    組裝 AI prompt，完全不讀學生程式碼。
     - 全部通過 → 回傳 None
-    - 依 first_fail 的 error_type（4 種）選擇 3 個 prompt 分支：
-      * syntax_error / runtime_error → 簡化版，傳 stderr（error_label 不同）
-      * no_return → 簡化版，提醒 return
-      * None (wrong answer) → 完整版，傳所有失敗 cases 做 pattern 推斷
+    - syntax_error  → 只送 stderr
+    - runtime_error → 送觸發錯誤的 input + stderr
+    - no_return     → 固定提示
+    - wrong_answer  → 送所有失敗的 (input, expected, actual)，蘇格拉底式
     """
     failed = [r for r in results if not r["passed"]]
     if not failed:
@@ -33,90 +32,96 @@ def build_prompt(code: str, results: list[dict]) -> str | None:
     first_fail = failed[0]
     error_type = first_fail["error_type"]
 
-    if error_type in ("syntax_error", "runtime_error"):
-        error_label = "語法錯誤（程式無法執行）" if error_type == "syntax_error" else "執行時期錯誤（runtime error）"
-        return f"""你是一個程式學習助教，目標是幫助大一學生學習 Python。
+    if error_type == "syntax_error":
+        return f"""你是一個程式學習助教，幫助大一學生學習 Python。
 
-學生程式碼：
-{code}
+學生在解 Longest Substring Without Repeating Characters 時發生語法錯誤：
 
-發生了{error_label}，錯誤訊息如下：
 {first_fail['stderr']}
 
 請依序做三件事：
-1. 用一句話解釋這個錯誤訊息的意思
-2. 提示學生看錯誤訊息中的行號或關鍵字，幫他定位問題位置
-3. 問一個引導性問題，讓學生自己找到修正方向
+1. 用一句白話文解釋這個錯誤訊息的意思（20 字以內）
+2. 提示學生根據行號找到問題位置
+3. 用一個問題引導學生思考那個位置哪裡不對
 
-規則：
-- 不要直接給出修正後的程式碼
-- 用繁體中文，語氣友善鼓勵
-- 回答控制在 150 字以內"""
+規則：不要給出修正後的程式碼。繁體中文，語氣像陪學生 debug 的學長姐。120 字以內。"""
+
+    if error_type == "runtime_error":
+        return f"""你是一個程式學習助教，幫助大一學生學習 Python。
+
+題目：Longest Substring Without Repeating Characters
+（給一個字串，找不含重複字元的最長子字串長度）
+
+學生程式在以下輸入時發生執行期錯誤：
+- 輸入：{first_fail['input']!r}
+- 錯誤訊息：{first_fail['stderr']}
+
+請依序做三件事：
+1. 用白話文解釋這個錯誤是什麼意思
+2. 引導學生去看錯誤訊息中的行號
+3. 問學生：「這個輸入有什麼特別的地方，可能讓程式在那行出錯？」
+
+規則：不要給出修正後的程式碼。繁體中文，語氣友善鼓勵。150 字以內。"""
 
     if error_type == "no_return":
-        return f"""你是一個程式學習助教，目標是幫助大一學生學習 Python。
+        return """你是一個程式學習助教，幫助大一學生學習 Python。
 
-學生程式碼：
-{code}
+題目：Longest Substring Without Repeating Characters
 
-問題：函式執行後回傳了 None，代表函式內沒有 return 語句或 return 沒有帶值。
+學生的函式執行完後回傳了 None，代表答案沒有被傳出來。
 
-請提醒學生函式需要回傳值，並說明 return 的用法。
+請做兩件事：
+1. 解釋 Python 函式為什麼需要 return 語句
+2. 用一個問題讓學生思考：「你計算出來的答案，存在哪個變數裡？那個變數最後有沒有被回傳？」
 
-規則：
-1. 不要直接給出答案
-2. 用繁體中文回答，語氣友善鼓勵
-3. 回答控制在 100 字以內"""
+規則：不要直接說程式碼要怎麼改。繁體中文，語氣像幫學生釐清思路的學長姐。100 字以內。"""
 
-    # wrong_answer (error_type is None): use full pattern-analysis prompt
+    # wrong_answer（error_type is None）
     def truncate(v, n=50):
         s = repr(v)
-        return s if len(s) <= n else s[:n] + '...'
+        return s if len(s) <= n else s[:n] + "..."
 
+    n_fail = len(failed)
     failed_summary = "\n".join(
         f"- Input: {truncate(r['input'])} / Expected: {r['expected']} / Actual: {truncate(r['actual'])}"
         for r in failed
     )
 
-    return f"""你是一個程式學習助教，幫助大一學生學習 Python。
+    return f"""你是一個程式學習助教，專門幫助大一學生學習解題思維。
 
 題目：Longest Substring Without Repeating Characters
-學生程式碼：
-{code}
+定義：給一個字串，找「不含重複字元的最長子字串」的長度。
+例如："abcabcbb" → 3，因為 "abc" 是最長的無重複子字串。
 
-目前學生看到的第一個失敗案例：
-- 輸入：{first_fail['input']!r}
-- 學生程式碼的輸出：{first_fail['actual']}
-- 正確答案：{first_fail['expected']}
-
-其他失敗案例（輔助參考）：
+學生有 {n_fail}/17 筆測資失敗，以下是全部失敗案例：
 {failed_summary}
 
-分析前請先檢查這些常見 Python 問題：
-- return 語句的縮排層級是否正確（是在最內層迴圈內提早回傳，還是在正確位置）
-- 迴圈是否提早終止導致只處理了部分輸入
+請先分析這些失敗案例的數值 pattern（不要輸出分析過程），
+再根據推斷出的理解落差，用一個蘇格拉底式問題引導學生。
 
-請根據「這個輸入」和「學生程式碼實際給出的輸出」，找出最可能的根本原因，給學生一個引導式提示讓他能朝正確方向思考。
+提示深度原則：
+- 學生答案方向完全錯誤 → 從觀念入手（子字串的定義、滑動視窗的概念）
+- 學生方向正確但細節錯 → 從具體數字追問（為什麼這個 input 得到這個 output）
 
-要求：
-1. 不要直接給出正確程式碼
-2. 提示要具體，針對這個 input/output 的落差，不要泛泛而談
-3. 用繁體中文，語氣自然友善，像在跟學生說話
-4. 控制在 150 字以內"""
+輸出規則：
+- 只輸出給學生看的提示，不要輸出分析
+- 不要給出正確程式碼或完整演算法步驟
+- 結尾必須是一個問句
+- 繁體中文，語氣像在討論題目的學長姐
+- 200 字以內"""
 
 
-async def get_hint(code: str, results: list[dict]) -> str | None:
+async def get_hint(results: list[dict]) -> str | None:
     """呼叫 Groq/Gemini API 取得 AI 提示。全部通過時回傳 None。API 失敗時回傳 None。"""
-    prompt = build_prompt(code, results)
+    prompt = build_prompt(results)
     if prompt is None:
         return None
 
     try:
-        result = client.chat.completions.create(
+        response = await client.chat.completions.create(
             model=_MODEL,
             messages=[{"role": "user", "content": prompt}],
         )
-        response = await result if inspect.isawaitable(result) else result
         content = response.choices[0].message.content
         if content is None:
             return None
