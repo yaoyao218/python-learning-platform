@@ -93,7 +93,7 @@ async def test_get_hint_calls_api_and_returns_content():
     mock_response.choices = [AsyncMock()]
     mock_response.choices[0].message.content = "這是 AI 提示"
 
-    with patch("ai.client.chat.completions.create", return_value=mock_response) as mock_create:
+    with patch("ai.client.chat.completions.create", new_callable=AsyncMock, return_value=mock_response) as mock_create:
         hint = await get_hint(results)
 
     assert hint == "這是 AI 提示"
