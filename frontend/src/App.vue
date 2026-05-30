@@ -14,23 +14,21 @@
         <CodeEditor v-model="code" />
         <div class="submit-row">
           <button class="submit-btn" :disabled="loading" @click="handleSubmit">
-            <span class="btn-icon">{{ loading ? '⟳' : '▶' }}</span>
+            <Loader2 v-if="loading" :size="14" class="btn-spinner" />
+            <Play v-else :size="14" />
             <span>{{ loading ? '執行中...' : '提交程式碼' }}</span>
           </button>
-          <span v-if="loading && warmingUp" class="warming-msg">
-            ☕ 伺服器冷啟動中，請稍候約 30 秒…
-          </span>
-          <span v-else-if="loading" class="loading-dots">
+          <span v-if="loading" class="loading-dots">
             <span></span><span></span><span></span>
           </span>
         </div>
         <div v-if="error" class="error-banner">
-          <span class="error-icon">✕</span> {{ error }}
+          <X :size="12" />{{ error }}
         </div>
       </div>
 
       <div class="right-col">
-        <ResultPanel :results="results" :hint="hint" />
+        <ResultPanel :results="results" :hint="hint" :loading="loading" />
       </div>
     </div>
   </div>
@@ -38,6 +36,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { Play, Loader2, X } from 'lucide-vue-next'
 import ProblemStatement from './components/ProblemStatement.vue'
 import CodeEditor from './components/CodeEditor.vue'
 import ResultPanel from './components/ResultPanel.vue'
@@ -63,21 +62,17 @@ const problem = {
   ],
 }
 
-const code      = ref(STARTER_CODE)
-const results   = ref([])
-const hint      = ref(null)
-const loading   = ref(false)
-const warmingUp = ref(false)
-const error     = ref(null)
+const code    = ref(STARTER_CODE)
+const results = ref([])
+const hint    = ref(null)
+const loading = ref(false)
+const error   = ref(null)
 
 async function handleSubmit() {
-  loading.value   = true
-  warmingUp.value = false
-  results.value   = []
-  hint.value      = null
-  error.value     = null
-
-  const warmTimer = setTimeout(() => { warmingUp.value = true }, 5000)
+  loading.value = true
+  results.value = []
+  hint.value    = null
+  error.value   = null
 
   try {
     const data    = await submitCode(code.value)
@@ -87,9 +82,7 @@ async function handleSubmit() {
     console.error('Submit error:', err)
     error.value = '無法連線到後端，請稍後再試'
   } finally {
-    clearTimeout(warmTimer)
-    loading.value   = false
-    warmingUp.value = false
+    loading.value = false
   }
 }
 </script>
@@ -246,7 +239,15 @@ strong { font-weight: 600; }
 .submit-btn:active:not(:disabled) { transform: scale(0.98); }
 .submit-btn:disabled { background: var(--surface-hi); color: var(--text-3); cursor: not-allowed; }
 
-.btn-icon { font-size: 12px; }
+.btn-spinner {
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
 
 /* Loading dots */
 .loading-dots {
@@ -283,9 +284,4 @@ strong { font-weight: 600; }
 }
 .error-icon { font-size: 10px; }
 
-.warming-msg {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--amber);
-}
 </style>
