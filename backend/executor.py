@@ -78,7 +78,7 @@ _result = _sol.lengthOfLongestSubstring({repr(input_val)})
 print(_result)
 """
 
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     stdout_str, stderr_str, returncode = await loop.run_in_executor(
         _thread_pool, _run_subprocess, runner_script, timeout
     )

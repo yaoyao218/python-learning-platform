@@ -89,7 +89,7 @@ import { computed } from 'vue'
 
 const props = defineProps({
   results: { type: Array,    default: () => [] },
-  hint:    { type: String,   default: null },
+  hint:    { type: [String, null], default: null },
   loading: { type: Boolean,  default: false },
 })
 
@@ -301,6 +301,11 @@ const allPassed = computed(() =>
 @keyframes shimmer {
   0%, 100% { opacity: 0.4; }
   50%       { opacity: 0.9; }
+}
+
+@keyframes dot-pulse {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1); }
 }
 
 /* AI Hint */
