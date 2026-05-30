@@ -1,5 +1,4 @@
 import os
-import inspect
 import openai
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
@@ -119,11 +118,10 @@ async def get_hint(results: list[dict]) -> str | None:
         return None
 
     try:
-        result = client.chat.completions.create(
+        response = await client.chat.completions.create(
             model=_MODEL,
             messages=[{"role": "user", "content": prompt}],
         )
-        response = await result if inspect.isawaitable(result) else result
         content = response.choices[0].message.content
         if content is None:
             return None
