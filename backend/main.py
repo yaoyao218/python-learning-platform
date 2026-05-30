@@ -32,7 +32,7 @@ class SubmitRequest(BaseModel):
 async def submit(req: SubmitRequest):
     t0 = time.perf_counter()
     results = await judge(req.code)
-    hint = await get_hint(req.code, results)
+    hint = await get_hint(results)
     elapsed_ms = (time.perf_counter() - t0) * 1000
     # 紀錄這次提交（只在 TESTGEN_SESSION_LOG=1 時實際寫檔）
     if LOG_ENABLED:
@@ -40,7 +40,7 @@ async def submit(req: SubmitRequest):
             code=req.code,
             results=results,
             hint=hint,
-            ai_prompt=build_prompt(req.code, results),
+            ai_prompt=build_prompt(results),
             elapsed_ms=elapsed_ms,
         )
     return {"results": results, "hint": hint}
