@@ -12,8 +12,16 @@
         <div class="section-header">
           <span class="section-label">測試結果</span>
           <span class="result-summary">
-            {{ passCount }} / {{ results.length }} 通過
+            <span :class="passCount === results.length ? 'summary-all' : 'summary-partial'">{{ passCount }}</span>
+            <span class="summary-sep"> / {{ results.length }} 通過</span>
           </span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div
+            class="progress-bar-fill"
+            :class="passCount === results.length ? 'fill-all' : 'fill-partial'"
+            :style="{ width: (passCount / results.length * 100) + '%' }"
+          ></div>
         </div>
 
         <div class="result-list">
@@ -49,6 +57,22 @@
         </div>
       </div>
 
+      <!-- AI Hint skeleton -->
+      <div v-if="loading && !hint" class="panel-section hint-section">
+        <div class="section-header">
+          <span class="section-label hint-label">AI 分析中</span>
+          <span class="skeleton-dot-row">
+            <span></span><span></span><span></span>
+          </span>
+        </div>
+        <div class="hint-skeleton">
+          <div class="sk-line sk-line-80"></div>
+          <div class="sk-line sk-line-60"></div>
+          <div class="sk-line sk-line-90"></div>
+          <div class="sk-line sk-line-50"></div>
+        </div>
+      </div>
+
       <!-- AI Hint -->
       <div v-if="hint" class="panel-section hint-section">
         <div class="section-header">
@@ -64,8 +88,9 @@
 import { computed } from 'vue'
 
 const props = defineProps({
-  results: { type: Array, default: () => [] },
-  hint:    { type: String, default: null },
+  results: { type: Array,    default: () => [] },
+  hint:    { type: String,   default: null },
+  loading: { type: Boolean,  default: false },
 })
 
 const visibleResults = computed(() => {
@@ -141,8 +166,28 @@ const allPassed = computed(() =>
 .result-summary {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--text-3);
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
 }
+
+.summary-all     { color: var(--green); font-weight: 600; font-size: 13px; }
+.summary-partial { color: var(--amber); font-weight: 600; font-size: 13px; }
+.summary-sep     { color: var(--text-3); }
+
+/* Progress bar */
+.progress-bar-wrap {
+  height: 2px;
+  background: var(--border);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.fill-all     { background: var(--green); }
+.fill-partial { background: var(--amber); }
 
 /* Result rows */
 .result-list { padding: 8px 0; }
@@ -214,6 +259,49 @@ const allPassed = computed(() =>
   color: var(--red);
 }
 .val-got strong { color: var(--red); font-weight: 600; }
+
+/* AI Hint skeleton */
+.skeleton-dot-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.skeleton-dot-row span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--teal);
+  animation: dot-pulse 1.2s ease-in-out infinite;
+}
+.skeleton-dot-row span:nth-child(2) { animation-delay: 0.2s; }
+.skeleton-dot-row span:nth-child(3) { animation-delay: 0.4s; }
+
+.hint-skeleton {
+  margin: 16px 20px;
+  padding: 16px;
+  background: var(--teal-dim);
+  border-left: 2px solid var(--teal);
+  border-radius: 0 4px 4px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sk-line {
+  height: 10px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--teal) 20%, var(--teal-dim));
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+.sk-line-80 { width: 80%; }
+.sk-line-60 { width: 60%; }
+.sk-line-90 { width: 90%; }
+.sk-line-50 { width: 50%; }
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.9; }
+}
 
 /* AI Hint */
 .hint-section { border-bottom: none; }
