@@ -5,3 +5,5 @@ node_modules/
 .superpowers/
 venv/
 .venv/
+backend/testgen/feedback_current.json
+frontend/dist/

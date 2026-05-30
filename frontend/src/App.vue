@@ -282,6 +282,5 @@ strong { font-weight: 600; }
   align-items: center;
   gap: 8px;
 }
-.error-icon { font-size: 10px; }
 
 </style>
