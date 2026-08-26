@@ -43,12 +43,13 @@ def quality_report():
     # 把 TEST_CASES 注入 run_eval 模組（它的 evaluate_pool 從 module-global 讀）
     mod = importlib.import_module(PROBLEM_MODULE)
     run_eval_mod.TEST_CASES = mod.TEST_CASES
+    method = getattr(mod, "METHOD", "lengthOfLongestSubstring")
 
     testgen_dir = BACKEND / "testgen"
 
     async def run():
-        s_plus = await evaluate_pool(testgen_dir / "solutions_correct")
-        s_minus = await evaluate_pool(testgen_dir / "solutions_wrong")
+        s_plus = await evaluate_pool(testgen_dir / "solutions_correct", method)
+        s_minus = await evaluate_pool(testgen_dir / "solutions_wrong", method)
         return summarise(s_plus, s_minus), s_plus, s_minus
 
     report, s_plus, s_minus = asyncio.run(run())

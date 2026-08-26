@@ -40,7 +40,7 @@ async def main():
     try:
         import problem, judge, executor
         check("import problem / judge / executor", True,
-              f"problem.TEST_CASES = {len(problem.TEST_CASES)} 筆")
+              f"problem.TEST_CASES = {len(problem.TEST_CASES)} 筆（longest-substring）")
     except Exception as e:
         check("import 核心模組", False, str(e))
         print(f"\n  → 通常是 backend/ 不在 PYTHONPATH，或 requirements 沒裝。")
@@ -67,7 +67,7 @@ async def main():
     print("\n=== 預檢 3：reference 正解全過 ===")
     REF = HERE / "solutions_correct" / "sliding_window.py"
     ref_code = REF.read_text(encoding="utf-8")
-    results = await judge.judge(ref_code)
+    results = await judge.judge(ref_code, "longest-substring")
     all_pass = all(r["passed"] for r in results)
     n_pass = sum(1 for r in results if r["passed"])
     if not check("reference 全過 problem.TEST_CASES", all_pass,
@@ -83,7 +83,7 @@ async def main():
     survivors = []
     for sol_file in sorted(s_minus_dir.glob("*.py")):
         code = sol_file.read_text(encoding="utf-8")
-        rs = await judge.judge(code)
+        rs = await judge.judge(code, "longest-substring")
         fails = [r for r in rs if not r["passed"]]
         sname = sol_file.name
         if not fails:
@@ -109,10 +109,12 @@ async def main():
             ("wrong_answer",
              "class Solution:\n    def lengthOfLongestSubstring(self, s):\n        return len(s)"),
         ]
+        title = problem.PROBLEMS["longest-substring"]["title"]
+        context = problem.PROBLEMS["longest-substring"]["ai_context"]
         for label, code in scenarios:
             try:
-                rs = await judge.judge(code)
-                prompt = ai.build_prompt(code, rs)
+                rs = await judge.judge(code, "longest-substring")
+                prompt = ai.build_prompt(rs, title, context)
                 ok = prompt is not None and isinstance(prompt, str) and len(prompt) > 100
                 if not check(f"build_prompt for {label}", ok,
                              f"prompt 長度 = {len(prompt) if prompt else 0}"):

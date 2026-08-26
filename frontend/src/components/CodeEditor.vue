@@ -25,6 +25,9 @@ const emit = defineEmits(['update:modelValue'])
 
 const code = ref(props.modelValue)
 watch(code, (val) => emit('update:modelValue', val))
+watch(() => props.modelValue, (val) => {
+  if (val !== code.value) code.value = val
+})
 
 const editorOptions = {
   fontSize: 14,

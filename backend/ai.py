@@ -13,10 +13,10 @@ client = AsyncOpenAI(
     base_url="https://generativelanguage.googleapis.com/v1beta/openai/" if _use_gemini else "https://api.groq.com/openai/v1",
 )
 
-_MODEL = "gemini-2.0-flash" if _use_gemini else "llama-3.1-8b-instant"
+_MODEL = "gemini-2.0-flash" if _use_gemini else "openai/gpt-oss-20b"
 
 
-def build_prompt(results: list[dict]) -> str | None:
+def build_prompt(results: list[dict], problem_title: str, problem_context: str) -> str | None:
     """
     組裝 AI prompt，完全不讀學生程式碼。
     - 全部通過 → 回傳 None
@@ -24,6 +24,10 @@ def build_prompt(results: list[dict]) -> str | None:
     - runtime_error → 送觸發錯誤的 input + stderr
     - no_return     → 固定提示
     - wrong_answer  → 送所有失敗的 (input, expected, actual)，蘇格拉底式
+
+    Args:
+        problem_title: 題目名稱（如 "Valid Parentheses"）
+        problem_context: 題目定義的純文字描述（給 AI 當上下文，不含 HTML）
     """
     failed = [r for r in results if not r["passed"]]
     if not failed:
@@ -35,7 +39,7 @@ def build_prompt(results: list[dict]) -> str | None:
     if error_type == "syntax_error":
         return f"""你是一個程式學習助教，幫助大一學生學習 Python。
 
-學生在解 Longest Substring Without Repeating Characters 時發生語法錯誤：
+學生在解 {problem_title} 時發生語法錯誤：
 
 {first_fail['stderr']}
 
@@ -49,8 +53,8 @@ def build_prompt(results: list[dict]) -> str | None:
     if error_type == "runtime_error":
         return f"""你是一個程式學習助教，幫助大一學生學習 Python。
 
-題目：Longest Substring Without Repeating Characters
-（給一個字串，找不含重複字元的最長子字串長度）
+題目：{problem_title}
+（{problem_context}）
 
 學生程式在以下輸入時發生執行期錯誤：
 - 輸入：{first_fail['input']!r}
@@ -64,9 +68,9 @@ def build_prompt(results: list[dict]) -> str | None:
 規則：不要給出修正後的程式碼。繁體中文，語氣友善鼓勵。150 字以內。"""
 
     if error_type == "no_return":
-        return """你是一個程式學習助教，幫助大一學生學習 Python。
+        return f"""你是一個程式學習助教，幫助大一學生學習 Python。
 
-題目：Longest Substring Without Repeating Characters
+題目：{problem_title}
 
 學生的函式執行完後回傳了 None，代表答案沒有被傳出來。
 
@@ -82,6 +86,7 @@ def build_prompt(results: list[dict]) -> str | None:
         return s if len(s) <= n else s[:n] + "..."
 
     n_fail = len(failed)
+    n_total = len(results)
     failed_summary = "\n".join(
         f"- Input: {truncate(r['input'])} / Expected: {r['expected']} / Actual: {truncate(r['actual'])}"
         for r in failed
@@ -89,18 +94,17 @@ def build_prompt(results: list[dict]) -> str | None:
 
     return f"""你是一個程式學習助教，專門幫助大一學生學習解題思維。
 
-題目：Longest Substring Without Repeating Characters
-定義：給一個字串，找「不含重複字元的最長子字串」的長度。
-例如："abcabcbb" → 3，因為 "abc" 是最長的無重複子字串。
+題目：{problem_title}
+定義：{problem_context}
 
-學生有 {n_fail}/17 筆測資失敗，以下是全部失敗案例：
+學生有 {n_fail}/{n_total} 筆測資失敗，以下是全部失敗案例：
 {failed_summary}
 
 請先分析這些失敗案例的數值 pattern（不要輸出分析過程），
 再根據推斷出的理解落差，用一個蘇格拉底式問題引導學生。
 
 提示深度原則：
-- 學生答案方向完全錯誤 → 從觀念入手（子字串的定義、滑動視窗的概念）
+- 學生答案方向完全錯誤 → 從觀念入手（題目的核心定義、關鍵演算法概念）
 - 學生方向正確但細節錯 → 從具體數字追問（為什麼這個 input 得到這個 output）
 
 輸出規則：
@@ -111,9 +115,9 @@ def build_prompt(results: list[dict]) -> str | None:
 - 200 字以內"""
 
 
-async def get_hint(results: list[dict]) -> str | None:
+async def get_hint(results: list[dict], problem_title: str, problem_context: str) -> str | None:
     """呼叫 Groq/Gemini API 取得 AI 提示。全部通過時回傳 None。API 失敗時回傳 None。"""
-    prompt = build_prompt(results)
+    prompt = build_prompt(results, problem_title, problem_context)
     if prompt is None:
         return None
 

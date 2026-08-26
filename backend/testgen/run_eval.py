@@ -29,17 +29,20 @@ BACKEND = HERE.parent
 sys.path.insert(0, str(BACKEND))
 
 from executor import run_code          # noqa: E402
+from judge import compare, get_args    # noqa: E402
 
 # TEST_CASES 變成 lazy，由 main() 依 --tests 選項決定載入哪個模組
 TEST_CASES: list[dict] = []
+METHOD = "lengthOfLongestSubstring"
 
 
-async def run_solution_on_case(solution_code: str, tc: dict) -> dict:
+async def run_solution_on_case(solution_code: str, tc: dict, method: str = None) -> dict:
     """跑一個解法在一筆測資上，回傳 pass/fail + 詳細資訊。"""
     timeout = 10.0 if tc["is_stress"] else 5.0
-    result = await run_code(solution_code, tc["input"], timeout=timeout)
+    args = get_args(tc)
+    result = await run_code(solution_code, method or METHOD, args, timeout=timeout)
     actual = result["actual"]
-    passed = (actual == str(tc["expected"])) and result["error_type"] is None
+    passed = compare(actual, tc["expected"]) and result["error_type"] is None
     return {
         "index": tc["index"],
         "passed": passed,
@@ -49,14 +52,14 @@ async def run_solution_on_case(solution_code: str, tc: dict) -> dict:
     }
 
 
-async def evaluate_pool(pool_dir: Path) -> dict[str, list[dict]]:
+async def evaluate_pool(pool_dir: Path, method: str = None) -> dict[str, list[dict]]:
     """跑池子裡的每個 .py 解法在所有 TEST_CASES 上。"""
     out = {}
     for sol_file in sorted(pool_dir.glob("*.py")):
         code = sol_file.read_text(encoding="utf-8")
         # 同個解法的 18 筆 case 可以並行
         per_case = await asyncio.gather(
-            *(run_solution_on_case(code, tc) for tc in TEST_CASES)
+            *(run_solution_on_case(code, tc, method) for tc in TEST_CASES)
         )
         out[sol_file.name] = list(per_case)
     return out
@@ -134,7 +137,7 @@ def print_report(report: dict, s_plus: dict, s_minus: dict):
     for idx, caught in sorted(report["command_value"].items()):
         tc = next(t for t in TEST_CASES if t["index"] == idx)
         bar = "█" * caught + "·" * (n_minus - caught)
-        input_preview = repr(tc["input"])[:30]
+        input_preview = repr(tc.get("input", tc.get("args")))[:30]
         print(f"  #{idx:>2}  {bar}  {caught}/{n_minus}  {input_preview}")
 
     if report["false_positives"]:
@@ -156,14 +159,15 @@ async def main():
                    help="輸出 feedback_<label>.json 的標籤")
     args = p.parse_args()
 
-    # 動態載入指定模組的 TEST_CASES
-    global TEST_CASES
+    # 動態載入指定模組的 TEST_CASES / METHOD
+    global TEST_CASES, METHOD
     mod = importlib.import_module(args.tests)
     TEST_CASES = mod.TEST_CASES
-    print(f"[testgen] 載入 {args.tests}.TEST_CASES（{len(TEST_CASES)} 筆）、S+、S- ...")
+    METHOD = getattr(mod, "METHOD", "lengthOfLongestSubstring")
+    print(f"[testgen] 載入 {args.tests}.TEST_CASES（{len(TEST_CASES)} 筆，method={METHOD}）、S+、S- ...")
 
-    s_plus = await evaluate_pool(HERE / "solutions_correct")
-    s_minus = await evaluate_pool(HERE / "solutions_wrong")
+    s_plus = await evaluate_pool(HERE / "solutions_correct", METHOD)
+    s_minus = await evaluate_pool(HERE / "solutions_wrong", METHOD)
     report = summarise(s_plus, s_minus)
     report["tests_module"] = args.tests
     report["raw_S_plus"] = s_plus

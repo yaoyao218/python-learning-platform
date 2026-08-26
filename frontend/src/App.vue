@@ -5,12 +5,21 @@
         <span class="brand-pip">◈</span>
         <span class="brand-text">Python 學習平台</span>
       </span>
-      <span class="topbar-tag">LeetCode #3</span>
+      <select
+        v-if="problemList.length"
+        class="problem-select"
+        :value="problemId"
+        @change="onProblemChange"
+      >
+        <option v-for="p in problemList" :key="p.id" :value="p.id">
+          {{ p.title }}（{{ diffLabel(p.difficulty) }}）
+        </option>
+      </select>
     </header>
 
     <div class="main-layout">
       <div class="left-col">
-        <ProblemStatement :problem="problem" />
+        <ProblemStatement v-if="problem" :problem="problem" />
         <CodeEditor v-model="code" />
         <div class="submit-row">
           <button class="submit-btn" :disabled="loading" @click="handleSubmit">
@@ -35,38 +44,57 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Play, Loader2, X } from 'lucide-vue-next'
 import ProblemStatement from './components/ProblemStatement.vue'
 import CodeEditor from './components/CodeEditor.vue'
 import ResultPanel from './components/ResultPanel.vue'
-import { submitCode } from './api.js'
+import { fetchProblemList, fetchProblem, submitCode } from './api.js'
 
-const STARTER_CODE = `class Solution:
-    def lengthOfLongestSubstring(self, s: str) -> int:
-        # 在此撰寫你的解法
-        pass
-`
-
-const problem = {
-  title: 'Longest Substring Without Repeating Characters',
-  description: '給定一個字串 <code>s</code>，請找出不含重複字元的<strong>最長子字串</strong>的長度。',
-  examples: [
-    { input: 'abcabcbb', output: 3, explanation: '最長不重複子字串為 "abc"，長度為 3' },
-    { input: 'bbbbb',    output: 1, explanation: '最長子字串為 "b"，長度為 1' },
-    { input: 'pwwkew',   output: 3, explanation: '最長不重複子字串為 "wke"，長度為 3' },
-  ],
-  constraints: [
-    '0 ≤ s.length ≤ 5 × 10⁴',
-    's 只包含英文字母、數字、符號與空白字元',
-  ],
+const DIFF_LABELS = { easy: '低', medium: '中', hard: '高' }
+function diffLabel(difficulty) {
+  return DIFF_LABELS[difficulty] ?? difficulty
 }
 
-const code    = ref(STARTER_CODE)
-const results = ref([])
-const hint    = ref(null)
-const loading = ref(false)
-const error   = ref(null)
+const problemList = ref([])   // [{ id, title, difficulty }]
+const problemId   = ref(null)
+const problem     = ref(null) // 目前選中題目的完整內容
+const code        = ref('')
+const results     = ref([])
+const hint        = ref(null)
+const loading     = ref(false)
+const error       = ref(null)
+
+onMounted(async () => {
+  try {
+    problemList.value = await fetchProblemList()
+    if (problemList.value.length) {
+      await selectProblem(problemList.value[0].id)
+    }
+  } catch (err) {
+    console.error('Load problem list error:', err)
+    error.value = '無法載入題目清單'
+  }
+})
+
+async function selectProblem(id) {
+  try {
+    const data      = await fetchProblem(id)
+    problem.value   = data
+    problemId.value = id
+    code.value      = data.starter_code
+    results.value   = []
+    hint.value       = null
+    error.value      = null
+  } catch (err) {
+    console.error('Load problem error:', err)
+    error.value = '無法載入題目'
+  }
+}
+
+function onProblemChange(event) {
+  selectProblem(event.target.value)
+}
 
 async function handleSubmit() {
   loading.value = true
@@ -75,7 +103,7 @@ async function handleSubmit() {
   error.value   = null
 
   try {
-    const data    = await submitCode(code.value)
+    const data    = await submitCode(code.value, problemId.value)
     results.value = data.results
     hint.value    = data.hint
   } catch (err) {
@@ -172,16 +200,21 @@ strong { font-weight: 600; }
 
 .brand-text { color: var(--text); }
 
-.topbar-tag {
+.problem-select {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-3);
+  color: var(--text);
+  background: var(--surface-hi);
   border: 1px solid var(--border);
-  padding: 3px 10px;
-  border-radius: 2px;
+  padding: 6px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  max-width: 380px;
+}
+
+.problem-select:hover {
+  border-color: var(--border-hi);
 }
 
 /* ── Layout ── */

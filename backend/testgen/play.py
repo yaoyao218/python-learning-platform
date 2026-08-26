@@ -38,18 +38,22 @@ def read_code_from_stdin() -> str:
     return sys.stdin.read()
 
 
-async def play(code: str, write_log: bool = True):
+async def play(code: str, write_log: bool = True, problem_id: str = "longest-substring"):
     # 延遲 import 避免在 sandbox 沒裝 openai 時整支腳本爆炸
     from judge import judge
     from ai import get_hint, build_prompt
+    from problem import PROBLEMS
     from testgen import session_logger
 
     if not write_log:
         session_logger.LOG_ENABLED = False
 
-    print(f"\n{BOLD}━━━ 跑 judge ━━━{RESET}")
+    problem_title = PROBLEMS[problem_id]["title"]
+    problem_context = PROBLEMS[problem_id]["ai_context"]
+
+    print(f"\n{BOLD}━━━ 跑 judge（{problem_title}）━━━{RESET}")
     t0 = time.perf_counter()
-    results = await judge(code)
+    results = await judge(code, problem_id)
     judge_ms = (time.perf_counter() - t0) * 1000
 
     n_pass = sum(1 for r in results if r["passed"])
@@ -75,7 +79,7 @@ async def play(code: str, write_log: bool = True):
 
     # AI prompt
     print(f"\n{BOLD}━━━ 組裝 AI prompt ━━━{RESET}")
-    prompt = build_prompt(code, results)
+    prompt = build_prompt(results, problem_title, problem_context)
     if prompt is None:
         print(f"  {GREEN}全過 → 不需要 AI 提示{RESET}")
     else:
@@ -86,7 +90,7 @@ async def play(code: str, write_log: bool = True):
     # AI hint
     print(f"\n{BOLD}━━━ 呼叫 Groq Llama ━━━{RESET}")
     t1 = time.perf_counter()
-    hint = await get_hint(code, results)
+    hint = await get_hint(results, problem_title, problem_context)
     ai_ms = (time.perf_counter() - t1) * 1000
     if hint:
         print(f"  耗時：{ai_ms:.0f} ms")
@@ -117,6 +121,8 @@ def main():
                    help="讀檔案內容當程式碼（不指定 = 從 stdin 貼上）")
     p.add_argument("--no-log", action="store_true",
                    help="不寫 session log")
+    p.add_argument("--problem", type=str, default="longest-substring",
+                   help="題目 id（longest-substring / valid-parentheses / median-two-sorted-arrays）")
     args = p.parse_args()
 
     if args.file:
@@ -128,7 +134,7 @@ def main():
         print(f"{RED}沒有程式碼，結束{RESET}")
         sys.exit(1)
 
-    asyncio.run(play(code, write_log=not args.no_log))
+    asyncio.run(play(code, write_log=not args.no_log, problem_id=args.problem))
 
 
 if __name__ == "__main__":

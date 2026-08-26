@@ -2,7 +2,7 @@
   <div class="problem">
     <div class="problem-header">
       <div class="problem-meta">
-        <span class="meta-label">題目</span>
+        <span class="meta-label" :class="diffClass">{{ diffLabel }}</span>
       </div>
       <h1 class="problem-title">{{ problem.title }}</h1>
       <p class="problem-desc" v-html="problem.description"></p>
@@ -37,9 +37,20 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   problem: { type: Object, required: true },
 })
+
+const DIFF_MAP = {
+  easy:   { label: '低', cls: 'diff-easy' },
+  medium: { label: '中', cls: 'diff-medium' },
+  hard:   { label: '高', cls: 'diff-hard' },
+}
+
+const diffLabel = computed(() => DIFF_MAP[props.problem.difficulty]?.label ?? '題目')
+const diffClass = computed(() => DIFF_MAP[props.problem.difficulty]?.cls ?? '')
 </script>
 
 <style scoped>
@@ -60,6 +71,10 @@ defineProps({
   padding: 3px 8px;
   border-radius: 2px;
 }
+
+.diff-easy   { color: var(--green); background: var(--green-dim); }
+.diff-medium { color: var(--amber); background: var(--amber-dim); }
+.diff-hard   { color: var(--red);   background: var(--red-dim); }
 
 .problem-title {
   font-family: var(--font-mono);

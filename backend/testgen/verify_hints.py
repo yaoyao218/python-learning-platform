@@ -11,7 +11,9 @@ import os
 from pathlib import Path
 from judge import judge
 from ai import get_hint
+from problem import PROBLEMS
 
+PROBLEM_ID = "longest-substring"  # solutions_wrong/ 目前只有這題的 bug 池
 SOLUTIONS_DIR = Path(__file__).parent / "solutions_wrong"
 
 BUG_DESCRIPTIONS = {
@@ -30,14 +32,14 @@ async def verify_one(filename: str) -> None:
     path = SOLUTIONS_DIR / filename
     code = path.read_text()
 
-    results = await judge(code)
+    results = await judge(code, PROBLEM_ID)
     passed = sum(1 for r in results if r["passed"])
     failed = [r for r in results if not r["passed"]]
 
     print(f"\n{SEP}")
     print(f"BUG：{filename}")
     print(f"預期行為：{BUG_DESCRIPTIONS[filename]}")
-    print(f"測資結果：{passed}/17 通過")
+    print(f"測資結果：{passed}/{len(results)} 通過")
 
     # 印出前 3 筆失敗的 actual 值，讓人快速確認 pattern
     print("失敗 pattern（前 3 筆）：")
@@ -51,7 +53,8 @@ async def verify_one(filename: str) -> None:
 
     # 呼叫 AI
     print("AI 提示：")
-    hint = await get_hint(results)
+    problem = PROBLEMS[PROBLEM_ID]
+    hint = await get_hint(results, problem["title"], problem["ai_context"])
     if hint:
         print(hint)
     else:

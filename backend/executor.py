@@ -49,13 +49,18 @@ def _run_subprocess(runner_script: str, timeout: float) -> tuple[str, str, int]:
         return ("", "執行超時（超過時間限制）", -1)
 
 
-async def run_code(code: str, input_val: str, timeout: float = 5.0) -> dict:
+async def run_code(code: str, method: str, args: tuple, timeout: float = 5.0) -> dict:
     """
     在 ThreadPoolExecutor 執行學生程式碼，跨平台相容（Linux / Windows）。
+
+    Args:
+        method: Solution 類別要呼叫的方法名
+        args: 呼叫該方法的位置參數（tuple）
 
     Returns:
         dict: { actual: str|None, error_type: str|None, stderr: str }
         error_type 可能值: "syntax_error" | "runtime_error" | "no_return" | None
+        actual 是 repr() 過的字串，可用 ast.literal_eval 還原成實際型別。
     """
     forbidden_error = check_forbidden(code)
     if forbidden_error:
@@ -74,8 +79,8 @@ async def run_code(code: str, input_val: str, timeout: float = 5.0) -> dict:
     runner_script = f"""{code}
 
 _sol = Solution()
-_result = _sol.lengthOfLongestSubstring({repr(input_val)})
-print(_result)
+_result = _sol.{method}(*{args!r})
+print(repr(_result))
 """
 
     loop = asyncio.get_running_loop()
