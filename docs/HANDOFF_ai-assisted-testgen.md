@@ -34,6 +34,7 @@ pip install -r requirements.txt
 
 - Python **3.10 以上**（程式用了 `str | None` 型別語法）
 - `backend/.env` 放 `GROQ_API_KEY=...`（**不要 commit**，跟組長拿或自己到 console.groq.com 申請）
+  - **一定要有這個檔**：`ai.py` 在 import 時就會建立 API client，沒有金鑰的話 `tests/test_ai.py`、`tests/test_main.py` 會在收集階段報 `openai.OpenAIError: Missing credentials`。只想跑測試、不呼叫 AI 的話，填任意假值也可以
 - Windows 終端機中文亂碼：指令前加 `PYTHONIOENCODING=utf-8`（PowerShell：`$env:PYTHONIOENCODING="utf-8"`）
 
 **確認環境正常：**
@@ -41,7 +42,7 @@ pip install -r requirements.txt
 ```bash
 cd backend
 pytest -q
-# 預期：43 passed, 8 skipped
+# 預期：41 passed, 8 skipped
 # 8 個 skip = 兩題尚未收斂 × 4 項品質守門員，屬正常
 ```
 
@@ -215,7 +216,7 @@ python -m testgen.assess_problem --problem best-time-stock                      
 
 | 測什麼 | 指令 | 預期 |
 |---|---|---|
-| 全部單元測試 | `pytest -q` | 43 passed, 8 skipped |
+| 全部單元測試 | `pytest -q` | 41 passed, 8 skipped |
 | LC3 正式數字沒被改壞 | `python -m testgen.run_eval --tests problem --label check` | TPR 1.0000／TNR 0.8824（測完刪掉 `feedback_check.json`） |
 | 新題目的解法池 | `python -m testgen.assess_problem --problem <id>` | 2a–2e 全部 ✓ |
 | 第 0 輪 | `python -m testgen.rounds show --problem <id> --round 0` | LC121 0.500、LC32 0.278、LC3 0.4907 |
