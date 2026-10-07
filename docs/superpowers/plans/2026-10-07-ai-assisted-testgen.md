@@ -435,7 +435,7 @@ backend/testgen/
     │   ├── solutions_heldout/    ← 驗收池（迭代期間不使用）
     │   ├── spec.py               ← 輸入規格：validate / random_args / small_args
     │   ├── assessment.json       ← assess_problem 的評分卡
-    │   └── rounds/               ← 每輪的候選、評測、審核紀錄
+    │   └── rounds/               ← 每輪的候選、評測、審核紀錄（pilot/ 為試跑，不計入實驗）
     ├── longest-valid-parentheses/  （同上）
     └── longest-substring/
         ├── solutions_heldout/      ← LC3 驗收池
@@ -501,11 +501,32 @@ S- 池是 TNR 的分母，**必須在第 1 輪 AI 提案前定案，之後不再
 python -m testgen.propose --problem longest-valid-parentheses --round 1
 ```
 
-- **輸入給 AI：** 題目 `ai_context` + constraints、S* 原始碼、S- 的一行錯誤描述（不給 S- 原始碼）、第 2 輪起附上一輪結構化紀錄
-- **AI 輸出（JSON，強制格式）：** `[{"input"或"args": …, "target_bug": "<S- 檔名>", "rationale": "…"}]`，每輪 10–15 筆
-- **規則：AI 不准提供 expected。** expected 一律由 S* 算
-- 經 `spec.validate` 篩掉不合法輸入（擋掉的數量也記錄）
-- 寫出 `rounds/r{N}_candidates.json`，同時記錄 model、temperature、完整 prompt、耗時
+- [x] `testgen/rounds.py`：管理每輪正式測資與評測（`rounds/r{N}_tests.json`），評測經平台 executor、只用訓練池
+  - `rounds init`：建立第 0 輪。LC121、LC32 用官方範例；**LC3 用 `--from-module problem_old`（原始 18 筆）**，與人工迭代同一個起點
+- [x] `testgen/propose.py`：
+  - **輸入給 AI：** 題目 `ai_context`、函式簽名、constraints、S* 原始碼、S- 訓練池的一行錯誤描述（不給 S- 原始碼，不提驗收池）、上一輪正式測資與每個 S- 的通過率／被哪幾筆抓到；第 2 輪起附上一輪每筆候選的 `caught` 與人工 `decision`（結構化 JSON，不含自由敘述）
+  - **AI 輸出：** JSON mode，`{"candidates": [{"args": [...], "target_bug": "...", "rationale": "..."}]}`，預設每輪 12 筆
+  - **AI 不准提供 expected**；有附的話丟掉並記錄次數
+  - 經 `spec.validate` 篩掉不合法輸入，並擋掉與正式測資／同輪候選重複的；被拒絕的連同原因都記錄
+  - 寫出 `rounds/r{N}_candidates.json`：model、temperature、reasoning_effort、完整 messages、原始回覆、token 用量、耗時
+  - **防止「抽到滿意為止」：** 同一輪已有提案時預設拒絕；`--force` 重新提案時舊檔改名為 `.attemptK.json` 保留
+  - `--dry-run` 只印 prompt；`--pilot` 試跑，結果寫到 `rounds/pilot/`，不計入實驗
+- [x] 第 0 輪：LC121 TNR 0.500、LC32 0.278、LC3（原始 18 筆）0.4907，與既有紀錄一致
+
+#### Phase 2 驗證紀錄（2026-10-07）
+
+1. **模型：** Groq 上已沒有 Llama 系列（`llama-3.3-70b-versatile`、`llama-3.1-8b-instant` 都不在模型清單）。依已定案規則改用 Groq 上最大的可用模型 **`openai/gpt-oss-120b`**。平台的 `ai.py` 早已改用 `openai/gpt-oss-20b`，線上提示不受影響（`CLAUDE.md` 的 AI 設定表已過時）。
+2. **試跑（`--pilot`，不計入實驗）**，LC32 第 1 輪、temperature 0.7：
+
+   | 指標 | 結果 |
+   |---|---|
+   | 回傳／接受／拒絕 | 12／11／1（拒絕原因：與同輪其他候選重複；**0 筆不合法**、0 筆附 expected） |
+   | `target_hit` 率 | 10/11 = 0.91 |
+   | 每筆平均抓到的 S- 比例 | 0.424（第 0 輪測資為 0.278） |
+   | 候選合起來抓到 | 6/6，包含第 0 輪完全漏掉的 `total_pairs`、`count_adjacent_pairs` |
+   | 成本 | 9.3 秒、約 4300 tokens |
+
+   試跑的候選內容與 AI 理由**沒有給審核者看**，避免影響正式實驗的審核。
 
 ### Phase 3：評測 + 分流 `testgen/score_candidates.py`
 
@@ -561,7 +582,7 @@ python -m testgen.propose --problem longest-valid-parentheses --round 1
 
 ## 七、已定案的決策（2026-10-07）
 
-1. **提案模型：** `propose.py` 可用 `--model` 切換；主要用 Groq `llama-3.3-70b-versatile`（沿用現有 `GROQ_API_KEY`，開工前確認仍可用，否則改用 Groq 上最大的可用模型）。每輪記錄 model、temperature、完整 prompt。選做：第 1 輪 8B vs 70B 各跑一次比較。
+1. **提案模型：** `propose.py` 可用 `--model` 切換；原定 Groq `llama-3.3-70b-versatile` 已下架，依規則改用 Groq 上最大的可用模型 **`openai/gpt-oss-120b`**（沿用現有 `GROQ_API_KEY`）。每輪記錄 model、temperature、完整 prompt。選做：第 1 輪平台現用的 `gpt-oss-20b` vs `gpt-oss-120b` 各跑一次比較。
 2. **效率指標：** 不直接拿 LC3 人工迭代比時間（當初沒計時）。主要報「人工細看比例」，加上同一場實驗內實測的「分流省下的時間」。
 3. **收斂條件：** 改用 TNR 達成率（第五節）。
 4. **選題：** 易 LC121／中 LC3／難 LC32；VP、MED 留在平台但不進實驗。
