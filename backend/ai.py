@@ -1,9 +1,14 @@
+import logging
 import os
 import openai
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 
+from hint_guard import guard
+
 load_dotenv()
+
+_logger = logging.getLogger(__name__)
 
 _api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GROQ_API_KEY", "")
 _use_gemini = bool(os.environ.get("GEMINI_API_KEY"))
@@ -116,7 +121,12 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str) 
 
 
 async def get_hint(results: list[dict], problem_title: str, problem_context: str) -> str | None:
-    """呼叫 Groq/Gemini API 取得 AI 提示。全部通過時回傳 None。API 失敗時回傳 None。"""
+    """呼叫 Groq/Gemini API 取得 AI 提示。全部通過時回傳 None。API 失敗時回傳 None。
+
+    回傳前會先經過 hint_guard 的輸出端檢查（第二道防線，見 hint_guard.py）：
+    萬一 LLM 沒聽話、提示裡夾了程式碼，這裡會攔下來換成安全的替代文字，
+    而不是把可能洩漏答案的內容直接送到學生畫面上。
+    """
     prompt = build_prompt(results, problem_title, problem_context)
     if prompt is None:
         return None
@@ -129,6 +139,11 @@ async def get_hint(results: list[dict], problem_title: str, problem_context: str
         content = response.choices[0].message.content
         if content is None:
             return None
-        return content
-    except openai.OpenAIError:
+    except openai.OpenAIError as e:
+        _logger.warning("AI hint request failed (%s): %s", _MODEL, e)
         return None
+
+    safe_hint, problems = guard(content)
+    if problems:
+        _logger.warning("AI hint failed quality guard, using fallback: %s", problems)
+    return safe_hint
