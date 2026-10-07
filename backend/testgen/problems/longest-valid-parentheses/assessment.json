@@ -1,0 +1,75 @@
+{
+  "problem": "longest-valid-parentheses",
+  "seed": 0,
+  "verdict": "A",
+  "gate_2a_s_plus_consistency": {
+    "pass": true,
+    "n_inputs": 28191,
+    "mismatches": 0,
+    "example": null
+  },
+  "gate_2bcd_s_minus": {
+    "pass": true,
+    "n_s_minus": 6,
+    "effective": 6,
+    "equivalent": [],
+    "duplicates": [],
+    "subsumed": [
+      [
+        "left_scan_only",
+        "reset_without_base"
+      ]
+    ]
+  },
+  "heldout_validity": {
+    "pass": true,
+    "n_heldout": 3,
+    "equivalent": [],
+    "same_as_training": []
+  },
+  "gate_2e_test_cases": {
+    "pass": true,
+    "invalid_cases": [],
+    "expected_mismatch": []
+  },
+  "gate_3a_ceiling": {
+    "ceiling": 1.0,
+    "max_caught": 6,
+    "example": "('(())(((())()',)",
+    "example_caught": [
+      "count_adjacent_pairs",
+      "left_scan_only",
+      "max_depth",
+      "no_concat",
+      "reset_without_base",
+      "total_pairs"
+    ],
+    "searched": {
+      "random": 20000,
+      "exhaustive_small": 8191
+    }
+  },
+  "gate_3b_round0": {
+    "n_cases": 3,
+    "tnr": 0.2778,
+    "achievement": 0.2778,
+    "caught": [
+      "left_scan_only",
+      "max_depth",
+      "no_concat",
+      "reset_without_base"
+    ],
+    "missed": [
+      "count_adjacent_pairs",
+      "total_pairs"
+    ]
+  },
+  "s_minus_descriptions": {
+    "count_adjacent_pairs": "錯誤：只認相鄰的 \"()\"，不認巢狀的 \"(())\"",
+    "left_scan_only": "錯誤：只從左往右掃一次，漏掉左括號多出來的情況（如 \"(()\"）",
+    "max_depth": "錯誤：回傳最大巢狀深度 × 2，把「深度」誤當成「長度」",
+    "no_concat": "錯誤：只計算單一配對區段的長度，沒把相鄰的合法區段（如 \"()()\"）接起來",
+    "reset_without_base": "錯誤：遇到多餘的 ')' 會重設起點，但沒處理結尾多出來、沒配對的 '('",
+    "total_pairs": "錯誤：計算全部能配對的括號數 × 2，沒要求子字串必須連續"
+  }
+}

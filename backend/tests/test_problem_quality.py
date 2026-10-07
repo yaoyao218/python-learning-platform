@@ -54,6 +54,8 @@ def _load_test_cases(problem_id: str) -> list[dict]:
 def quality_report(request):
     """對一題跑一次 S+/S- × 測資，回傳 summarise 出來的 metrics + 細節。"""
     problem_id = request.param
+    if not registry.converged(problem_id):
+        pytest.skip(f"{problem_id} 的測資尚未收斂（registry converged=False），不套用守門員")
     test_cases = _load_test_cases(problem_id)
     # 把測資注入 run_eval 模組（它的 evaluate_pool 從 module-global 讀）
     run_eval_mod.TEST_CASES = test_cases

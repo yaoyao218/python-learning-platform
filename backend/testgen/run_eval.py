@@ -162,7 +162,12 @@ async def main():
                         "test_cases，否則用 problem（= 原本的 problem.py）")
     p.add_argument("--label", default="baseline",
                    help="輸出 feedback_<label>.json 的標籤")
+    p.add_argument("--heldout", action="store_true",
+                   help="S- 改用驗收池（solutions_heldout/）。只在最後一輪結束後驗收時使用，"
+                        "迭代期間不要跑（需搭配 --problem）")
     args = p.parse_args()
+    if args.heldout and not args.problem:
+        p.error("--heldout 需要搭配 --problem")
 
     global TEST_CASES, METHOD
     if args.problem:
@@ -175,7 +180,7 @@ async def main():
         else:
             TEST_CASES = prob["test_cases"]
         correct_dir = registry.pool_dir(args.problem, "correct")
-        wrong_dir = registry.pool_dir(args.problem, "wrong")
+        wrong_dir = registry.pool_dir(args.problem, "heldout" if args.heldout else "wrong")
         out_dir = registry.feedback_dir(args.problem)
         source = args.tests or f"problem.PROBLEMS[{args.problem!r}]"
     else:
@@ -186,7 +191,8 @@ async def main():
         METHOD = getattr(mod, "METHOD", "lengthOfLongestSubstring")
         correct_dir, wrong_dir, out_dir = HERE / "solutions_correct", HERE / "solutions_wrong", HERE
         source = tests_module
-    print(f"[testgen] 載入 {source} 的 TEST_CASES（{len(TEST_CASES)} 筆，method={METHOD}）、S+、S- ...")
+    pool_name = "S- 驗收池" if args.heldout else "S-"
+    print(f"[testgen] 載入 {source} 的 TEST_CASES（{len(TEST_CASES)} 筆，method={METHOD}）、S+、{pool_name} ...")
 
     s_plus = await evaluate_pool(correct_dir, METHOD)
     s_minus = await evaluate_pool(wrong_dir, METHOD)
@@ -194,6 +200,7 @@ async def main():
     report["tests_module"] = source
     if args.problem:
         report["problem"] = args.problem
+    report["S_minus_pool"] = "heldout" if args.heldout else "wrong"
     report["raw_S_plus"] = s_plus
     report["raw_S_minus"] = s_minus
 

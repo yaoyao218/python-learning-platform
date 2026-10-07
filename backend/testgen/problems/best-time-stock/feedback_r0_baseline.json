@@ -1,0 +1,181 @@
+{
+  "metrics": {
+    "TPR": 1.0,
+    "TNR": 0.5,
+    "n_test_cases": 2,
+    "n_S_plus": 3,
+    "n_S_minus": 6
+  },
+  "S_plus_pass_rates": {
+    "brute_force.py": 1.0,
+    "kadane_diff.py": 1.0,
+    "one_pass.py": 1.0
+  },
+  "S_minus_pass_rates": {
+    "adjacent_only.py": 0.5,
+    "buy_first_day.py": 0.5,
+    "max_minus_min.py": 0.0,
+    "no_clamp_zero.py": 0.5,
+    "skip_last_day.py": 1.0,
+    "sum_positive_diffs.py": 0.5
+  },
+  "command_value": {
+    "1": 4,
+    "2": 2
+  },
+  "false_positives": [
+    "skip_last_day.py"
+  ],
+  "false_negatives": [],
+  "tests_module": "problem.PROBLEMS['best-time-stock']",
+  "problem": "best-time-stock",
+  "S_minus_pool": "wrong",
+  "raw_S_plus": {
+    "brute_force.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "kadane_diff.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "one_pass.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ]
+  },
+  "raw_S_minus": {
+    "adjacent_only.py": [
+      {
+        "index": 1,
+        "passed": false,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "buy_first_day.py": [
+      {
+        "index": 1,
+        "passed": false,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "max_minus_min.py": [
+      {
+        "index": 1,
+        "passed": false,
+        "actual": "6",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": false,
+        "actual": "6",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "no_clamp_zero.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": false,
+        "actual": "-1",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "skip_last_day.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "sum_positive_diffs.py": [
+      {
+        "index": 1,
+        "passed": false,
+        "actual": "7",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ]
+  }
+}

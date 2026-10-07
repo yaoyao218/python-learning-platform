@@ -1,0 +1,773 @@
+{
+  "metrics": {
+    "TPR": 1.0,
+    "TNR": 0.4706,
+    "n_test_cases": 17,
+    "n_S_plus": 3,
+    "n_S_minus": 3
+  },
+  "S_plus_pass_rates": {
+    "brute_force.py": 1.0,
+    "hash_map.py": 1.0,
+    "sliding_window.py": 1.0
+  },
+  "S_minus_pass_rates": {
+    "if_not_while.py": 0.2941,
+    "no_max_left.py": 0.9412,
+    "update_only_on_dup.py": 0.3529
+  },
+  "command_value": {
+    "1": 0,
+    "2": 0,
+    "3": 1,
+    "4": 1,
+    "5": 1,
+    "6": 1,
+    "7": 1,
+    "8": 2,
+    "9": 2,
+    "10": 2,
+    "11": 2,
+    "12": 2,
+    "13": 1,
+    "14": 2,
+    "15": 2,
+    "16": 2,
+    "17": 2
+  },
+  "false_positives": [],
+  "false_negatives": [],
+  "tests_module": "problem.PROBLEMS['longest-substring']",
+  "problem": "longest-substring",
+  "S_minus_pool": "heldout",
+  "raw_S_plus": {
+    "brute_force.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "1",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "6",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "9",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "8",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "9",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "11",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": true,
+        "actual": "9",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": true,
+        "actual": "5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": true,
+        "actual": "13",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": true,
+        "actual": "11",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": true,
+        "actual": "15",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "13",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "hash_map.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "1",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "6",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "9",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "8",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "9",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "11",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": true,
+        "actual": "9",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": true,
+        "actual": "5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": true,
+        "actual": "13",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": true,
+        "actual": "11",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": true,
+        "actual": "15",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "13",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "sliding_window.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "1",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "6",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "9",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "8",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "9",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "11",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": true,
+        "actual": "9",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": true,
+        "actual": "5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": true,
+        "actual": "13",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": true,
+        "actual": "11",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": true,
+        "actual": "15",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "13",
+        "error_type": null,
+        "stderr": ""
+      }
+    ]
+  },
+  "raw_S_minus": {
+    "if_not_while.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "1",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": false,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "6",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "9",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": false,
+        "actual": "6",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": false,
+        "actual": "10",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": false,
+        "actual": "12",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": false,
+        "actual": "14",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": false,
+        "actual": "13",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": false,
+        "actual": "11",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": false,
+        "actual": "10",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": false,
+        "actual": "17",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": false,
+        "actual": "16",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": false,
+        "actual": "18",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": false,
+        "actual": "18",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "no_max_left.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "1",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "6",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "9",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "8",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "9",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "11",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": true,
+        "actual": "9",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": false,
+        "actual": "12",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": true,
+        "actual": "13",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": true,
+        "actual": "11",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": true,
+        "actual": "15",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "13",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "update_only_on_dup.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "1",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": false,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": false,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": false,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": false,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": false,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": false,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": false,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": true,
+        "actual": "5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": false,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": false,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": false,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": false,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      }
+    ]
+  }
+}

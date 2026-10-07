@@ -1,0 +1,122 @@
+{
+  "problem": "longest-substring",
+  "seed": 0,
+  "verdict": "A",
+  "gate_2a_s_plus_consistency": {
+    "pass": true,
+    "n_inputs": 41845,
+    "mismatches": 0,
+    "example": null
+  },
+  "gate_2bcd_s_minus": {
+    "pass": true,
+    "n_s_minus": 6,
+    "effective": 6,
+    "equivalent": [],
+    "duplicates": [],
+    "subsumed": [
+      [
+        "always_len",
+        "no_return"
+      ],
+      [
+        "always_len",
+        "off_by_one_window"
+      ],
+      [
+        "count_unique",
+        "always_len"
+      ],
+      [
+        "count_unique",
+        "no_return"
+      ],
+      [
+        "count_unique",
+        "off_by_one_window"
+      ],
+      [
+        "inner_return",
+        "always_len"
+      ],
+      [
+        "inner_return",
+        "no_return"
+      ],
+      [
+        "inner_return",
+        "off_by_one_window"
+      ],
+      [
+        "no_reset_left",
+        "always_len"
+      ],
+      [
+        "no_reset_left",
+        "inner_return"
+      ],
+      [
+        "no_reset_left",
+        "no_return"
+      ],
+      [
+        "no_reset_left",
+        "off_by_one_window"
+      ],
+      [
+        "off_by_one_window",
+        "no_return"
+      ]
+    ]
+  },
+  "heldout_validity": {
+    "pass": true,
+    "n_heldout": 3,
+    "equivalent": [],
+    "same_as_training": []
+  },
+  "gate_2e_test_cases": {
+    "pass": true,
+    "invalid_cases": [],
+    "expected_mismatch": []
+  },
+  "gate_3a_ceiling": {
+    "ceiling": 1.0,
+    "max_caught": 6,
+    "example": "(' d ecebb',)",
+    "example_caught": [
+      "always_len",
+      "count_unique",
+      "inner_return",
+      "no_reset_left",
+      "no_return",
+      "off_by_one_window"
+    ],
+    "searched": {
+      "random": 20000,
+      "exhaustive_small": 21845
+    }
+  },
+  "gate_3b_round0": {
+    "n_cases": 17,
+    "tnr": 0.8824,
+    "achievement": 0.8824,
+    "caught": [
+      "always_len",
+      "count_unique",
+      "inner_return",
+      "no_reset_left",
+      "no_return",
+      "off_by_one_window"
+    ],
+    "missed": []
+  },
+  "s_minus_descriptions": {
+    "always_len": "",
+    "count_unique": "",
+    "inner_return": "",
+    "no_reset_left": "",
+    "no_return": "",
+    "off_by_one_window": ""
+  }
+}

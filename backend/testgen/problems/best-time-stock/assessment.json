@@ -1,0 +1,74 @@
+{
+  "problem": "best-time-stock",
+  "seed": 0,
+  "verdict": "B",
+  "gate_2a_s_plus_consistency": {
+    "pass": true,
+    "n_inputs": 39530,
+    "mismatches": 0,
+    "example": null
+  },
+  "gate_2bcd_s_minus": {
+    "pass": true,
+    "n_s_minus": 6,
+    "effective": 6,
+    "equivalent": [],
+    "duplicates": [],
+    "subsumed": [
+      [
+        "no_clamp_zero",
+        "max_minus_min"
+      ]
+    ]
+  },
+  "heldout_validity": {
+    "pass": true,
+    "n_heldout": 3,
+    "equivalent": [],
+    "same_as_training": []
+  },
+  "gate_2e_test_cases": {
+    "pass": true,
+    "invalid_cases": [],
+    "expected_mismatch": []
+  },
+  "gate_3a_ceiling": {
+    "ceiling": 0.8333,
+    "max_caught": 5,
+    "example": "([9, 7, 0, 3, 4, 1, 4, 8],)",
+    "example_caught": [
+      "adjacent_only",
+      "buy_first_day",
+      "max_minus_min",
+      "skip_last_day",
+      "sum_positive_diffs"
+    ],
+    "searched": {
+      "random": 20000,
+      "exhaustive_small": 19530
+    }
+  },
+  "gate_3b_round0": {
+    "n_cases": 2,
+    "tnr": 0.5,
+    "achievement": 0.6,
+    "caught": [
+      "adjacent_only",
+      "buy_first_day",
+      "max_minus_min",
+      "no_clamp_zero",
+      "sum_positive_diffs"
+    ],
+    "missed": [
+      "skip_last_day"
+    ]
+  },
+  "s_minus_descriptions": {
+    "adjacent_only": "錯誤：只比較相鄰兩天的價差，沒考慮隔好幾天再賣",
+    "buy_first_day": "錯誤：固定在第一天買入，只找之後的最高價",
+    "max_minus_min": "錯誤：直接回傳 max(prices) - min(prices)，忽略「必須先買後賣」的順序",
+    "no_clamp_zero": "錯誤：利潤初值設成第一天到第二天的差價，無法獲利時回傳負數而不是 0",
+    "skip_last_day": "錯誤：迴圈範圍少一天，最後一天從未被當作賣出日",
+    "sum_positive_diffs": "錯誤：把所有上漲的價差加總，誤解成可以多次買賣"
+  }
+}
