@@ -33,10 +33,16 @@ def check_forbidden(code: str) -> str | None:
 
 
 def _run_subprocess(runner_script: str, timeout: float) -> tuple[str, str, int]:
-    """同步執行子程序，在 ThreadPoolExecutor 裡呼叫。跨平台相容。"""
+    """同步執行子程序，在 ThreadPoolExecutor 裡呼叫。跨平台相容。
+
+    程式從 stdin 傳入（`python -`），不放在命令列：命令列有長度上限
+    （Windows 32767 字元、Linux 單一參數約 128KB），大型測資放不進去。
+    stdin 讀完程式後就是 EOF，學生程式呼叫 input() 會立刻得到 EOFError，不會卡到超時。
+    """
     try:
         result = subprocess.run(
-            [sys.executable, "-c", runner_script],
+            [sys.executable, "-"],
+            input=runner_script.encode(),
             capture_output=True,
             timeout=timeout,
         )
