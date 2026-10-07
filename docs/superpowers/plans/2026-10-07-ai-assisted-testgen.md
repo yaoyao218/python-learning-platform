@@ -433,7 +433,8 @@ backend/testgen/
     ├── best-time-stock/
     │   ├── solutions_correct/   solutions_wrong/
     │   ├── solutions_heldout/    ← 驗收池（迭代期間不使用）
-    │   ├── validator.py          ← 檢查輸入是否符合 constraints
+    │   ├── spec.py               ← 輸入規格：validate / random_args / small_args
+    │   ├── assessment.json       ← assess_problem 的評分卡
     │   └── rounds/               ← 每輪的候選、評測、審核紀錄
     ├── longest-valid-parentheses/  （同上）
     └── longest-substring/
@@ -469,14 +470,30 @@ backend/testgen/
 
 S- 池是 TNR 的分母，**必須在第 1 輪 AI 提案前定案，之後不再修改**，否則各輪 TNR 無法比較。
 
-- [ ] `problem.py` 新增 LC121、LC32（第 0 輪測資 = LC 官方範例）
-- [ ] 依 1.4 節寫 S+/S- 檔案，每個檔頭一行註解寫「這是哪種初學者錯誤」——**這行就是之後餵給 AI 的錯誤描述**
-- [ ] 依「穩定測資的定義」寫三題的驗收池 `solutions_heldout/`，與訓練池同時凍結
-- [ ] `run_eval.py` 加 `--heldout`：只在驗收時使用，輸出驗收 TNR 與漏網清單
-- [ ] 寫 `validator.py`（LC121：1 ≤ 長度 ≤ 10⁵、0 ≤ 價格 ≤ 10⁴；LC32：只含 `()`、0 ≤ 長度 ≤ 3×10⁴）
-- [ ] `testgen/assess_problem.py`：實作第四節第二、三關（S+ 一致性、S- 非等價／不重複／包含關係、validator 檢查、TNR 上限、起點達成率），輸出評分卡
-- [ ] 跑第 0 輪評測 → 存成 `rounds/r0_baseline.json`
-- [ ] **完成標準：** 三題 TPR=1.0；記下第 0 輪 TNR 與上限
+- [x] `problem.py` 新增 `best-time-stock`（LC121）、`longest-valid-parentheses`（LC32），第 0 輪測資 = LC 官方範例；`test_main.py` 的題目數斷言改成 5 題
+- [x] 依 1.4 節寫 S+/S- 檔案，每個檔頭一行註解寫「這是哪種初學者錯誤」——**這行就是之後餵給 AI 的錯誤描述**
+- [x] 依「穩定測資的定義」寫三題的驗收池 `solutions_heldout/`，與訓練池同時凍結
+- [x] `run_eval.py` 加 `--heldout`：只在驗收時使用（需搭配 `--problem`）
+- [x] 每題寫 `spec.py`（取代原本規劃的 `validator.py`）：`validate(args)` 檢查 constraints、`random_args(rng)` 隨機小輸入、`small_args()` 窮舉小輸入
+- [x] `testgen/assess_problem.py`：實作第四節第二、三關，輸出評分卡到 `problems/<id>/assessment.json`。驗收池**只檢查有效性**，不計算它對現有測資的表現
+- [x] `registry.py` 登記兩題、填入上限；加 `converged` 旗標，未收斂的題目品質守門員 skip
+- [x] 跑第 0 輪評測 → `problems/<id>/feedback_r0_baseline.json`
+- [x] **完成標準：** 三題 TPR=1.0；記下第 0 輪 TNR 與上限
+
+#### Phase 1 結果（2026-10-07）
+
+| 題目 | 2a S+ 一致 | 有效 S- | 包含關係 | 驗收池有效 | 3a 上限 | 第 0 輪 TNR | 達成率 | 第 0 輪漏網 | 判定 |
+|---|---|---|---|---|---|---|---|---|---|
+| LC121 | ✓（39530 組 0 次不一致） | 6/6 | 1 組 | ✓ 3/3 | 0.833 | 0.500 | 0.600 | `skip_last_day` | B 級 |
+| LC32 | ✓（28191 組） | 6/6 | 1 組 | ✓ 3/3 | 1.000 | 0.278 | 0.278 | `total_pairs`、`count_adjacent_pairs` | A 級 |
+| LC3 | ✓（41845 組） | 6/6 | 13 組¹ | ✓ 3/3 | 1.000 | 0.882（v4） | 0.882 | — | A 級 |
+
+¹ `no_return` 每筆都答錯，所以其他 5 個 S- 都被它「包含」，佔了 5 組。
+
+- `assess_problem`（同程序直接呼叫）與 `run_eval`（經平台 executor）算出的第 0 輪 TNR 完全一致。
+- LC3 人工版 v4 的驗收 TNR（`run_eval --heldout`）= **0.4706**，與暫存區探測一致；`no_max_left` 通過率 94%（17 筆只有 1 筆抓到）。人工組已凍結，所以可以先看。紀錄在 `testgen/feedback_manual_v4_heldout.json`。
+- pytest：43 passed、8 skipped（兩題未收斂 × 4 項守門員）。
+- **上線影響：** 兩題加入 `PROBLEMS` 後會出現在前端題目列表，但目前只有官方範例測資。這個分支在兩題收斂前**不應合併到 main**（main 會自動部署）。
 
 ### Phase 2：AI 提案器 `testgen/propose.py`
 
@@ -487,7 +504,7 @@ python -m testgen.propose --problem longest-valid-parentheses --round 1
 - **輸入給 AI：** 題目 `ai_context` + constraints、S* 原始碼、S- 的一行錯誤描述（不給 S- 原始碼）、第 2 輪起附上一輪結構化紀錄
 - **AI 輸出（JSON，強制格式）：** `[{"input"或"args": …, "target_bug": "<S- 檔名>", "rationale": "…"}]`，每輪 10–15 筆
 - **規則：AI 不准提供 expected。** expected 一律由 S* 算
-- 經 `validator.py` 篩掉不合法輸入（擋掉的數量也記錄）
+- 經 `spec.validate` 篩掉不合法輸入（擋掉的數量也記錄）
 - 寫出 `rounds/r{N}_candidates.json`，同時記錄 model、temperature、完整 prompt、耗時
 
 ### Phase 3：評測 + 分流 `testgen/score_candidates.py`
