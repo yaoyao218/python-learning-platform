@@ -64,16 +64,19 @@ async def test_submit_unknown_problem_returns_404():
 
 
 @pytest.mark.asyncio
-async def test_list_problems_returns_three():
+async def test_list_problems_returns_all():
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as client:
         response = await client.get("/problems")
     assert response.status_code == 200
     data = response.json()
-    assert len(data) == 3
+    assert len(data) == 5
     ids = {p["id"] for p in data}
-    assert ids == {"longest-substring", "valid-parentheses", "median-two-sorted-arrays"}
+    assert ids == {
+        "longest-substring", "valid-parentheses", "median-two-sorted-arrays",
+        "best-time-stock", "longest-valid-parentheses",
+    }
 
 
 @pytest.mark.asyncio

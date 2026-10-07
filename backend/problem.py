@@ -81,6 +81,21 @@ _MEDIAN_CASES = [
     {"index": 11, "args": ([100000], [100000]), "expected": 100000.0, "is_stress": False},
 ]
 
+# 第 0 輪：只有 LC 官方範例（AI 輔助測資實驗的起點，見
+# docs/superpowers/plans/2026-10-07-ai-assisted-testgen.md）。
+# 單一參數是 list 時用 args=(prices,)，因為 judge 的截斷顯示只處理字串型的 "input"。
+_BEST_TIME_STOCK_CASES = [
+    {"index": 1, "args": ([7, 1, 5, 3, 6, 4],), "expected": 5, "is_stress": False},
+    {"index": 2, "args": ([7, 6, 4, 3, 1],), "expected": 0, "is_stress": False},
+]
+
+# 第 0 輪：只有 LC 官方範例。
+_LONGEST_VALID_PARENTHESES_CASES = [
+    {"index": 1, "input": "(()", "expected": 2, "is_stress": False},
+    {"index": 2, "input": ")()())", "expected": 4, "is_stress": False},
+    {"index": 3, "input": "", "expected": 0, "is_stress": False},
+]
+
 
 PROBLEMS = {
     "longest-substring": {
@@ -162,6 +177,61 @@ PROBLEMS = {
             "        pass\n"
         ),
         "test_cases": _MEDIAN_CASES,
+    },
+    "best-time-stock": {
+        "title": "Best Time to Buy and Sell Stock",
+        "difficulty": "easy",
+        "method": "maxProfit",
+        "description": (
+            '給定一個陣列 <code>prices</code>，<code>prices[i]</code> 是某支股票第 i 天的價格。'
+            '你只能選擇<strong>某一天買入</strong>，並在<strong>之後的某一天賣出</strong>。'
+            '回傳你能獲得的最大利潤；如果無法獲利，回傳 <code>0</code>。'
+        ),
+        "ai_context": '給一個每日股價陣列，只能買一次、之後賣一次，求最大利潤，無法獲利回傳 0。例如：[7,1,5,3,6,4] → 5（第 2 天以 1 買入、第 5 天以 6 賣出）。',
+        "examples": [
+            {"input": 'prices = [7,1,5,3,6,4]', "output": 5,
+             "explanation": '第 2 天（價格 1）買入、第 5 天（價格 6）賣出，利潤 6-1 = 5；不能先賣後買'},
+            {"input": 'prices = [7,6,4,3,1]', "output": 0,
+             "explanation": '價格一路下跌，沒有任何交易能獲利，回傳 0'},
+        ],
+        "constraints": [
+            "1 ≤ prices.length ≤ 10⁵",
+            "0 ≤ prices[i] ≤ 10⁴",
+        ],
+        "starter_code": (
+            "from typing import List\n\n"
+            "class Solution:\n"
+            "    def maxProfit(self, prices: List[int]) -> int:\n"
+            "        # 在此撰寫你的解法\n"
+            "        pass\n"
+        ),
+        "test_cases": _BEST_TIME_STOCK_CASES,
+    },
+    "longest-valid-parentheses": {
+        "title": "Longest Valid Parentheses",
+        "difficulty": "hard",
+        "method": "longestValidParentheses",
+        "description": (
+            '給定一個只包含 <code>(</code> 與 <code>)</code> 的字串 <code>s</code>，'
+            '回傳<strong>最長的合法（括號正確配對）且連續的子字串</strong>的長度。'
+        ),
+        "ai_context": '給一個只含 ( 和 ) 的字串，找出「括號正確配對且連續」的最長子字串長度。例如：")()())" → 4（最長合法子字串是 "()()"）。',
+        "examples": [
+            {"input": '(()', "output": 2, "explanation": '最長合法子字串為 "()"'},
+            {"input": ')()())', "output": 4, "explanation": '最長合法子字串為 "()()"'},
+            {"input": '', "output": 0, "explanation": '空字串沒有合法子字串'},
+        ],
+        "constraints": [
+            "0 ≤ s.length ≤ 3 × 10⁴",
+            "s[i] 只會是 '(' 或 ')'",
+        ],
+        "starter_code": (
+            "class Solution:\n"
+            "    def longestValidParentheses(self, s: str) -> int:\n"
+            "        # 在此撰寫你的解法\n"
+            "        pass\n"
+        ),
+        "test_cases": _LONGEST_VALID_PARENTHESES_CASES,
     },
 }
 
