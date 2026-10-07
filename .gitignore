@@ -7,3 +7,6 @@ venv/
 .venv/
 backend/testgen/feedback_current.json
 frontend/dist/
+
+# AI 輔助測資實驗的試跑紀錄（不屬於實驗紀錄）
+backend/testgen/problems/*/rounds/pilot/
