@@ -1,0 +1,333 @@
+{
+  "problem": "best-time-stock",
+  "round": 2,
+  "test_phase": true,
+  "note": "測試階段：審核由 AI 代審（非人工），規則為只看 TPR/TNR 數字；不計入正式實驗結果。",
+  "reviewer": "AI（測試階段代審，非人工）",
+  "rule": "只看 TPR/TNR 數字，不看 AI 理由；上一輪正式測資全保留，候選以貪婪法依 TNR 加入",
+  "created_at": "2026-10-13T18:55:40",
+  "trace": [
+    [
+      "start",
+      null,
+      0.5556
+    ],
+    [
+      "add",
+      "r2c6",
+      0.5833
+    ]
+  ],
+  "items": [
+    {
+      "id": "r2c1",
+      "args": [
+        [
+          9,
+          0,
+          8,
+          1,
+          7,
+          2,
+          6,
+          3,
+          5,
+          4
+        ]
+      ],
+      "expected": 8,
+      "target_bug": "max_minus_min",
+      "kills": [
+        "buy_first_day",
+        "max_minus_min",
+        "sum_positive_diffs"
+      ],
+      "target_hit": true,
+      "decision": "drop",
+      "reason": "抓到 3/6（buy_first_day, max_minus_min, sum_positive_diffs）；加入保留集 TNR 0.5833→0.5667（下降）"
+    },
+    {
+      "id": "r2c2",
+      "args": [
+        [
+          1,
+          10,
+          2,
+          9,
+          3,
+          8,
+          4,
+          7,
+          5,
+          6
+        ]
+      ],
+      "expected": 9,
+      "target_bug": "adjacent_only",
+      "kills": [
+        "sum_positive_diffs"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 1/6（sum_positive_diffs）；加入保留集 TNR 0.5833→0.5000（下降）"
+    },
+    {
+      "id": "r2c3",
+      "args": [
+        [
+          5,
+          4,
+          3,
+          2,
+          1,
+          0,
+          10,
+          0,
+          9,
+          0
+        ]
+      ],
+      "expected": 10,
+      "target_bug": "skip_last_day",
+      "kills": [
+        "buy_first_day",
+        "sum_positive_diffs"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 2/6（buy_first_day, sum_positive_diffs）；加入保留集 TNR 0.5833→0.5333（下降）"
+    },
+    {
+      "id": "r2c4",
+      "args": [
+        [
+          0,
+          5,
+          0,
+          6,
+          0,
+          7,
+          0,
+          8,
+          0,
+          9
+        ]
+      ],
+      "expected": 9,
+      "target_bug": "no_clamp_zero",
+      "kills": [
+        "skip_last_day",
+        "sum_positive_diffs"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 2/6（skip_last_day, sum_positive_diffs）；加入保留集 TNR 0.5833→0.5333（下降）"
+    },
+    {
+      "id": "r2c5",
+      "args": [
+        [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ]
+      ],
+      "expected": 0,
+      "target_bug": "no_clamp_zero",
+      "kills": [],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 0/6（）；加入保留集 TNR 0.5833→0.4667（下降）"
+    },
+    {
+      "id": "r2c6",
+      "args": [
+        [
+          10,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      ],
+      "expected": 8,
+      "target_bug": "buy_first_day",
+      "kills": [
+        "adjacent_only",
+        "buy_first_day",
+        "max_minus_min",
+        "skip_last_day"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 4/6（adjacent_only, buy_first_day, max_minus_min, skip_last_day）；移除它 TNR 0.5556→0.5833，保留可提高密度"
+    },
+    {
+      "id": "r2c7",
+      "args": [
+        [
+          2,
+          9,
+          1,
+          8,
+          0,
+          7,
+          3,
+          6,
+          4,
+          5
+        ]
+      ],
+      "expected": 7,
+      "target_bug": "adjacent_only",
+      "kills": [
+        "max_minus_min",
+        "sum_positive_diffs"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 2/6（max_minus_min, sum_positive_diffs）；加入保留集 TNR 0.5833→0.5333（下降）"
+    },
+    {
+      "id": "r2c8",
+      "args": [
+        [
+          4,
+          0,
+          5,
+          0,
+          6,
+          0,
+          7,
+          0,
+          8,
+          0
+        ]
+      ],
+      "expected": 8,
+      "target_bug": "skip_last_day",
+      "kills": [
+        "buy_first_day",
+        "sum_positive_diffs"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 2/6（buy_first_day, sum_positive_diffs）；加入保留集 TNR 0.5833→0.5333（下降）"
+    },
+    {
+      "id": "r2c9",
+      "args": [
+        [
+          1,
+          2,
+          1,
+          3,
+          1,
+          4,
+          1,
+          5,
+          1,
+          6
+        ]
+      ],
+      "expected": 5,
+      "target_bug": "max_minus_min",
+      "kills": [
+        "skip_last_day",
+        "sum_positive_diffs"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 2/6（skip_last_day, sum_positive_diffs）；加入保留集 TNR 0.5833→0.5333（下降）"
+    },
+    {
+      "id": "r2c10",
+      "args": [
+        [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1,
+          0,
+          10,
+          9,
+          8
+        ]
+      ],
+      "expected": 10,
+      "target_bug": "no_clamp_zero",
+      "kills": [
+        "buy_first_day"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 1/6（buy_first_day）；加入保留集 TNR 0.5833→0.5000（下降）"
+    },
+    {
+      "id": "r2c11",
+      "args": [
+        [
+          0,
+          10,
+          0,
+          9,
+          0,
+          8,
+          0,
+          7,
+          0,
+          6
+        ]
+      ],
+      "expected": 10,
+      "target_bug": "buy_first_day",
+      "kills": [
+        "sum_positive_diffs"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 1/6（sum_positive_diffs）；加入保留集 TNR 0.5833→0.5000（下降）"
+    },
+    {
+      "id": "r2c12",
+      "args": [
+        [
+          5,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      ],
+      "expected": 8,
+      "target_bug": "adjacent_only",
+      "kills": [
+        "adjacent_only",
+        "buy_first_day",
+        "skip_last_day"
+      ],
+      "target_hit": true,
+      "decision": "drop",
+      "reason": "抓到 3/6（adjacent_only, buy_first_day, skip_last_day）；加入保留集 TNR 0.5833→0.5667（下降）"
+    }
+  ]
+}

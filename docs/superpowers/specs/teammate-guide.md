@@ -65,9 +65,9 @@
 <!-- BOARD:START -->
 | ID | 內容 | 負責 | 狀態 | 最後更新 | 產出檔案 | 證據 | 備註 |
 |---|---|---|---|---|---|---|---|
-| E1 | 【主線】longest-substring 測資確認與記錄 | | 未開始 | 2026-10-10 | | | 見任務卡 E1；已決定不補輪次 |
-| E2 | 【主線】best-time-stock 測資定稿 | | 未開始 | 2026-10-10 | backend/problem.py, backend/testgen/registry.py | | 見任務卡 E2 |
-| E3 | 【主線】longest-valid-parentheses 測資定稿 | | 未開始 | 2026-10-10 | backend/problem.py, backend/testgen/registry.py | | 見任務卡 E3 |
+| E1 | 【主線】longest-substring 測資確認與記錄 | Claude（代組員） | 完成 | 2026-10-13 | | `run_eval --problem longest-substring`：18 道，TPR 1.0000、訓練池 TNR 0.8889，無漏網；順序：官方範例 3 道在前、其餘由短到長、壓力測資在最後 | 18 道 = 人工迭代 17 道 + main #10 加的 5 萬字元壓力測資（擋 O(n²)，TNR 0.8824→0.8889）；驗收池 0.47 是先前紀錄，已用過一次，本次沒有重跑；不補輪次（K12） |
+| E2 | 【主線】best-time-stock 測資定稿 | Claude（代組員） | 完成 | 2026-10-13 | backend/problem.py | r1–r3（gpt-oss-120b 提案、AI 代審）：2→4 道，TPR 1.0、訓練池 TNR 0.5→0.5833（達成率 0.70），訓練池無漏網；驗收池跑一次：TNR 0.4167，`global_min_then_max` 漏網（K13）；已用 E4 寫回 problem.py；pytest 104 passed, 8 skipped | 以「可實測」交付、**未達標**，未標收斂；r3 沒有新增任何測資（K15） |
+| E3 | 【主線】longest-valid-parentheses 測資定稿 | Claude（代組員） | 完成 | 2026-10-13 | backend/problem.py | r3–r5（r3 用既有候選、r4–r5 gpt-oss-120b 提案，AI 代審）：14→54 道，TPR 1.0、訓練池 TNR 0.5476→0.6759（達成率 0.68），6 種錯誤都被擋到（含 `left_scan_only`）；驗收池跑一次：TNR 0.5370，無漏網；已用 E4 寫回 problem.py；pytest 104 passed, 8 skipped | 以「可實測」交付、**未達標**（停止條件：3 輪），未標收斂 |
 | E4 | 【主線】最終輪測資寫回 `problem.py` 的匯出工具 | 專題負責人 | 完成 | 2026-10-10 | backend/testgen/export_round_to_problem.py, backend/tests/test_export_round.py | 已實作；15 個單元測試（58 passed）；對三題真實資料 dry-run 過；兩個變異檢查被測試抓到 | E2、E3 用它寫回 problem.py |
 | B2 | 【主線】三題虛擬碼產出與往返檢查（I8） | | 未開始 | 2026-10-10 | backend/testgen/problems/longest-substring/pseudocode.json, backend/testgen/problems/best-time-stock/pseudocode.json, backend/testgen/problems/longest-valid-parentheses/pseudocode.json | | 腳本已可跑，三題各試過一次（k=2）都通過；需正式產出並存檔 |
 | C1 | 【主線】提示加入虛擬碼與 `hint_guard` 擴充（I11） | | 未開始 | 2026-10-10 | backend/ai.py, backend/hint_guard.py, backend/tests/test_ai.py | | 依賴 B2 |
@@ -91,7 +91,7 @@
 
 > 【主線】任務**不依賴**【強化】任務：三題測資用現有的人工池與輪次流程就能完成（評測本來就經由 `executor` 的子程序執行）。
 
-**已完成的事（供對照）**：效能基準與答錯集合指紋（`baseline_assess.json`）、Groq 模型與額度限制查明、推理 token 拆解、虛擬碼往返檢查腳本、使用者說明草稿、設計文件整理。後端測試起點：`58 passed, 8 skipped`。
+**已完成的事（供對照）**：效能基準與答錯集合指紋（`baseline_assess.json`）、Groq 模型與額度限制查明、推理 token 拆解、虛擬碼往返檢查腳本、使用者說明草稿、設計文件整理。後端測試起點：`58 passed, 8 skipped`（合併 main 之後為 `104 passed, 8 skipped`）。
 
 ## 4. 規則與預設做法
 
@@ -168,6 +168,9 @@
 | K10 | 黑名單是名稱檢查，`getattr(__builtins__, 'open')` 等繞過手法擋不住 | 已知、接受（威脅模型：無意誤用） | 嚴格模式只擋名稱；AI 程式另走子程序＋逾時；覺得可疑的程式先人工看 | 否 | 已知 | | 2026-10-10 |
 | K11 | longest-valid-parentheses 的 `left_scan_only` 一直擋不到（單次提案與大量取樣共 69 筆候選 0 筆；看分數再改僅少數次擋到） | 已知：這種錯誤只在特定括號結構才出錯 | 照 E3 的停止條件；未達標就以「可實測」交付並保持未收斂 | 否 | 已知 | | 2026-10-10 |
 | K12 | longest-substring 的 `r0_tests.json` 是舊基準（18 道），不是目前 `problem.py` 的 17 道 | 已確認（r0 的 source 是 `problem_old.TEST_CASES`，TNR 0.4907） | **負責人已決定（2026-10-10）：不補輪次，直接使用現有 17 道**；匯出工具會拒絕丟掉現有案例；不要對這題的 r0 使用匯出 | 否 | 已知 | 專題負責人 | 2026-10-10 |
+| K13 | best-time-stock 驗收池 `global_min_then_max` 沒有被任何測資擋下（驗收 TNR 0.4167） | 照實記錄；驗收池只跑一次，不回頭改測資 | 若上線前要補強，須在實驗紀錄凍結後另做一輪並標明是實驗外修正 | 否 | 已知 | 專題負責人決定 | 2026-10-13 |
+| K14 | `propose --reasoning-effort` 在 `openai==1.51.0`（requirements.txt 釘的版本）會 TypeError | SDK 太舊，不支援 `reasoning_effort` 參數 | 跑 testgen 時另用較新的 SDK（實測 1.82.0 可用）；requirements.txt 沒改，避免影響 Render 部署 | 否 | 已知 | | 2026-10-13 |
+| K15 | best-time-stock 最終只有 4 道測資 | AI 代審的貪婪規則只收「提高平均抓錯數」的候選；r1、r2 各收 1 筆，r3 0 筆 | 照規則交付；道數少可能讓學生較少看到失敗案例，是否另外補教學用案例由負責人決定 | 否 | 已知 | | 2026-10-13 |
 <!-- ISSUES:END -->
 
 ## 6. 任務卡

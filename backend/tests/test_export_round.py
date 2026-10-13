@@ -207,9 +207,16 @@ def test_cli_write_and_second_run_has_no_diff(tmp_path):
 
 
 # ---------------------------------------------------------------- 真實資料：不應該把 problem.py 現有案例丟掉（只讀）
-@pytest.mark.parametrize("pid,rnd,official", [("longest-valid-parentheses", 2, 3), ("best-time-stock", 0, 2)])
-def test_real_rounds_contain_current_problem_cases(pid, rnd, official):
+def _latest_round(pid):
     from testgen import rounds
+    return max(int(f.name[1:-len("_tests.json")]) for f in rounds.rounds_dir(pid).glob("r*_tests.json"))
+
+
+@pytest.mark.parametrize("pid,official", [("longest-valid-parentheses", 3), ("best-time-stock", 2)])
+def test_real_rounds_contain_current_problem_cases(pid, official):
+    # 用該題最新一輪：舊輪次本來就不含之後才加進 problem.py 的案例
+    from testgen import rounds
+    rnd = _latest_round(pid)
     cases = rounds.load_round_tests(pid, rnd)["cases"]
     source = (BACKEND / "problem.py").read_text(encoding="utf-8")
     text, info = ex.build_new_source(source, pid, cases, official, rnd)

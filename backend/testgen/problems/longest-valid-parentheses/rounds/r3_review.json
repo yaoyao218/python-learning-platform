@@ -1,0 +1,948 @@
+{
+  "problem": "longest-valid-parentheses",
+  "round": 3,
+  "test_phase": true,
+  "note": "測試階段：審核由 AI 代審（非人工），規則為只看 TPR/TNR 數字；不計入正式實驗結果。",
+  "reviewer": "AI（測試階段代審，非人工）",
+  "rule": "只看 TPR/TNR 數字，不看 AI 理由；上一輪正式測資全保留，候選以貪婪法依 TNR 加入",
+  "created_at": "2026-10-13T18:46:17",
+  "trace": [
+    [
+      "start",
+      null,
+      0.5476
+    ],
+    [
+      "add",
+      "r3c4",
+      0.5667
+    ],
+    [
+      "add",
+      "r3c14",
+      0.5833
+    ],
+    [
+      "add",
+      "r3c17",
+      0.598
+    ],
+    [
+      "add",
+      "r3c19",
+      0.6111
+    ],
+    [
+      "add",
+      "r3c22",
+      0.6228
+    ],
+    [
+      "add",
+      "r3c24",
+      0.6333
+    ],
+    [
+      "add",
+      "r3c31",
+      0.6429
+    ],
+    [
+      "add",
+      "r3c46",
+      0.6515
+    ],
+    [
+      "add",
+      "r3c1",
+      0.6522
+    ],
+    [
+      "add",
+      "r3c2",
+      0.6528
+    ],
+    [
+      "add",
+      "r3c3",
+      0.6533
+    ],
+    [
+      "add",
+      "r3c5",
+      0.6538
+    ],
+    [
+      "add",
+      "r3c6",
+      0.6543
+    ],
+    [
+      "add",
+      "r3c8",
+      0.6548
+    ],
+    [
+      "add",
+      "r3c9",
+      0.6552
+    ],
+    [
+      "add",
+      "r3c13",
+      0.6556
+    ],
+    [
+      "add",
+      "r3c15",
+      0.6559
+    ],
+    [
+      "add",
+      "r3c16",
+      0.6562
+    ],
+    [
+      "add",
+      "r3c18",
+      0.6566
+    ],
+    [
+      "add",
+      "r3c23",
+      0.6569
+    ],
+    [
+      "add",
+      "r3c25",
+      0.6571
+    ],
+    [
+      "add",
+      "r3c26",
+      0.6574
+    ],
+    [
+      "add",
+      "r3c27",
+      0.6577
+    ],
+    [
+      "add",
+      "r3c30",
+      0.6579
+    ],
+    [
+      "add",
+      "r3c32",
+      0.6581
+    ],
+    [
+      "add",
+      "r3c34",
+      0.6583
+    ],
+    [
+      "add",
+      "r3c38",
+      0.6585
+    ],
+    [
+      "add",
+      "r3c39",
+      0.6587
+    ],
+    [
+      "add",
+      "r3c40",
+      0.6589
+    ],
+    [
+      "add",
+      "r3c42",
+      0.6591
+    ],
+    [
+      "add",
+      "r3c43",
+      0.6593
+    ]
+  ],
+  "items": [
+    {
+      "id": "r3c1",
+      "args": [
+        "())(()())()(()))(()"
+      ],
+      "expected": 12,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c2",
+      "args": [
+        "((())())(()())())(()"
+      ],
+      "expected": 16,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c3",
+      "args": [
+        "()(()))(()())(()())"
+      ],
+      "expected": 12,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c4",
+      "args": [
+        "(()())(()(()))(()"
+      ],
+      "expected": 14,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "reset_without_base",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 5/6（count_adjacent_pairs, max_depth, no_concat, reset_without_base, total_pairs）；移除它 TNR 0.6553→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c5",
+      "args": [
+        "())()(()())()(()))"
+      ],
+      "expected": 14,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c6",
+      "args": [
+        "((()()))(()))(()(()))"
+      ],
+      "expected": 12,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c7",
+      "args": [
+        "()()((()))(()())())"
+      ],
+      "expected": 18,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6593→0.6558（下降）"
+    },
+    {
+      "id": "r3c8",
+      "args": [
+        "(()(()))()(()()))(()"
+      ],
+      "expected": 16,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c9",
+      "args": [
+        "())((()))()(()))(()())"
+      ],
+      "expected": 12,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c10",
+      "args": [
+        "((())())()(()())(()))"
+      ],
+      "expected": 20,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6593→0.6558（下降）"
+    },
+    {
+      "id": "r3c11",
+      "args": [
+        "(()())()(()(()))(()())"
+      ],
+      "expected": 22,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6593→0.6558（下降）"
+    },
+    {
+      "id": "r3c12",
+      "args": [
+        "()(()())(()(()))()())"
+      ],
+      "expected": 20,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6593→0.6558（下降）"
+    },
+    {
+      "id": "r3c13",
+      "args": [
+        "((()))()(()))((())())"
+      ],
+      "expected": 12,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c14",
+      "args": [
+        "())()()((()))(()())(()"
+      ],
+      "expected": 16,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "reset_without_base",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 5/6（count_adjacent_pairs, max_depth, no_concat, reset_without_base, total_pairs）；移除它 TNR 0.6553→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c15",
+      "args": [
+        "(()))(()())()(()(()))"
+      ],
+      "expected": 16,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c16",
+      "args": [
+        "()((()))(()())())(()())"
+      ],
+      "expected": 16,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c17",
+      "args": [
+        "((())())(()(()))(()"
+      ],
+      "expected": 16,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "reset_without_base",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 5/6（count_adjacent_pairs, max_depth, no_concat, reset_without_base, total_pairs）；移除它 TNR 0.6553→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c18",
+      "args": [
+        "())((()))(()())(()))"
+      ],
+      "expected": 16,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c19",
+      "args": [
+        "(()(()))()()((()))(()"
+      ],
+      "expected": 18,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "reset_without_base",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 5/6（count_adjacent_pairs, max_depth, no_concat, reset_without_base, total_pairs）；移除它 TNR 0.6553→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c20",
+      "args": [
+        "()()((()))(()())()())"
+      ],
+      "expected": 20,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6593→0.6558（下降）"
+    },
+    {
+      "id": "r3c21",
+      "args": [
+        "((()))()(()())(()(()))"
+      ],
+      "expected": 22,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6593→0.6558（下降）"
+    },
+    {
+      "id": "r3c22",
+      "args": [
+        "())()(()())((()))(()"
+      ],
+      "expected": 14,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "reset_without_base",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 5/6（count_adjacent_pairs, max_depth, no_concat, reset_without_base, total_pairs）；移除它 TNR 0.6553→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c23",
+      "args": [
+        "(()())((()))()(()))(()"
+      ],
+      "expected": 18,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c24",
+      "args": [
+        "()(()))((()))(()())(()"
+      ],
+      "expected": 12,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "reset_without_base",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 5/6（count_adjacent_pairs, max_depth, no_concat, reset_without_base, total_pairs）；移除它 TNR 0.6553→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c25",
+      "args": [
+        "((())())()(()()))(()())"
+      ],
+      "expected": 16,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c26",
+      "args": [
+        "())((()))()(()())(()())"
+      ],
+      "expected": 20,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c27",
+      "args": [
+        "(()(()))()(()()))(()())"
+      ],
+      "expected": 16,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c28",
+      "args": [
+        "()()((()))(()(()))()())"
+      ],
+      "expected": 22,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6593→0.6558（下降）"
+    },
+    {
+      "id": "r3c29",
+      "args": [
+        "((()))(()())((()))(()))"
+      ],
+      "expected": 22,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6593→0.6558（下降）"
+    },
+    {
+      "id": "r3c30",
+      "args": [
+        "())()((()))(()())(()(()))"
+      ],
+      "expected": 22,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c31",
+      "args": [
+        "(()())()((()))(()())(()"
+      ],
+      "expected": 20,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "reset_without_base",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 5/6（count_adjacent_pairs, max_depth, no_concat, reset_without_base, total_pairs）；移除它 TNR 0.6553→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c32",
+      "args": [
+        "()(()())((()))(()()))(()"
+      ],
+      "expected": 20,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c33",
+      "args": [
+        "((())())(()())()(()))"
+      ],
+      "expected": 20,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6593→0.6558（下降）"
+    },
+    {
+      "id": "r3c34",
+      "args": [
+        "())((()))(()())()(()))"
+      ],
+      "expected": 18,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c35",
+      "args": [
+        "(()(()))()()((()))(()())"
+      ],
+      "expected": 24,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6593→0.6558（下降）"
+    },
+    {
+      "id": "r3c36",
+      "args": [
+        "()()((()))(()())(()()))"
+      ],
+      "expected": 22,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6593→0.6558（下降）"
+    },
+    {
+      "id": "r3c37",
+      "args": [
+        "((()))()(()())((()))(()())"
+      ],
+      "expected": 26,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6593→0.6558（下降）"
+    },
+    {
+      "id": "r3c38",
+      "args": [
+        "())()(()())((()))(()())"
+      ],
+      "expected": 20,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c39",
+      "args": [
+        "(()())((()))()(()()))(()"
+      ],
+      "expected": 20,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c40",
+      "args": [
+        "()(()))((()))(()())(()())"
+      ],
+      "expected": 18,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c41",
+      "args": [
+        "((())())()(()())((()))(()))"
+      ],
+      "expected": 26,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6593→0.6558（下降）"
+    },
+    {
+      "id": "r3c42",
+      "args": [
+        "())((()))()(()())(()(()))"
+      ],
+      "expected": 22,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c43",
+      "args": [
+        "(()(()))()(()()))((()))(()"
+      ],
+      "expected": 16,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, no_concat, total_pairs）；移除它 TNR 0.6591→0.6593，保留可提高密度"
+    },
+    {
+      "id": "r3c44",
+      "args": [
+        "()()((()))(()(()))(()())"
+      ],
+      "expected": 24,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6593→0.6558（下降）"
+    },
+    {
+      "id": "r3c45",
+      "args": [
+        "((()))(()())()((()))(()()))"
+      ],
+      "expected": 26,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6593→0.6558（下降）"
+    },
+    {
+      "id": "r3c46",
+      "args": [
+        "())()((()))(()())(()())(()"
+      ],
+      "expected": 20,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "reset_without_base",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 5/6（count_adjacent_pairs, max_depth, no_concat, reset_without_base, total_pairs）；移除它 TNR 0.6553→0.6593，保留可提高密度"
+    }
+  ]
+}
