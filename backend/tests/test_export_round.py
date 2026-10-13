@@ -185,7 +185,8 @@ def run_cli(tmp_path: Path, extra: list[str]):
     ]}), encoding="utf-8")
     r = subprocess.run([sys.executable, "-m", "testgen.export_round_to_problem", "--problem", "best-time-stock", "--round", "1",
                         "--official", "2", "--problem-file", str(problem_file), "--tests-json", str(tests_json), *extra],
-                       cwd=BACKEND, capture_output=True, text=True, encoding="utf-8")
+                       cwd=BACKEND, capture_output=True, text=True, encoding="utf-8",
+                       stdin=subprocess.DEVNULL)  # 不繼承 pytest 的 stdin，Windows 上不加會 WinError 6
     return r, problem_file
 
 
@@ -202,7 +203,8 @@ def test_cli_write_and_second_run_has_no_diff(tmp_path):
     assert len(load_list(problem_file.read_text(encoding="utf-8"), "_BEST_TIME_STOCK_CASES")) == 3
     r2 = subprocess.run([sys.executable, "-m", "testgen.export_round_to_problem", "--problem", "best-time-stock", "--round", "1",
                          "--official", "2", "--problem-file", str(problem_file), "--tests-json", str(tmp_path / "r1_tests.json")],
-                        cwd=BACKEND, capture_output=True, text=True, encoding="utf-8")
+                        cwd=BACKEND, capture_output=True, text=True, encoding="utf-8",
+                       stdin=subprocess.DEVNULL)  # 不繼承 pytest 的 stdin，Windows 上不加會 WinError 6
     assert "沒有差異" in r2.stdout
 
 

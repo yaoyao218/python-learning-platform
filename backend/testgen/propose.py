@@ -174,7 +174,8 @@ def build_messages(problem_id: str, n: int, n_candidates: int, version: str = "v
 
 
 def call_model(provider: str, model: str, messages: list[dict], temperature: float,
-               reasoning_effort: str | None) -> tuple[str, dict]:
+               reasoning_effort: str | None, max_tokens: int = 8000) -> tuple[str, dict]:
+    import openai
     from dotenv import load_dotenv
     from openai import OpenAI
     load_dotenv(BACKEND / ".env")
@@ -184,10 +185,16 @@ def call_model(provider: str, model: str, messages: list[dict], temperature: flo
         raise SystemExit(f"backend/.env 沒有 {cfg['key_env']}")
     client = OpenAI(api_key=key, base_url=cfg["base_url"])
     kwargs = dict(model=model, messages=messages, temperature=temperature,
-                  response_format={"type": "json_object"}, max_completion_tokens=8000)
+                  response_format={"type": "json_object"}, max_completion_tokens=max_tokens)
     if reasoning_effort:
         kwargs["reasoning_effort"] = reasoning_effort
-    resp = client.chat.completions.create(**kwargs)
+    try:
+        resp = client.chat.completions.create(**kwargs)
+    except openai.RateLimitError:
+        # Groq 免費方案有每分鐘 token 上限；額度暫時用完時等一分鐘重試一次
+        print("[propose] 達到每分鐘 token 上限，60 秒後重試一次")
+        time.sleep(60)
+        resp = client.chat.completions.create(**kwargs)
     usage = resp.usage.model_dump() if resp.usage else {}
     return resp.choices[0].message.content or "", usage
 
@@ -259,6 +266,9 @@ def main():
                    help="推理模型（如 gpt-oss）的推理強度；不給就用模型預設")
     p.add_argument("--prompt-version", default="v2", choices=list(SYSTEM_PROMPTS),
                    help="提示版本。v1=每筆鎖定一種錯誤；v2=目標是單筆輸入同時抓到的錯誤種類數（預設）")
+    p.add_argument("--max-tokens", type=int, default=8000,
+                   help="回覆的 token 上限（含推理）。Groq 免費方案把 prompt + 這個值一起算進每分鐘 8000 的額度，"
+                        "prompt 變長時要調低，並搭配 --reasoning-effort low")
     p.add_argument("--dry-run", action="store_true", help="只印出 prompt，不呼叫 API")
     p.add_argument("--force", action="store_true", help="這一輪已有提案時重新提案（舊檔改名保留）")
     p.add_argument("--pilot", action="store_true",
@@ -287,7 +297,8 @@ def main():
         print(f"[propose] 舊提案已保留為 {archived.name}")
 
     t0 = time.time()
-    raw, usage = call_model(args.provider, args.model, messages, args.temperature, args.reasoning_effort)
+    raw, usage = call_model(args.provider, args.model, messages, args.temperature, args.reasoning_effort,
+                            args.max_tokens)
     elapsed = round(time.time() - t0, 2)
     accepted, rejected, stats = parse_candidates(args.problem, raw, args.round)
 
@@ -297,7 +308,7 @@ def main():
         "pilot": args.pilot,
         "meta": {
             "provider": args.provider, "model": args.model, "temperature": args.temperature,
-            "reasoning_effort": args.reasoning_effort, "n_requested": args.n,
+            "reasoning_effort": args.reasoning_effort, "max_tokens": args.max_tokens, "n_requested": args.n,
             "prompt_version": args.prompt_version,
             "created_at": datetime.now().isoformat(timespec="seconds"),
             "elapsed_sec": elapsed, "usage": usage,
