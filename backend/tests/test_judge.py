@@ -62,3 +62,11 @@ def test_compare_float_tolerance_rejects_wrong_value():
 def test_compare_bool():
     assert compare("True", True) is True
     assert compare("False", True) is False
+
+
+@pytest.mark.asyncio
+async def test_judge_results_include_is_stress():
+    code = "class Solution:\n    def isValid(self, s):\n        return True\n"
+    results = await judge(code, "valid-parentheses")
+    flags = [tc["is_stress"] for tc in PROBLEMS["valid-parentheses"]["test_cases"]]
+    assert [r["is_stress"] for r in results] == flags
