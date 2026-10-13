@@ -1,0 +1,18 @@
+{
+  "version": "49e59c5d5b5dcec9",
+  "text": "**Input:** a string `s` of parentheses.  \n**Output:** the length of the longest valid (well‑formed) parentheses substring.\n\n1. Create a list `stack` containing only `-1` (acts as a sentinel for the last invalid index).  \n2. Set `best` to `0`.  \n3. For each position `i` from `0` to the length of `s` minus one, do:  \n4.   Let `c` be the character at position `i`.  \n5.   If `c` is `'('`, push `i` onto `stack`.  \n6.   Otherwise (`c` is `')'`):  \n7.     Remove the top element from `stack`.  \n8.     If `stack` is now empty, push `i` onto `stack` (mark this position as the new reference for future lengths).  \n9.     Else, compute the distance `i - stack[top]` where `stack[top]` is the new top element.  \n10.    Update `best` to the larger of `best` and that distance.  \n11. After the loop, return `best`.",
+  "source_s_plus": "stack_index.py",
+  "writer": "openai/gpt-oss-20b",
+  "implementer": "openai/gpt-oss-120b",
+  "k": 3,
+  "attempts": 1,
+  "passed": true,
+  "created_at": "2026-10-13T20:11:04",
+  "format_warnings": [
+    "有以冒號結尾的行",
+    "含索引寫法 x[i]",
+    "人工閱讀：全文為英文，平台介面是中文"
+  ],
+  "n_probe_inputs": 10194,
+  "note": "同系列模型（K7）；單次結果（K9）；格式軟規則只記錄警告、未改寫（K4）"
+}

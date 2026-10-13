@@ -75,7 +75,7 @@
 | E5 | 【主線】best-time-stock 實驗外補強（K13、K15） | | 未開始 | 2026-10-13 | backend/problem.py | | **等負責人決定**；做法見任務卡 E5。實驗紀錄（rounds/）不動 |
 | E6 | 【主線】全自動流程：`pipeline.py`、`auto_review.py`（自動審核升級為正式元件） | Claude（代組員） | 完成 | 2026-10-13 | backend/testgen/pipeline.py, backend/testgen/auto_review.py, backend/tests/test_pipeline.py | 自動審核對 LC121 r1–r3、LC32 r1–r5 重算全部一致；LC3 全自動跑完 4 輪；三題驗收池結果存成 `rounds/heldout_final.json`；`python -m pytest -q` 108 passed, 8 skipped | 拿掉人工審核後的主要流程；結果見計畫第八節 |
 | M1 | 【主線】合併到 main 前的準備 | | 未開始 | 2026-10-13 | | | 依賴 E5、B2、C1、C2；見任務卡 M1 |
-| B2 | 【主線】三題虛擬碼產出與往返檢查（I8） | | 未開始 | 2026-10-10 | backend/testgen/problems/longest-substring/pseudocode.json, backend/testgen/problems/best-time-stock/pseudocode.json, backend/testgen/problems/longest-valid-parentheses/pseudocode.json | | 腳本已可跑，三題各試過一次（k=2）都通過；需正式產出並存檔 |
+| B2 | 【主線】三題虛擬碼產出與往返檢查（I8） | Claude（代組員） | 完成 | 2026-10-13 | backend/testgen/problems/longest-substring/pseudocode.json, backend/testgen/problems/best-time-stock/pseudocode.json, backend/testgen/problems/longest-valid-parentheses/pseudocode.json | `pseudocode_roundtrip.py --k 3`（寫手 gpt-oss-20b、實作者 gpt-oss-120b）：三題都第 1 次就通過，各 3/3 實作與 S+ 一致（探測輸入 23,848／21,533／10,194 組）；存成 `problems/<id>/pseudocode.json` | 人工閱讀的小瑕疵記在 format_warnings、沒有改寫：longest-valid-parentheses 全文是英文；longest-substring 第 13 步停止條件寫成「超過長度」、第 4 與 13 步重複 |
 | C1 | 【主線】提示加入虛擬碼與 `hint_guard` 擴充（I11） | | 未開始 | 2026-10-10 | backend/ai.py, backend/hint_guard.py, backend/tests/test_ai.py | | 依賴 B2 |
 | C2 | 【主線】虛擬碼顯示（I15） | | 未開始 | 2026-10-10 | backend/problem.py, backend/main.py, frontend/src/components/ProblemStatement.vue | | 依賴 B2 |
 | C3 | 【主線】使用者說明與同意說明（I16） | 專題負責人（草稿） | 進行中 | 2026-10-10 | docs/superpowers/specs/user-facing-draft.md | | 草稿已完成；【待確認】欄位等負責人決定 |
