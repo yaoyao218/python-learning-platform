@@ -1,9 +1,14 @@
+import logging
 import os
 import openai
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 
+from hint_guard import guard
+
 load_dotenv()
+
+_logger = logging.getLogger(__name__)
 
 _api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GROQ_API_KEY", "")
 _use_gemini = bool(os.environ.get("GEMINI_API_KEY"))
@@ -150,6 +155,12 @@ async def get_hint(
 ) -> str | None:
     """呼叫 Groq/Gemini API 取得 AI 提示。全部通過時回傳 None。API 失敗時回傳 None。
 
+    AI 回覆在送到學生畫面前會經過兩道輸出端檢查：
+      1. masking（有 problem_id 時）：提示裡的程式碼區塊若能通過測資，
+         把關鍵邏輯遮成 # TODO，其餘文字保留
+      2. hint_guard：檢查程式碼區塊以外的文字（AI 沒用 ``` 包起來的程式碼）
+         和結尾問句，不合格就整段換成安全的替代文字
+
     Args:
         results:         judge() 回傳的測資結果清單
         problem_title:   題目名稱
@@ -168,7 +179,8 @@ async def get_hint(
         content = response.choices[0].message.content
         if content is None:
             return None
-    except openai.OpenAIError:
+    except openai.OpenAIError as e:
+        _logger.warning("AI hint request failed (%s): %s", _MODEL, e)
         return None
 
     # 有 problem_id 時執行遮罩檢查；本地 import 避免循環依賴
@@ -177,4 +189,7 @@ async def get_hint(
         from masking import sanitize_hint  # noqa: PLC0415
         content = await sanitize_hint(content, problem_id, problem_title, client, _MODEL)
 
-    return content
+    safe_hint, problems = guard(content, code_blocks_vetted=problem_id is not None)
+    if problems:
+        _logger.warning("AI hint failed quality guard, using fallback: %s", problems)
+    return safe_hint
