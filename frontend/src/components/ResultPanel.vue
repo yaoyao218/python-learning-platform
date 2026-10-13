@@ -39,11 +39,25 @@
             <div class="result-values">
               <span class="val-expected">→ {{ result.expected }}</span>
               <span v-if="!result.passed" class="val-got">
-                got <strong>{{ result.actual ?? 'Error' }}</strong>
+                got <strong>{{ result.actual ?? ERROR_LABELS[result.error_type] ?? 'Error' }}</strong>
               </span>
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- 錯誤訊息：語法錯誤 / 執行錯誤 / 沒有回傳值時，直接給學生看 -->
+      <div v-if="errorDetail" class="panel-section error-section">
+        <div class="section-header">
+          <span class="section-label error-label">{{ errorDetail.label }}</span>
+          <span class="error-case">測資 #{{ errorDetail.index }}</span>
+        </div>
+        <pre class="error-body">{{ errorDetail.message }}</pre>
+      </div>
+
+      <!-- AI 提示沒拿到（API 失敗或額度用完），讓學生知道不是自己的問題 -->
+      <div v-if="!allPassed && !hint && !loading" class="panel-section">
+        <div class="hint-unavailable">AI 提示暫時無法取得，可以先看上面的測資結果自己找找看。</div>
       </div>
 
       <!-- Success card (all passed, no hint) -->
@@ -102,6 +116,25 @@ const visibleResults = computed(() => {
 const passCount = computed(() =>
   props.results.filter((r) => r.passed).length
 )
+
+const ERROR_LABELS = {
+  syntax_error:  '語法錯誤',
+  runtime_error: '執行錯誤',
+  no_return:     '沒有回傳值',
+}
+
+const NO_RETURN_MESSAGE = '函式執行完回傳了 None。檢查看看：算出來的答案有沒有用 return 傳出去？'
+
+// 只顯示第一個失敗的錯誤，跟測試結果列表「顯示到第一個失敗為止」一致
+const errorDetail = computed(() => {
+  const firstFail = props.results.find((r) => !r.passed)
+  if (!firstFail || !firstFail.error_type) return null
+  return {
+    index:   firstFail.index,
+    label:   ERROR_LABELS[firstFail.error_type] ?? '錯誤',
+    message: firstFail.stderr || (firstFail.error_type === 'no_return' ? NO_RETURN_MESSAGE : ''),
+  }
+})
 
 const allPassed = computed(() =>
   props.results.length > 0 && props.results.every((r) => r.passed)
@@ -259,6 +292,37 @@ const allPassed = computed(() =>
   color: var(--red);
 }
 .val-got strong { color: var(--red); font-weight: 600; }
+
+/* Error detail */
+.error-label { color: var(--red); }
+
+.error-case {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.error-body {
+  margin: 16px 20px;
+  padding: 14px 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--red-dim);
+  border-left: 2px solid var(--red);
+  border-radius: 0 4px 4px 0;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+.hint-unavailable {
+  margin: 16px 20px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-3);
+}
 
 /* AI Hint skeleton */
 .skeleton-dot-row {
