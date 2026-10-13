@@ -1,0 +1,222 @@
+{
+  "problem": "longest-valid-parentheses",
+  "round": 1,
+  "pilot": true,
+  "reviewer": "AI（測試階段代審，非人工）",
+  "rule": "只看 TPR/TNR 數字，不看 AI 理由；貪婪法依 TNR 加入候選，r0 原測資全保留；每個 S- 至少被抓一次",
+  "created_at": "2026-10-09T15:39:26",
+  "source_candidates": "r1_candidates.20261007-153837.json",
+  "trace": [
+    [
+      "start",
+      null,
+      0.2778
+    ],
+    [
+      "add",
+      "r1c8",
+      0.375
+    ],
+    [
+      "add",
+      "r1c11",
+      0.4333
+    ],
+    [
+      "add",
+      "r1c4",
+      0.4444
+    ],
+    [
+      "add",
+      "r1c6",
+      0.4524
+    ],
+    [
+      "add",
+      "r1c7",
+      0.4583
+    ],
+    [
+      "add",
+      "r1c10",
+      0.463
+    ]
+  ],
+  "items": [
+    {
+      "id": "r1c1",
+      "args": [
+        "(())"
+      ],
+      "expected": 4,
+      "target_bug": "count_adjacent_pairs",
+      "kills": [
+        "count_adjacent_pairs"
+      ],
+      "target_hit": true,
+      "decision": "drop",
+      "reason": "抓到 1/6（count_adjacent_pairs）；加入保留集 TNR 0.4630→0.4333（下降），且所抓的 bug 已被保留測資覆蓋"
+    },
+    {
+      "id": "r1c2",
+      "args": [
+        "((()))"
+      ],
+      "expected": 6,
+      "target_bug": "count_adjacent_pairs",
+      "kills": [
+        "count_adjacent_pairs"
+      ],
+      "target_hit": true,
+      "decision": "drop",
+      "reason": "抓到 1/6（count_adjacent_pairs）；加入保留集 TNR 0.4630→0.4333（下降），且所抓的 bug 已被保留測資覆蓋"
+    },
+    {
+      "id": "r1c3",
+      "args": [
+        "()()()"
+      ],
+      "expected": 6,
+      "target_bug": "max_depth",
+      "kills": [
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": true,
+      "decision": "drop",
+      "reason": "抓到 2/6（max_depth, no_concat）；加入保留集 TNR 0.4630→0.4500（下降），且所抓的 bug 已被保留測資覆蓋"
+    },
+    {
+      "id": "r1c4",
+      "args": [
+        "(())()"
+      ],
+      "expected": 6,
+      "target_bug": "max_depth",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；移除它 TNR 0.4583→0.4630，保留可提高密度"
+    },
+    {
+      "id": "r1c5",
+      "args": [
+        "())(())"
+      ],
+      "expected": 4,
+      "target_bug": "total_pairs",
+      "kills": [
+        "count_adjacent_pairs",
+        "total_pairs"
+      ],
+      "target_hit": true,
+      "decision": "drop",
+      "reason": "抓到 2/6（count_adjacent_pairs, total_pairs）；加入保留集 TNR 0.4630→0.4500（下降），且所抓的 bug 已被保留測資覆蓋"
+    },
+    {
+      "id": "r1c6",
+      "args": [
+        "())(()"
+      ],
+      "expected": 2,
+      "target_bug": "total_pairs",
+      "kills": [
+        "max_depth",
+        "reset_without_base",
+        "total_pairs"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 3/6（max_depth, reset_without_base, total_pairs）；移除它 TNR 0.4583→0.4630，保留可提高密度"
+    },
+    {
+      "id": "r1c7",
+      "args": [
+        "(())()()"
+      ],
+      "expected": 8,
+      "target_bug": "no_concat",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；移除它 TNR 0.4583→0.4630，保留可提高密度"
+    },
+    {
+      "id": "r1c8",
+      "args": [
+        "(((())"
+      ],
+      "expected": 4,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "left_scan_only",
+        "max_depth",
+        "reset_without_base"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, left_scan_only, max_depth, reset_without_base）；移除它 TNR 0.4375→0.4630，保留可提高密度"
+    },
+    {
+      "id": "r1c9",
+      "args": [
+        "(()())("
+      ],
+      "expected": 6,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 2/6（count_adjacent_pairs, max_depth）；加入保留集 TNR 0.4630→0.4500（下降），且所抓的 bug 已被保留測資覆蓋"
+    },
+    {
+      "id": "r1c10",
+      "args": [
+        ")()(()"
+      ],
+      "expected": 2,
+      "target_bug": "reset_without_base",
+      "kills": [
+        "max_depth",
+        "reset_without_base",
+        "total_pairs"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 3/6（max_depth, reset_without_base, total_pairs）；移除它 TNR 0.4583→0.4630，保留可提高密度"
+    },
+    {
+      "id": "r1c11",
+      "args": [
+        "(()())(()"
+      ],
+      "expected": 6,
+      "target_bug": "reset_without_base",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "reset_without_base",
+        "total_pairs"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 4/6（count_adjacent_pairs, max_depth, reset_without_base, total_pairs）；移除它 TNR 0.4375→0.4630，保留可提高密度"
+    }
+  ],
+  "test_phase": true,
+  "note": "測試階段：候選為試跑提案（2026-10-07），審核由 AI 代審，非人工；不計入正式實驗結果，僅用來測試迭代流程。",
+  "copied_from": "pilot/r1_review.pilot.json"
+}

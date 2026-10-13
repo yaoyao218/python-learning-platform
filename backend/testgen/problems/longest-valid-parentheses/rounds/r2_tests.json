@@ -1,0 +1,194 @@
+{
+  "problem": "longest-valid-parentheses",
+  "round": 2,
+  "test_phase": true,
+  "note": "測試階段：審核由 AI 代審（非人工），規則為只看 TPR/TNR 數字；不計入正式實驗結果。",
+  "reviewer": "AI（測試階段代審，非人工）",
+  "rule": "只看 TPR/TNR 數字，不看 AI 理由；上一輪正式測資全保留，候選以貪婪法依 TNR 加入",
+  "created_at": "2026-10-09T15:47:06",
+  "source": "AI 代審（測試階段）：r1 + 保留的 r2 候選",
+  "evaluation": {
+    "TPR": 1.0,
+    "TNR": 0.5476,
+    "ceiling": 1.0,
+    "achievement": 0.5476,
+    "S_minus_pass_rates": {
+      "count_adjacent_pairs": 0.3571,
+      "left_scan_only": 0.8571,
+      "max_depth": 0.0714,
+      "no_concat": 0.5,
+      "reset_without_base": 0.5,
+      "total_pairs": 0.4286
+    },
+    "S_minus_caught_by": {
+      "count_adjacent_pairs": [
+        4,
+        6,
+        7,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "left_scan_only": [
+        1,
+        7
+      ],
+      "max_depth": [
+        1,
+        2,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "no_concat": [
+        2,
+        4,
+        6,
+        10,
+        11,
+        12,
+        13
+      ],
+      "reset_without_base": [
+        1,
+        5,
+        7,
+        8,
+        9,
+        11,
+        14
+      ],
+      "total_pairs": [
+        5,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ]
+    },
+    "uncaught": [],
+    "S_plus_failures": []
+  },
+  "cases": [
+    {
+      "index": 1,
+      "input": "(()",
+      "expected": 2,
+      "is_stress": false
+    },
+    {
+      "index": 2,
+      "input": ")()())",
+      "expected": 4,
+      "is_stress": false
+    },
+    {
+      "index": 3,
+      "input": "",
+      "expected": 0,
+      "is_stress": false
+    },
+    {
+      "args": [
+        "(())()"
+      ],
+      "expected": 6,
+      "is_stress": false,
+      "index": 4
+    },
+    {
+      "args": [
+        "())(()"
+      ],
+      "expected": 2,
+      "is_stress": false,
+      "index": 5
+    },
+    {
+      "args": [
+        "(())()()"
+      ],
+      "expected": 8,
+      "is_stress": false,
+      "index": 6
+    },
+    {
+      "args": [
+        "(((())"
+      ],
+      "expected": 4,
+      "is_stress": false,
+      "index": 7
+    },
+    {
+      "args": [
+        ")()(()"
+      ],
+      "expected": 2,
+      "is_stress": false,
+      "index": 8
+    },
+    {
+      "args": [
+        "(()())(()"
+      ],
+      "expected": 6,
+      "is_stress": false,
+      "index": 9
+    },
+    {
+      "args": [
+        "(()())())(()"
+      ],
+      "expected": 8,
+      "is_stress": false,
+      "index": 10
+    },
+    {
+      "args": [
+        "()(())()(()"
+      ],
+      "expected": 8,
+      "is_stress": false,
+      "index": 11
+    },
+    {
+      "args": [
+        "())()(()())"
+      ],
+      "expected": 8,
+      "is_stress": false,
+      "index": 12
+    },
+    {
+      "args": [
+        "())((()))()("
+      ],
+      "expected": 8,
+      "is_stress": false,
+      "index": 13
+    },
+    {
+      "args": [
+        "((())())(()"
+      ],
+      "expected": 8,
+      "is_stress": false,
+      "index": 14
+    }
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "problem": "longest-valid-parentheses",
+  "round": 3,
+  "pilot": false,
+  "meta": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.7,
+    "reasoning_effort": "low",
+    "n_requested": 12,
+    "prompt_version": "v2",
+    "created_at": "2026-10-09T15:48:25",
+    "elapsed_sec": 5.06,
+    "usage": {
+      "completion_tokens": 934,
+      "prompt_tokens": 2480,
+      "total_tokens": 3414,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 92,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": null,
+      "queue_time": 0.313556832,
+      "prompt_time": 0.588928848,
+      "completion_time": 1.9396616039999999,
+      "total_time": 2.528590452
+    }
+  },
+  "stats": {
+    "n_returned": 12,
+    "dropped_expected_fields": 0,
+    "unknown_target_bug": 0,
+    "n_accepted": 11,
+    "n_rejected": 1
+  },
+  "candidates": [
+    {
+      "id": "r3c1",
+      "args": [
+        "())(()())()"
+      ],
+      "target_bug": "max_depth",
+      "target_bug_raw": "max_depth",
+      "rationale": "包含嵌套、相鄰合法區段與多餘的右括號，會同時誤判深度、相鄰配對、未連接區段與總配對數"
+    },
+    {
+      "id": "r3c2",
+      "args": [
+        "((())())(()())"
+      ],
+      "target_bug": "max_depth",
+      "target_bug_raw": "max_depth",
+      "rationale": "深度 3、兩段合法子字串相連且有多餘左括號，會觸發深度、相鄰、未連接與重設基點錯誤"
+    },
+    {
+      "id": "r3c3",
+      "args": [
+        "(()())(()(()))"
+      ],
+      "target_bug": "max_depth",
+      "target_bug_raw": "max_depth",
+      "rationale": "混合巢狀與相鄰合法區段，同時有未匹配的左括號，會讓所有六種錯誤都失敗"
+    },
+    {
+      "id": "r3c4",
+      "args": [
+        "())()(()())())"
+      ],
+      "target_bug": "max_depth",
+      "target_bug_raw": "max_depth",
+      "rationale": "多個孤立右括號與兩段相連合法子字串，測試左掃、重設基點、深度、相鄰與總配對計算"
+    },
+    {
+      "id": "r3c5",
+      "args": [
+        "((()()))(()())"
+      ],
+      "target_bug": "max_depth",
+      "target_bug_raw": "max_depth",
+      "rationale": "深度 3 的嵌套與後續相鄰合法區段，會同時誤算深度、相鄰配對、未連接與總配對"
+    },
+    {
+      "id": "r3c6",
+      "args": [
+        "(()(()))(()"
+      ],
+      "target_bug": "max_depth",
+      "target_bug_raw": "max_depth",
+      "rationale": "嵌套深度 2、最後缺少右括號，會觸發深度、左掃遺漏、重設基點與未連接錯誤"
+    },
+    {
+      "id": "r3c7",
+      "args": [
+        "())((()))()())"
+      ],
+      "target_bug": "max_depth",
+      "target_bug_raw": "max_depth",
+      "rationale": "包含完整嵌套、前置多餘右括號與結尾多餘右括號，能同時抓到六種常見錯誤"
+    },
+    {
+      "id": "r3c8",
+      "args": [
+        "(()())()(()"
+      ],
+      "target_bug": "max_depth",
+      "target_bug_raw": "max_depth",
+      "rationale": "兩段合法區段中間有未匹配左括號，測試深度、相鄰、未連接與重設基點"
+    },
+    {
+      "id": "r3c9",
+      "args": [
+        "((())()())(()"
+      ],
+      "target_bug": "max_depth",
+      "target_bug_raw": "max_depth",
+      "rationale": "深度 2、相鄰合法區段與結尾缺失右括號，會讓所有錯誤模型都出錯"
+    },
+    {
+      "id": "r3c10",
+      "args": [
+        "())()())(()"
+      ],
+      "target_bug": "max_depth",
+      "target_bug_raw": "max_depth",
+      "rationale": "多個孤立右括號與兩段相連合法子字串，挑戰左掃、重設基點、深度、相鄰與總配對"
+    },
+    {
+      "id": "r3c11",
+      "args": [
+        "())((()))(()())"
+      ],
+      "target_bug": "max_depth",
+      "target_bug_raw": "max_depth",
+      "rationale": "前置多餘右括號、完整嵌套與後續相鄰合法區段，能一次觸發六種錯誤"
+    }
+  ],
+  "rejected": [
+    {
+      "item": {
+        "args": [
+          "(()(()))()()"
+        ],
+        "target_bug": "max_depth",
+        "rationale": "嵌套深度 2、後續相鄰合法區段，會同時誤算深度、相鄰配對、未連接與總配對"
+      },
+      "reason": "與先前被丟棄的候選重複"
+    }
+  ],
+  "messages": [
+    {
+      "role": "system",
+      "content": "你是協助設計程式題測資的助理。目標是提出「能同時讓盡量多種初學者錯誤寫法答錯、但正確寫法一定答對」的測試輸入。\n評分方式：每筆輸入會拿去測全部的錯誤寫法，看它讓幾種錯誤答錯。一筆輸入讓越多種錯誤答錯越好；只針對單一種錯誤的輸入價值低。\n規則：\n1. 只提供輸入，不要提供預期輸出（預期輸出會由參考正解計算）。\n2. 輸入必須完全符合題目限制。\n3. 輸入長度盡量 ≤ 20，讓學生看到失敗時能看懂。\n4. target_bug 填這筆輸入最難抓、目前通過率最高的那一種錯誤；但整筆輸入的目標是同時抓到盡量多種。\n5. 不要重複目前已有的測資，也不要重複先前被丟棄的測資。\n6. 只回覆一個 JSON 物件，不要有其他文字。"
+    },
+    {
+      "role": "user",
+      "content": "# 題目：Longest Valid Parentheses\n給一個只含 ( 和 ) 的字串，找出「括號正確配對且連續」的最長子字串長度。例如：\")()())\" → 4（最長合法子字串是 \"()()\"）。\n\n## 函式簽名\n```python\nclass Solution:\n    def longestValidParentheses(self, s: str) -> int:\n        # 在此撰寫你的解法\n        pass\n```\n\n## 限制\n- 0 ≤ s.length ≤ 3 × 10⁴\n- s[i] 只會是 '(' 或 ')'\n\n## 參考正解\n```python\n# 正解（S*）：stack 存索引，底部放「上一個不合法位置」當基準點，O(n)\nclass Solution:\n    def longestValidParentheses(self, s: str) -> int:\n        stack = [-1]\n        best = 0\n        for i, c in enumerate(s):\n            if c == '(':\n                stack.append(i)\n            else:\n                stack.pop()\n                if not stack:\n                    stack.append(i)\n                else:\n                    best = max(best, i - stack[-1])\n        return best\n```\n\n## 要抓的錯誤寫法（target_bug 必須是下列名稱之一）\n- count_adjacent_pairs：只認相鄰的 \"()\"，不認巢狀的 \"(())\"\n- left_scan_only：只從左往右掃一次，漏掉左括號多出來的情況（如 \"(()\"）\n- max_depth：回傳最大巢狀深度 × 2，把「深度」誤當成「長度」\n- no_concat：只計算單一配對區段的長度，沒把相鄰的合法區段（如 \"()()\"）接起來\n- reset_without_base：遇到多餘的 ')' 會重設起點，但沒處理結尾多出來、沒配對的 '('\n- total_pairs：計算全部能配對的括號數 × 2，沒要求子字串必須連續\n\n## 目前的正式測資（第 2 輪結束時，共 14 筆）\n- #1：'(()'\n- #2：')()())'\n- #3：''\n- #4：'(())()'\n- #5：'())(()'\n- #6：'(())()()'\n- #7：'(((())'\n- #8：')()(()'\n- #9：'(()())(()'\n- #10：'(()())())(()'\n- #11：'()(())()(()'\n- #12：'())()(()())'\n- #13：'())((()))()('\n- #14：'((())())(()'\n\n## 每種錯誤目前的狀況（通過率越高 = 越難被抓到）\n- count_adjacent_pairs：通過率 36%，被測資 [4, 6, 7, 9, 10, 11, 12, 13, 14] 抓到\n- left_scan_only：通過率 86%，被測資 [1, 7] 抓到\n- max_depth：通過率 7%，被測資 [1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] 抓到\n- no_concat：通過率 50%，被測資 [2, 4, 6, 10, 11, 12, 13] 抓到\n- reset_without_base：通過率 50%，被測資 [1, 5, 7, 8, 9, 11, 14] 抓到\n- total_pairs：通過率 43%，被測資 [5, 8, 9, 10, 11, 12, 13, 14] 抓到\n\n## 單筆輸入抓到幾種錯誤（越多越好）\n- #1：抓到 3/6 種\n- #2：抓到 2/6 種\n- #3：抓到 0/6 種\n- #4：抓到 3/6 種\n- #5：抓到 3/6 種\n- #6：抓到 3/6 種\n- #7：抓到 4/6 種\n- #8：抓到 3/6 種\n- #9：抓到 4/6 種\n- #10：抓到 4/6 種\n- #11：抓到 5/6 種\n- #12：抓到 4/6 種\n- #13：抓到 4/6 種\n- #14：抓到 4/6 種\n目前正式測資中，單筆最多抓到 5/6 種。\n\n## 第 2 輪的候選與人工裁決\ncaught 是實際評測抓到的錯誤；decision：keep=採用、drop=丟棄、edit=修改後採用。\n```json\n[\n {\n  \"input\": \"'(()())())(()'\",\n  \"target_bug\": \"max_depth\",\n  \"caught\": [\n   \"count_adjacent_pairs\",\n   \"max_depth\",\n   \"no_concat\",\n   \"total_pairs\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 4\n },\n {\n  \"input\": \"'()(())()(()'\",\n  \"target_bug\": \"max_depth\",\n  \"caught\": [\n   \"count_adjacent_pairs\",\n   \"max_depth\",\n   \"no_concat\",\n   \"reset_without_base\",\n   \"total_pairs\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 5\n },\n {\n  \"input\": \"'((()()))()())'\",\n  \"target_bug\": \"max_depth\",\n  \"caught\": [\n   \"count_adjacent_pairs\",\n   \"max_depth\",\n   \"no_concat\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"'())()(()())'\",\n  \"target_bug\": \"max_depth\",\n  \"caught\": [\n   \"count_adjacent_pairs\",\n   \"max_depth\",\n   \"no_concat\",\n   \"total_pairs\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 4\n },\n {\n  \"input\": \"'(()(()))()()'\",\n  \"target_bug\": \"max_depth\",\n  \"caught\": [\n   \"count_adjacent_pairs\",\n   \"max_depth\",\n   \"no_concat\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"'(()())(()())'\",\n  \"target_bug\": \"max_depth\",\n  \"caught\": [\n   \"count_adjacent_pairs\",\n   \"max_depth\",\n   \"no_concat\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"'())((()))()('\",\n  \"target_bug\": \"max_depth\",\n  \"caught\": [\n   \"count_adjacent_pairs\",\n   \"max_depth\",\n   \"no_concat\",\n   \"total_pairs\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 4\n },\n {\n  \"input\": \"'(()))(()())'\",\n  \"target_bug\": \"max_depth\",\n  \"caught\": [\n   \"count_adjacent_pairs\",\n   \"max_depth\",\n   \"total_pairs\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"'(()()())())'\",\n  \"target_bug\": \"max_depth\",\n  \"caught\": [\n   \"count_adjacent_pairs\",\n   \"max_depth\",\n   \"no_concat\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"'((())())(()'\",\n  \"target_bug\": \"max_depth\",\n  \"caught\": [\n   \"count_adjacent_pairs\",\n   \"max_depth\",\n   \"reset_without_base\",\n   \"total_pairs\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 4\n },\n {\n  \"input\": \"'())()())(()())'\",\n  \"target_bug\": \"max_depth\",\n  \"caught\": [\n   \"count_adjacent_pairs\",\n   \"max_depth\",\n   \"total_pairs\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"'(()())()(()())'\",\n  \"target_bug\": \"max_depth\",\n  \"caught\": [\n   \"count_adjacent_pairs\",\n   \"max_depth\",\n   \"no_concat\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 3\n }\n]\n```\n上一輪候選中，單筆最多抓到 5/6 種。\n\n## 請回覆\n提出 12 筆新的候選測資。目標是讓「單筆輸入同時抓到的錯誤種類數」盡量高，至少要超過目前的 5 種；只抓到一兩種的輸入價值低。格式：\n```json\n{\"candidates\": [{\"args\": [<第 1 個參數>], \"target_bug\": \"<錯誤名稱>\", \"rationale\": \"<一句話說明為什麼這筆會讓它答錯>\"}]}\n```\nargs 是呼叫 longestValidParentheses 時的位置參數列表（本題 1 個參數）。不要提供預期輸出。"
+    }
+  ],
+  "raw_response": "{\n  \"candidates\": [\n    {\n      \"args\": [\"())(()())()\"],\n      \"target_bug\": \"max_depth\",\n      \"rationale\": \"包含嵌套、相鄰合法區段與多餘的右括號，會同時誤判深度、相鄰配對、未連接區段與總配對數\"\n    },\n    {\n      \"args\": [\"((())())(()())\"],\n      \"target_bug\": \"max_depth\",\n      \"rationale\": \"深度 3、兩段合法子字串相連且有多餘左括號，會觸發深度、相鄰、未連接與重設基點錯誤\"\n    },\n    {\n      \"args\": [\"(()())(()(()))\"],\n      \"target_bug\": \"max_depth\",\n      \"rationale\": \"混合巢狀與相鄰合法區段，同時有未匹配的左括號，會讓所有六種錯誤都失敗\"\n    },\n    {\n      \"args\": [\"())()(()())())\"],\n      \"target_bug\": \"max_depth\",\n      \"rationale\": \"多個孤立右括號與兩段相連合法子字串，測試左掃、重設基點、深度、相鄰與總配對計算\"\n    },\n    {\n      \"args\": [\"((()()))(()())\"],\n      \"target_bug\": \"max_depth\",\n      \"rationale\": \"深度 3 的嵌套與後續相鄰合法區段，會同時誤算深度、相鄰配對、未連接與總配對\"\n    },\n    {\n      \"args\": [\"(()(()))(()\"],\n      \"target_bug\": \"max_depth\",\n      \"rationale\": \"嵌套深度 2、最後缺少右括號，會觸發深度、左掃遺漏、重設基點與未連接錯誤\"\n    },\n    {\n      \"args\": [\"())((()))()())\"],\n      \"target_bug\": \"max_depth\",\n      \"rationale\": \"包含完整嵌套、前置多餘右括號與結尾多餘右括號，能同時抓到六種常見錯誤\"\n    },\n    {\n      \"args\": [\"(()())()(()\"],\n      \"target_bug\": \"max_depth\",\n      \"rationale\": \"兩段合法區段中間有未匹配左括號，測試深度、相鄰、未連接與重設基點\"\n    },\n    {\n      \"args\": [\"((())()())(()\"],\n      \"target_bug\": \"max_depth\",\n      \"rationale\": \"深度 2、相鄰合法區段與結尾缺失右括號，會讓所有錯誤模型都出錯\"\n    },\n    {\n      \"args\": [\"())()())(()\"],\n      \"target_bug\": \"max_depth\",\n      \"rationale\": \"多個孤立右括號與兩段相連合法子字串，挑戰左掃、重設基點、深度、相鄰與總配對\"\n    },\n    {\n      \"args\": [\"(()(()))()()\"],\n      \"target_bug\": \"max_depth\",\n      \"rationale\": \"嵌套深度 2、後續相鄰合法區段，會同時誤算深度、相鄰配對、未連接與總配對\"\n    },\n    {\n      \"args\": [\"())((()))(()())\"],\n      \"target_bug\": \"max_depth\",\n      \"rationale\": \"前置多餘右括號、完整嵌套與後續相鄰合法區段，能一次觸發六種錯誤\"\n    }\n  ]\n}",
+  "test_phase": true,
+  "note": "測試階段：提示版本 v2；輸入紀錄是 AI 代審的第 2 輪（非人工）；不計入正式實驗結果。注意：本輪 reasoning_effort=low（前 3 次以預設 reasoning 呼叫皆回傳空內容失敗，未留檔），與前幾輪設定不同。"
+}
