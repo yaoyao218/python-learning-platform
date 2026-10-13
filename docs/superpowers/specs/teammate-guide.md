@@ -77,7 +77,7 @@
 | M1 | 【主線】合併到 main 前的準備 | | 未開始 | 2026-10-13 | | | 依賴 E5、B2、C1、C2；見任務卡 M1 |
 | B2 | 【主線】三題虛擬碼產出與往返檢查（I8） | Claude（代組員） | 完成 | 2026-10-13 | backend/testgen/problems/longest-substring/pseudocode.json, backend/testgen/problems/best-time-stock/pseudocode.json, backend/testgen/problems/longest-valid-parentheses/pseudocode.json | `pseudocode_roundtrip.py --k 3`（寫手 gpt-oss-20b、實作者 gpt-oss-120b）：三題都第 1 次就通過，各 3/3 實作與 S+ 一致（探測輸入 23,848／21,533／10,194 組）；存成 `problems/<id>/pseudocode.json` | 人工閱讀的小瑕疵記在 format_warnings、沒有改寫：longest-valid-parentheses 全文是英文；longest-substring 第 13 步停止條件寫成「超過長度」、第 4 與 13 步重複 |
 | C1 | 【主線】提示加入虛擬碼與 `hint_guard` 擴充（I11） | | 未開始 | 2026-10-10 | backend/ai.py, backend/hint_guard.py, backend/tests/test_ai.py | | 依賴 B2 |
-| C2 | 【主線】虛擬碼顯示（I15） | | 未開始 | 2026-10-10 | backend/problem.py, backend/main.py, frontend/src/components/ProblemStatement.vue | | 依賴 B2 |
+| C2 | 【主線】虛擬碼顯示（I15） | Claude（代組員） | 完成 | 2026-10-13 | backend/problem.py, backend/main.py, frontend/src/components/ProblemStatement.vue | `problem.py` 只載入 passed 的 pseudocode.json（version、text）；`GET /problems/{id}` 可選欄位；`ProblemStatement.vue` 收合區塊顯示。新增 3 個測試（有／沒有虛擬碼、未通過不載入）；pytest 112 passed, 8 skipped；瀏覽器實測：沒虛擬碼的題目外觀不變、有的預設收合 | AI 寫的文字先跳脫 HTML，只轉換 **粗體** 與 `程式` 兩種標記 |
 | C3 | 【主線】使用者說明與同意說明（I16） | 專題負責人（草稿） | 進行中 | 2026-10-10 | docs/superpowers/specs/user-facing-draft.md | | 草稿已完成；【待確認】欄位等負責人決定 |
 | T | 【主線】組員測試 T1–T6：重跑虛擬碼往返檢查、人工審閱、確認腳本不改 repo；T7 用 `pipeline --plan` 與 `auto_review --dry-run` 試跑全自動流程 | | 未開始 | 2026-10-13 | | | 見任務卡 T；結果放 PR 描述，不提交結果 JSON |
 | A1 | 【強化】安全批次執行器（I1） | | 未開始 | 2026-10-10 | backend/testgen/safe_batch.py, backend/tests/test_safe_batch.py | | 不阻擋實測；規格與效能基準已備 |

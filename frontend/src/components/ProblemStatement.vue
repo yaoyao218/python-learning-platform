@@ -33,6 +33,12 @@
         </li>
       </ul>
     </div>
+
+    <!-- 虛擬碼：只有通過往返檢查的題目才有；預設收合，想自己想的人可以不看 -->
+    <details v-if="problem.pseudocode" class="pseudocode">
+      <summary class="pseudocode-header">虛擬碼</summary>
+      <div class="pseudocode-body" v-html="pseudocodeHtml"></div>
+    </details>
   </div>
 </template>
 
@@ -51,6 +57,19 @@ const DIFF_MAP = {
 
 const diffLabel = computed(() => DIFF_MAP[props.problem.difficulty]?.label ?? '題目')
 const diffClass = computed(() => DIFF_MAP[props.problem.difficulty]?.cls ?? '')
+
+// 虛擬碼是 AI 寫的文字：先跳脫 HTML，再只轉換 **粗體** 與 `程式` 兩種標記
+function escapeHtml(text) {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+}
+
+const pseudocodeHtml = computed(() => {
+  const text = props.problem.pseudocode?.text ?? ''
+  return escapeHtml(text)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+})
 </script>
 
 <style scoped>
@@ -197,5 +216,35 @@ const diffClass = computed(() => DIFF_MAP[props.problem.difficulty]?.cls ?? '')
   position: absolute;
   left: 0;
   color: var(--amber);
+}
+
+.pseudocode {
+  padding: 16px 32px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.pseudocode-header {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  cursor: pointer;
+}
+
+.pseudocode-body {
+  margin-top: 12px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-2);
+  white-space: pre-wrap;
+}
+
+.pseudocode-body :deep(code) {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--teal);
 }
 </style>
