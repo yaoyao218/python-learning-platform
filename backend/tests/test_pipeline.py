@@ -22,23 +22,21 @@ def test_stop_reasons_match_recorded_runs():
     assert pipeline.stop_reason("best-time-stock", 3, 4, 0.85) == "stalled"
     # LC32：已跑到第 5 輪，超過上限 4
     assert pipeline.stop_reason("longest-valid-parentheses", 5, 4, 0.85) == "max_rounds"
-    # LC3：第 4 輪結束，達到上限
-    assert pipeline.stop_reason("longest-substring", 4, 4, 0.85) == "max_rounds"
-    # 還沒到上限、也沒停滯時要繼續
-    assert pipeline.stop_reason("longest-substring", 2, 4, 0.85) is None
+    # LC3：只有第 0 輪、未收斂、還沒到上限 → 要繼續（K16：全自動輪次已刪除）
+    assert pipeline.stop_reason("longest-substring", 0, 4, 0.85) is None
 
 
 def test_round_rows_follow_tests_files():
-    rows = pipeline.round_rows("longest-substring", 4)
-    assert [r["round"] for r in rows] == [0, 1, 2, 3, 4]
+    rows = pipeline.round_rows("longest-valid-parentheses", 5)
+    assert [r["round"] for r in rows] == [0, 1, 2, 3, 4, 5]
     for r in rows:
-        stored = json.loads(rounds.round_path("longest-substring", r["round"], "tests").read_text(encoding="utf-8"))
+        stored = json.loads(rounds.round_path("longest-valid-parentheses", r["round"], "tests").read_text(encoding="utf-8"))
         assert r["n_cases"] == len(stored["cases"])
         assert r["TNR"] == stored["evaluation"]["TNR"]
 
 
 def test_heldout_recorded_once_per_problem():
-    for pid in ("best-time-stock", "longest-valid-parentheses", "longest-substring"):
+    for pid in ("best-time-stock", "longest-valid-parentheses"):
         held = json.loads((rounds.rounds_dir(pid) / "heldout_final.json").read_text(encoding="utf-8"))
         assert held["round"] == pipeline.last_round(pid)
         assert held["TPR"] == 1.0
