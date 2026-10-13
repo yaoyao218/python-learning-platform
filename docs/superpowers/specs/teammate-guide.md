@@ -97,7 +97,7 @@
 
 > 【主線】任務**不依賴**【強化】任務：三題測資用現有的人工池與輪次流程就能完成（評測本來就經由 `executor` 的子程序執行）。
 
-**已完成的事（供對照）**：效能基準與答錯集合指紋（`baseline_assess.json`）、Groq 模型與額度限制查明、推理 token 拆解、虛擬碼往返檢查腳本、使用者說明草稿、設計文件整理、全自動測資流程（E6）。後端測試目前：`108 passed, 8 skipped`（8 個 skip = 兩題未收斂 × 4 項品質守門員，屬正常）。
+**已完成的事（供對照）**：效能基準與答錯集合指紋（`baseline_assess.json`）、Groq 模型與額度限制查明、推理 token 拆解、虛擬碼往返檢查腳本、使用者說明草稿、設計文件整理、全自動測資流程（E6）。後端測試目前：`109 passed, 8 skipped`（8 個 skip = 兩題未收斂 × 4 項品質守門員，屬正常）。
 
 ## 4. 規則與預設做法
 
@@ -177,7 +177,7 @@
 | K11 | longest-valid-parentheses 的 `left_scan_only` 一直擋不到（單次提案與大量取樣共 69 筆候選 0 筆；看分數再改僅少數次擋到） | 已知：這種錯誤只在特定括號結構才出錯 | 照 E3 的停止條件；未達標就以「可實測」交付並保持未收斂 | 否 | 已知 | | 2026-10-10 |
 | K12 | longest-substring 的 `r0_tests.json` 是舊基準（18 道），不是目前 `problem.py` 的 17 道 | 已確認（r0 的 source 是 `problem_old.TEST_CASES`，TNR 0.4907） | **負責人已決定（2026-10-10）：不補輪次，直接使用現有 17 道**；匯出工具會拒絕丟掉現有案例；不要對這題的 r0 使用匯出 | 否 | 已知 | 專題負責人 | 2026-10-10 |
 | K13 | best-time-stock 驗收池 `global_min_then_max` 沒有被任何測資擋下（驗收 TNR 0.4167） | 照實記錄；驗收池只跑一次，不回頭改測資 | 若上線前要補強，須在實驗紀錄凍結後另做一輪並標明是實驗外修正 | 否 | 已知 | 專題負責人決定 | 2026-10-13 |
-| K14 | `propose --reasoning-effort` 在 `openai==1.51.0`（requirements.txt 釘的版本）會 TypeError | SDK 太舊，不支援 `reasoning_effort` 參數 | 跑 testgen 時另用較新的 SDK（實測 1.82.0 可用）；requirements.txt 沒改，避免影響 Render 部署 | 否 | 已知 | | 2026-10-13 |
+| K14 | `propose --reasoning-effort` 在 `openai==1.51.0`（requirements.txt 釘的版本）會 TypeError | SDK 太舊，不支援 `reasoning_effort` 參數 | **已修正**：requirements.txt 升到 `openai==1.82.0`；`tests/test_openai_sdk.py` 檢查 SDK 支援 propose 用到的參數；實際呼叫 `ai.get_hint`（gpt-oss-20b）與 `propose.call_model`（gpt-oss-120b、reasoning_effort=low）皆正常 | 否 | 已解決 | Claude（代組員） | 2026-10-13 |
 | K15 | best-time-stock 最終只有 4 道測資 | AI 代審的貪婪規則只收「提高平均抓錯數」的候選；r1、r2 各收 1 筆，r3 0 筆 | 照規則交付；道數少可能讓學生較少看到失敗案例，是否另外補教學用案例由負責人決定 | 否 | 已知 | | 2026-10-13 |
 | K16 | longest-substring 在 2026-10-13 用 pipeline 從 `r0_tests.json`（舊基準 18 道）跑了全自動 4 輪，與 K12「不補輪次、不要從 r0 跑新輪次」的決定不一致 | 為了驗證全自動流程能從頭跑到尾；結果只存在 `rounds/r1–r4`，**沒有寫回 `problem.py`**，線上 18 道不變 | 當成實驗紀錄（同題對照：人工 4 輪訓練池 0.882／驗收池 0.471；全自動 4 輪 0.780／0.566）；**不要匯出到 problem.py**；是否保留由負責人決定 | 否 | 待負責人決定 | 專題負責人 | 2026-10-13 |
 | K17 | Groq 回 413「Request too large」，每分鐘 token 上限 8000 | 已知：prompt 和 `max_completion_tokens` 加總計算；推理強度預設時回覆可用滿 8000 | pipeline 預設 `--reasoning-effort low`、`--max-tokens 4000`；propose 遇到 429 等 60 秒重試一次 | 否 | 已排除 | | 2026-10-13 |
@@ -189,7 +189,7 @@
 ### 開工前（第一天，約 20 分鐘）
 ```bash
 cd backend
-python -m pytest -s -q      # 預期：108 passed, 8 skipped（需要 backend/.env 有 GROQ_API_KEY，只跑測試的話填任意值如 dummy 也可以）
+python -m pytest -s -q      # 預期：109 passed, 8 skipped（需要 backend/.env 有 GROQ_API_KEY，只跑測試的話填任意值如 dummy 也可以）
 python ../docs/superpowers/specs/teammate-tests/baseline_assess.py --repeats 3   # 量你機器上的效能基準
 python ../docs/superpowers/specs/teammate-tests/pseudocode_roundtrip.py --problem longest-substring   # 需要 backend/.env 的 GROQ_API_KEY
 git status      # 預期：只多了腳本產生的結果 JSON
