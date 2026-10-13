@@ -1,0 +1,292 @@
+{
+  "problem": "best-time-stock",
+  "round": 2,
+  "pilot": false,
+  "meta": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.7,
+    "reasoning_effort": "low",
+    "n_requested": 12,
+    "prompt_version": "v2",
+    "created_at": "2026-10-13T18:55:33",
+    "elapsed_sec": 3.72,
+    "usage": {
+      "completion_tokens": 1257,
+      "prompt_tokens": 2352,
+      "total_tokens": 3609,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 29,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": null,
+      "queue_time": 0.338540587,
+      "prompt_time": 0.121334647,
+      "completion_time": 2.619983468,
+      "total_time": 2.741318115
+    }
+  },
+  "stats": {
+    "n_returned": 12,
+    "dropped_expected_fields": 0,
+    "unknown_target_bug": 0,
+    "n_accepted": 12,
+    "n_rejected": 0
+  },
+  "candidates": [
+    {
+      "id": "r2c1",
+      "args": [
+        [
+          9,
+          0,
+          8,
+          1,
+          7,
+          2,
+          6,
+          3,
+          5,
+          4
+        ]
+      ],
+      "target_bug": "max_minus_min",
+      "target_bug_raw": "max_minus_min",
+      "rationale": "價格交錯下降再上升，使 max‑min 差大於任何合法買賣順序，且相鄰差、首日買、跳過最後一天和多次交易都給出錯誤結果"
+    },
+    {
+      "id": "r2c2",
+      "args": [
+        [
+          1,
+          10,
+          2,
+          9,
+          3,
+          8,
+          4,
+          7,
+          5,
+          6
+        ]
+      ],
+      "target_bug": "adjacent_only",
+      "target_bug_raw": "adjacent_only",
+      "rationale": "最佳利潤在第 1 天買第 2 天賣，但相鄰比較會錯過更大的跨距利潤，同時觸發首日買、max‑min、skip_last_day、sum_positive_diffs"
+    },
+    {
+      "id": "r2c3",
+      "args": [
+        [
+          5,
+          4,
+          3,
+          2,
+          1,
+          0,
+          10,
+          0,
+          9,
+          0
+        ]
+      ],
+      "target_bug": "skip_last_day",
+      "target_bug_raw": "skip_last_day",
+      "rationale": "最大利潤出現在最後一天賣出，跳過最後一天會返回錯誤，同時相鄰、首日買、max‑min、sum_positive_diffs也失敗"
+    },
+    {
+      "id": "r2c4",
+      "args": [
+        [
+          0,
+          5,
+          0,
+          6,
+          0,
+          7,
+          0,
+          8,
+          0,
+          9
+        ]
+      ],
+      "target_bug": "no_clamp_zero",
+      "target_bug_raw": "no_clamp_zero",
+      "rationale": "所有正利潤出現在非首兩天，若初始利潤設為第一天與第二天差會得到負值，且相鄰、首日買、max‑min、skip_last_day也會錯"
+    },
+    {
+      "id": "r2c5",
+      "args": [
+        [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ]
+      ],
+      "target_bug": "no_clamp_zero",
+      "target_bug_raw": "no_clamp_zero",
+      "rationale": "全等價格導致所有錯誤寫法返回 0 或負，特別測試無利潤時的 clamp 行為，同時觸發相鄰、首日買、max‑min、skip_last_day"
+    },
+    {
+      "id": "r2c6",
+      "args": [
+        [
+          10,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      ],
+      "target_bug": "buy_first_day",
+      "target_bug_raw": "buy_first_day",
+      "rationale": "最佳買點在第 2 天而非第 1 天，固定首日買會錯，且相鄰、max‑min、skip_last_day、sum_positive_diffs亦失誤"
+    },
+    {
+      "id": "r2c7",
+      "args": [
+        [
+          2,
+          9,
+          1,
+          8,
+          0,
+          7,
+          3,
+          6,
+          4,
+          5
+        ]
+      ],
+      "target_bug": "adjacent_only",
+      "target_bug_raw": "adjacent_only",
+      "rationale": "最佳利潤跨越多天，僅看相鄰差會低估，同時觸發首日買、max‑min、skip_last_day、sum_positive_diffs"
+    },
+    {
+      "id": "r2c8",
+      "args": [
+        [
+          4,
+          0,
+          5,
+          0,
+          6,
+          0,
+          7,
+          0,
+          8,
+          0
+        ]
+      ],
+      "target_bug": "skip_last_day",
+      "target_bug_raw": "skip_last_day",
+      "rationale": "最大利潤在最後一次上升的最後一天賣出，跳過最後一天會錯，且相鄰、首日買、max‑min、sum_positive_diffs亦錯"
+    },
+    {
+      "id": "r2c9",
+      "args": [
+        [
+          1,
+          2,
+          1,
+          3,
+          1,
+          4,
+          1,
+          5,
+          1,
+          6
+        ]
+      ],
+      "target_bug": "max_minus_min",
+      "target_bug_raw": "max_minus_min",
+      "rationale": "全局最小在開頭，最大在最後，max‑min 會給出不合法的差，且相鄰、首日買、skip_last_day、sum_positive_diffs也失敗"
+    },
+    {
+      "id": "r2c10",
+      "args": [
+        [
+          6,
+          5,
+          4,
+          3,
+          2,
+          1,
+          0,
+          10,
+          9,
+          8
+        ]
+      ],
+      "target_bug": "no_clamp_zero",
+      "target_bug_raw": "no_clamp_zero",
+      "rationale": "利潤在第 7 天到第 8 天之間，若初始利潤為第一兩天差會負，且相鄰、首日買、max‑min、skip_last_day都會錯"
+    },
+    {
+      "id": "r2c11",
+      "args": [
+        [
+          0,
+          10,
+          0,
+          9,
+          0,
+          8,
+          0,
+          7,
+          0,
+          6
+        ]
+      ],
+      "target_bug": "buy_first_day",
+      "target_bug_raw": "buy_first_day",
+      "rationale": "最佳買點在第 3 天，固定第一天買會失敗，並且相鄰、max‑min、skip_last_day、sum_positive_diffs也會錯"
+    },
+    {
+      "id": "r2c12",
+      "args": [
+        [
+          5,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      ],
+      "target_bug": "adjacent_only",
+      "target_bug_raw": "adjacent_only",
+      "rationale": "最佳利潤在第 2 天買第 10 天賣，僅相鄰差會錯，且首日買、max‑min、skip_last_day、sum_positive_diffs同樣錯誤"
+    }
+  ],
+  "rejected": [],
+  "messages": [
+    {
+      "role": "system",
+      "content": "你是協助設計程式題測資的助理。目標是提出「能同時讓盡量多種初學者錯誤寫法答錯、但正確寫法一定答對」的測試輸入。\n評分方式：每筆輸入會拿去測全部的錯誤寫法，看它讓幾種錯誤答錯。一筆輸入讓越多種錯誤答錯越好；只針對單一種錯誤的輸入價值低。\n規則：\n1. 只提供輸入，不要提供預期輸出（預期輸出會由參考正解計算）。\n2. 輸入必須完全符合題目限制。\n3. 輸入長度盡量 ≤ 20，讓學生看到失敗時能看懂。\n4. target_bug 填這筆輸入最難抓、目前通過率最高的那一種錯誤；但整筆輸入的目標是同時抓到盡量多種。\n5. 不要重複目前已有的測資，也不要重複先前被丟棄的測資。\n6. 只回覆一個 JSON 物件，不要有其他文字。"
+    },
+    {
+      "role": "user",
+      "content": "# 題目：Best Time to Buy and Sell Stock\n給一個每日股價陣列，只能買一次、之後賣一次，求最大利潤，無法獲利回傳 0。例如：[7,1,5,3,6,4] → 5（第 2 天以 1 買入、第 5 天以 6 賣出）。\n\n## 函式簽名\n```python\nfrom typing import List\n\nclass Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        # 在此撰寫你的解法\n        pass\n```\n\n## 限制\n- 1 ≤ prices.length ≤ 10⁵\n- 0 ≤ prices[i] ≤ 10⁴\n\n## 參考正解\n```python\n# 正解（S*）：一次掃描，記錄目前為止的最低價與最大利潤，O(n)\nfrom typing import List\n\n\nclass Solution:\n    def maxProfit(self, prices: List[int]) -> int:\n        lowest = prices[0]\n        best = 0\n        for p in prices:\n            lowest = min(lowest, p)\n            best = max(best, p - lowest)\n        return best\n```\n\n## 要抓的錯誤寫法（target_bug 必須是下列名稱之一）\n- adjacent_only：只比較相鄰兩天的價差，沒考慮隔好幾天再賣\n- buy_first_day：固定在第一天買入，只找之後的最高價\n- max_minus_min：直接回傳 max(prices) - min(prices)，忽略「必須先買後賣」的順序\n- no_clamp_zero：利潤初值設成第一天到第二天的差價，無法獲利時回傳負數而不是 0\n- skip_last_day：迴圈範圍少一天，最後一天從未被當作賣出日\n- sum_positive_diffs：把所有上漲的價差加總，誤解成可以多次買賣\n\n## 目前的正式測資（第 1 輪結束時，共 3 筆）\n- #1：[7, 1, 5, 3, 6, 4]\n- #2：[7, 6, 4, 3, 1]\n- #3：[2, 5, 1, 6, 0, 7, 3, 8]\n\n## 每種錯誤目前的狀況（通過率越高 = 越難被抓到）\n- adjacent_only：通過率 33%，被測資 [1, 3] 抓到\n- buy_first_day：通過率 33%，被測資 [1, 3] 抓到\n- max_minus_min：通過率 33%，被測資 [1, 2] 抓到\n- no_clamp_zero：通過率 67%，被測資 [2] 抓到\n- skip_last_day：通過率 67%，被測資 [3] 抓到\n- sum_positive_diffs：通過率 33%，被測資 [1, 3] 抓到\n\n## 單筆輸入抓到幾種錯誤（越多越好）\n- #1：抓到 4/6 種\n- #2：抓到 2/6 種\n- #3：抓到 4/6 種\n目前正式測資中，單筆最多抓到 4/6 種。\n\n## 第 1 輪的候選與人工裁決\ncaught 是實際評測抓到的錯誤；decision：keep=採用、drop=丟棄、edit=修改後採用。\n```json\n[\n {\n  \"input\": \"[5, 5, 5, 5, 5, 5, 5, 5, 5, 5]\",\n  \"target_bug\": \"no_clamp_zero\",\n  \"caught\": [],\n  \"decision\": \"drop\",\n  \"n_caught\": 0\n },\n {\n  \"input\": \"[9, 1, 2, 3, 4, 5, 6, 7, 8, 0]\",\n  \"target_bug\": \"adjacent_only\",\n  \"caught\": [\n   \"adjacent_only\",\n   \"buy_first_day\",\n   \"max_minus_min\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"[3, 8, 2, 9, 1, 10, 0, 11]\",\n  \"target_bug\": \"max_minus_min\",\n  \"caught\": [\n   \"buy_first_day\",\n   \"skip_last_day\",\n   \"sum_positive_diffs\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]\",\n  \"target_bug\": \"sum_positive_diffs\",\n  \"caught\": [\n   \"max_minus_min\",\n   \"no_clamp_zero\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 2\n },\n {\n  \"input\": \"[1, 100, 2, 99, 3, 98, 4, 97]\",\n  \"target_bug\": \"adjacent_only\",\n  \"caught\": [\n   \"sum_positive_diffs\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 1\n },\n {\n  \"input\": \"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]\",\n  \"target_bug\": \"no_clamp_zero\",\n  \"caught\": [],\n  \"decision\": \"drop\",\n  \"n_caught\": 0\n },\n {\n  \"input\": \"[2, 5, 1, 6, 0, 7, 3, 8]\",\n  \"target_bug\": \"skip_last_day\",\n  \"caught\": [\n   \"adjacent_only\",\n   \"buy_first_day\",\n   \"skip_last_day\",\n   \"sum_positive_diffs\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 4\n },\n {\n  \"input\": \"[4, 3, 2, 1, 5, 0, 6, 0, 7, 0]\",\n  \"target_bug\": \"adjacent_only\",\n  \"caught\": [\n   \"buy_first_day\",\n   \"sum_positive_diffs\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 2\n },\n {\n  \"input\": \"[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\",\n  \"target_bug\": \"buy_first_day\",\n  \"caught\": [\n   \"adjacent_only\",\n   \"skip_last_day\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 2\n },\n {\n  \"input\": \"[10, 1, 9, 2, 8, 3, 7, 4, 6, 5]\",\n  \"target_bug\": \"max_minus_min\",\n  \"caught\": [\n   \"buy_first_day\",\n   \"max_minus_min\",\n   \"sum_positive_diffs\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"[5, 1, 5, 1, 5, 1, 5, 1, 5, 1]\",\n  \"target_bug\": \"sum_positive_diffs\",\n  \"caught\": [\n   \"buy_first_day\",\n   \"sum_positive_diffs\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 2\n },\n {\n  \"input\": \"[3, 3, 2, 2, 1, 1, 0, 0, 5, 5]\",\n  \"target_bug\": \"adjacent_only\",\n  \"caught\": [\n   \"buy_first_day\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 1\n }\n]\n```\n上一輪候選中，單筆最多抓到 4/6 種。\n\n## 請回覆\n提出 12 筆新的候選測資。目標是讓「單筆輸入同時抓到的錯誤種類數」盡量高，至少要超過目前的 4 種；只抓到一兩種的輸入價值低。格式：\n```json\n{\"candidates\": [{\"args\": [<第 1 個參數>], \"target_bug\": \"<錯誤名稱>\", \"rationale\": \"<一句話說明為什麼這筆會讓它答錯>\"}]}\n```\nargs 是呼叫 maxProfit 時的位置參數列表（本題 1 個參數）。不要提供預期輸出。"
+    }
+  ],
+  "raw_response": "{\n  \"candidates\": [\n    {\n      \"args\": [[9, 0, 8, 1, 7, 2, 6, 3, 5, 4]],\n      \"target_bug\": \"max_minus_min\",\n      \"rationale\": \"價格交錯下降再上升，使 max‑min 差大於任何合法買賣順序，且相鄰差、首日買、跳過最後一天和多次交易都給出錯誤結果\"\n    },\n    {\n      \"args\": [[1, 10, 2, 9, 3, 8, 4, 7, 5, 6]],\n      \"target_bug\": \"adjacent_only\",\n      \"rationale\": \"最佳利潤在第 1 天買第 2 天賣，但相鄰比較會錯過更大的跨距利潤，同時觸發首日買、max‑min、skip_last_day、sum_positive_diffs\"\n    },\n    {\n      \"args\": [[5, 4, 3, 2, 1, 0, 10, 0, 9, 0]],\n      \"target_bug\": \"skip_last_day\",\n      \"rationale\": \"最大利潤出現在最後一天賣出，跳過最後一天會返回錯誤，同時相鄰、首日買、max‑min、sum_positive_diffs也失敗\"\n    },\n    {\n      \"args\": [[0, 5, 0, 6, 0, 7, 0, 8, 0, 9]],\n      \"target_bug\": \"no_clamp_zero\",\n      \"rationale\": \"所有正利潤出現在非首兩天，若初始利潤設為第一天與第二天差會得到負值，且相鄰、首日買、max‑min、skip_last_day也會錯\"\n    },\n    {\n      \"args\": [[3, 3, 3, 3, 3, 3, 3, 3, 3, 3]],\n      \"target_bug\": \"no_clamp_zero\",\n      \"rationale\": \"全等價格導致所有錯誤寫法返回 0 或負，特別測試無利潤時的 clamp 行為，同時觸發相鄰、首日買、max‑min、skip_last_day\"\n    },\n    {\n      \"args\": [[10, 1, 2, 3, 4, 5, 6, 7, 8, 9]],\n      \"target_bug\": \"buy_first_day\",\n      \"rationale\": \"最佳買點在第 2 天而非第 1 天，固定首日買會錯，且相鄰、max‑min、skip_last_day、sum_positive_diffs亦失誤\"\n    },\n    {\n      \"args\": [[2, 9, 1, 8, 0, 7, 3, 6, 4, 5]],\n      \"target_bug\": \"adjacent_only\",\n      \"rationale\": \"最佳利潤跨越多天，僅看相鄰差會低估，同時觸發首日買、max‑min、skip_last_day、sum_positive_diffs\"\n    },\n    {\n      \"args\": [[4, 0, 5, 0, 6, 0, 7, 0, 8, 0]],\n      \"target_bug\": \"skip_last_day\",\n      \"rationale\": \"最大利潤在最後一次上升的最後一天賣出，跳過最後一天會錯，且相鄰、首日買、max‑min、sum_positive_diffs亦錯\"\n    },\n    {\n      \"args\": [[1, 2, 1, 3, 1, 4, 1, 5, 1, 6]],\n      \"target_bug\": \"max_minus_min\",\n      \"rationale\": \"全局最小在開頭，最大在最後，max‑min 會給出不合法的差，且相鄰、首日買、skip_last_day、sum_positive_diffs也失敗\"\n    },\n    {\n      \"args\": [[6, 5, 4, 3, 2, 1, 0, 10, 9, 8]],\n      \"target_bug\": \"no_clamp_zero\",\n      \"rationale\": \"利潤在第 7 天到第 8 天之間，若初始利潤為第一兩天差會負，且相鄰、首日買、max‑min、skip_last_day都會錯\"\n    },\n    {\n      \"args\": [[0, 10, 0, 9, 0, 8, 0, 7, 0, 6]],\n      \"target_bug\": \"buy_first_day\",\n      \"rationale\": \"最佳買點在第 3 天，固定第一天買會失敗，並且相鄰、max‑min、skip_last_day、sum_positive_diffs也會錯\"\n    },\n    {\n      \"args\": [[5, 1, 2, 3, 4, 5, 6, 7, 8, 9]],\n      \"target_bug\": \"adjacent_only\",\n      \"rationale\": \"最佳利潤在第 2 天買第 10 天賣，僅相鄰差會錯，且首日買、max‑min、skip_last_day、sum_positive_diffs同樣錯誤\"\n    }\n  ]\n}"
+}

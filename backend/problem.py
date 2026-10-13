@@ -101,16 +101,128 @@ _MEDIAN_CASES = [
 # 第 0 輪：只有 LC 官方範例（AI 輔助測資實驗的起點，見
 # docs/superpowers/plans/2026-10-07-ai-assisted-testgen.md）。
 # 單一參數是 list 時用 args=(prices,)，因為 judge 的截斷顯示只處理字串型的 "input"。
+# 由 testgen/export_round_to_problem.py 從 r3_tests.json 產生：共 4 道，前 2 道為 LC 官方範例，其餘依輸入長度由短到長，壓力測資在最後。
 _BEST_TIME_STOCK_CASES = [
+    # LC 官方範例 1
     {"index": 1, "args": ([7, 1, 5, 3, 6, 4],), "expected": 5, "is_stress": False},
+    # LC 官方範例 2
     {"index": 2, "args": ([7, 6, 4, 3, 1],), "expected": 0, "is_stress": False},
+    # r3
+    {"index": 3, "args": ([2, 5, 1, 6, 0, 7, 3, 8],), "expected": 8, "is_stress": False},
+    # r3
+    {"index": 4, "args": ([10, 1, 2, 3, 4, 5, 6, 7, 8, 9],), "expected": 8, "is_stress": False},
 ]
 
-# 第 0 輪：只有 LC 官方範例。
+# 由 testgen/export_round_to_problem.py 從 r5_tests.json 產生：共 54 道，前 3 道為 LC 官方範例，其餘依輸入長度由短到長，壓力測資在最後。
 _LONGEST_VALID_PARENTHESES_CASES = [
-    {"index": 1, "input": "(()", "expected": 2, "is_stress": False},
-    {"index": 2, "input": ")()())", "expected": 4, "is_stress": False},
-    {"index": 3, "input": "", "expected": 0, "is_stress": False},
+    # LC 官方範例 1
+    {"index": 1, "input": '(()', "expected": 2, "is_stress": False},
+    # LC 官方範例 2
+    {"index": 2, "input": ')()())', "expected": 4, "is_stress": False},
+    # LC 官方範例 3
+    {"index": 3, "input": '', "expected": 0, "is_stress": False},
+    # r5
+    {"index": 4, "input": '(())()', "expected": 6, "is_stress": False},
+    # r5
+    {"index": 5, "input": '())(()', "expected": 2, "is_stress": False},
+    # r5
+    {"index": 6, "input": '(((())', "expected": 4, "is_stress": False},
+    # r5
+    {"index": 7, "input": ')()(()', "expected": 2, "is_stress": False},
+    # r5
+    {"index": 8, "input": '(())()()', "expected": 8, "is_stress": False},
+    # r5
+    {"index": 9, "input": '(()())(()', "expected": 6, "is_stress": False},
+    # r5
+    {"index": 10, "input": '()(())()(()', "expected": 8, "is_stress": False},
+    # r5
+    {"index": 11, "input": '())()(()())', "expected": 8, "is_stress": False},
+    # r5
+    {"index": 12, "input": '((())())(()', "expected": 8, "is_stress": False},
+    # r5
+    {"index": 13, "input": '(()())())(()', "expected": 8, "is_stress": False},
+    # r5
+    {"index": 14, "input": '())((()))()(', "expected": 8, "is_stress": False},
+    # r5
+    {"index": 15, "input": '(()())(()(()))(()', "expected": 14, "is_stress": False},
+    # r5
+    {"index": 16, "input": '(()))(()())())(()', "expected": 8, "is_stress": False},
+    # r5
+    {"index": 17, "input": '())()(()())()(()))', "expected": 14, "is_stress": False},
+    # r5
+    {"index": 18, "input": '())()(()())(()()))', "expected": 14, "is_stress": False},
+    # r5
+    {"index": 19, "input": ')()(()())(()())(()', "expected": 14, "is_stress": False},
+    # r5
+    {"index": 20, "input": '())(()())()(()))(()', "expected": 12, "is_stress": False},
+    # r5
+    {"index": 21, "input": '()(()))(()())(()())', "expected": 12, "is_stress": False},
+    # r5
+    {"index": 22, "input": '((())())(()(()))(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 23, "input": '((())())(()))(()())', "expected": 12, "is_stress": False},
+    # r5
+    {"index": 24, "input": '(()())()(()(()))(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 25, "input": '((()()))(()(()))(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 26, "input": '()((()))()(()())(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 27, "input": '((())())(()())())(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 28, "input": '(()(()))()(()()))(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 29, "input": '())((()))(()())(()))', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 30, "input": '())()(()())((()))(()', "expected": 14, "is_stress": False},
+    # r5
+    {"index": 31, "input": ')()()((()))(()())(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 32, "input": '((()()))(()))(()(()))', "expected": 12, "is_stress": False},
+    # r5
+    {"index": 33, "input": '((()))()(()))((())())', "expected": 12, "is_stress": False},
+    # r5
+    {"index": 34, "input": '(()))(()())()(()(()))', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 35, "input": '(()(()))()()((()))(()', "expected": 18, "is_stress": False},
+    # r5
+    {"index": 36, "input": '())((()))()(()()))(()', "expected": 14, "is_stress": False},
+    # r5
+    {"index": 37, "input": '())((()))()(()))(()())', "expected": 12, "is_stress": False},
+    # r5
+    {"index": 38, "input": '())()()((()))(()())(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 39, "input": '(()())((()))()(()))(()', "expected": 18, "is_stress": False},
+    # r5
+    {"index": 40, "input": '()(()))((()))(()())(()', "expected": 12, "is_stress": False},
+    # r5
+    {"index": 41, "input": '())((()))(()())()(()))', "expected": 18, "is_stress": False},
+    # r5
+    {"index": 42, "input": '()((()))(()())())(()())', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 43, "input": '((())())()(()()))(()())', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 44, "input": '())((()))()(()())(()())', "expected": 20, "is_stress": False},
+    # r5
+    {"index": 45, "input": '(()(()))()(()()))(()())', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 46, "input": '(()())()((()))(()())(()', "expected": 20, "is_stress": False},
+    # r5
+    {"index": 47, "input": '())()(()())((()))(()())', "expected": 20, "is_stress": False},
+    # r5
+    {"index": 48, "input": '()(()())((()))(()()))(()', "expected": 20, "is_stress": False},
+    # r5
+    {"index": 49, "input": '(()())((()))()(()()))(()', "expected": 20, "is_stress": False},
+    # r5
+    {"index": 50, "input": '())()((()))(()())(()(()))', "expected": 22, "is_stress": False},
+    # r5
+    {"index": 51, "input": '()(()))((()))(()())(()())', "expected": 18, "is_stress": False},
+    # r5
+    {"index": 52, "input": '())((()))()(()())(()(()))', "expected": 22, "is_stress": False},
+    # r5
+    {"index": 53, "input": '(()(()))()(()()))((()))(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 54, "input": '())()((()))(()())(()())(()', "expected": 20, "is_stress": False},
 ]
 
 
