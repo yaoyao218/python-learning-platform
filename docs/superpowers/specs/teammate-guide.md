@@ -76,7 +76,7 @@
 | E6 | 【主線】全自動流程：`pipeline.py`、`auto_review.py`（自動審核升級為正式元件） | Claude（代組員） | 完成 | 2026-10-13 | backend/testgen/pipeline.py, backend/testgen/auto_review.py, backend/tests/test_pipeline.py | 自動審核對 LC121 r1–r3、LC32 r1–r5 重算全部一致；LC3 全自動跑完 4 輪；三題驗收池結果存成 `rounds/heldout_final.json`；`python -m pytest -q` 108 passed, 8 skipped | 拿掉人工審核後的主要流程；結果見計畫第八節 |
 | M1 | 【主線】合併到 main 前的準備 | | 未開始 | 2026-10-13 | | | 依賴 E5、B2、C1、C2；見任務卡 M1 |
 | B2 | 【主線】三題虛擬碼產出與往返檢查（I8） | Claude（代組員） | 完成 | 2026-10-13 | backend/testgen/problems/longest-substring/pseudocode.json, backend/testgen/problems/best-time-stock/pseudocode.json, backend/testgen/problems/longest-valid-parentheses/pseudocode.json | `pseudocode_roundtrip.py --k 3`（寫手 gpt-oss-20b、實作者 gpt-oss-120b）：三題都第 1 次就通過，各 3/3 實作與 S+ 一致（探測輸入 23,848／21,533／10,194 組）；存成 `problems/<id>/pseudocode.json` | 人工閱讀的小瑕疵記在 format_warnings、沒有改寫：longest-valid-parentheses 全文是英文；longest-substring 第 13 步停止條件寫成「超過長度」、第 4 與 13 步重複 |
-| C1 | 【主線】提示加入虛擬碼與 `hint_guard` 擴充（I11） | | 未開始 | 2026-10-10 | backend/ai.py, backend/hint_guard.py, backend/tests/test_ai.py | | 依賴 B2 |
+| C1 | 【主線】提示加入虛擬碼與 `hint_guard` 擴充（I11） | Claude（代組員） | 完成 | 2026-10-13 | backend/ai.py, backend/hint_guard.py, backend/tests/test_ai.py | `build_prompt(..., pseudocode)`：runtime_error／timeout／wrong_answer 放入虛擬碼與「可引用步驟編號、不整段複述、不斷言第 N 步錯」規則；簽名測試確認沒有學生程式碼參數。`hint_guard`：逐字抄超過 2 個步驟就擋；三題虛擬碼本身不會被當成程式碼。pytest 123 passed, 8 skipped；真實模型三題各 4 次共 12/12 正常提示 | 加入虛擬碼後 prompt 變長，gpt-oss-20b 預設推理會把 2048 token 用光、回傳空內容（實測 3/4，同 K3）；提示改用 reasoning_effort=low（只在 gpt-oss，Gemini 不帶） |
 | C2 | 【主線】虛擬碼顯示（I15） | Claude（代組員） | 完成 | 2026-10-13 | backend/problem.py, backend/main.py, frontend/src/components/ProblemStatement.vue | `problem.py` 只載入 passed 的 pseudocode.json（version、text）；`GET /problems/{id}` 可選欄位；`ProblemStatement.vue` 收合區塊顯示。新增 3 個測試（有／沒有虛擬碼、未通過不載入）；pytest 112 passed, 8 skipped；瀏覽器實測：沒虛擬碼的題目外觀不變、有的預設收合 | AI 寫的文字先跳脫 HTML，只轉換 **粗體** 與 `程式` 兩種標記 |
 | C3 | 【主線】使用者說明與同意說明（I16） | 專題負責人（草稿） | 進行中 | 2026-10-10 | docs/superpowers/specs/user-facing-draft.md | | 草稿已完成；【待確認】欄位等負責人決定 |
 | T | 【主線】組員測試 T1–T6：重跑虛擬碼往返檢查、人工審閱、確認腳本不改 repo；T7 用 `pipeline --plan` 與 `auto_review --dry-run` 試跑全自動流程 | | 未開始 | 2026-10-13 | | | 見任務卡 T；結果放 PR 描述，不提交結果 JSON |
@@ -97,7 +97,7 @@
 
 > 【主線】任務**不依賴**【強化】任務：三題測資用現有的人工池與輪次流程就能完成（評測本來就經由 `executor` 的子程序執行）。
 
-**已完成的事（供對照）**：效能基準與答錯集合指紋（`baseline_assess.json`）、Groq 模型與額度限制查明、推理 token 拆解、虛擬碼往返檢查腳本、使用者說明草稿、設計文件整理、全自動測資流程（E6）。後端測試目前：`109 passed, 8 skipped`（8 個 skip = 兩題未收斂 × 4 項品質守門員，屬正常）。
+**已完成的事（供對照）**：效能基準與答錯集合指紋（`baseline_assess.json`）、Groq 模型與額度限制查明、推理 token 拆解、虛擬碼往返檢查腳本、使用者說明草稿、設計文件整理、全自動測資流程（E6）。後端測試目前：`123 passed, 8 skipped`（8 個 skip = 兩題未收斂 × 4 項品質守門員，屬正常）。
 
 ## 4. 規則與預設做法
 
@@ -189,7 +189,7 @@
 ### 開工前（第一天，約 20 分鐘）
 ```bash
 cd backend
-python -m pytest -s -q      # 預期：109 passed, 8 skipped（需要 backend/.env 有 GROQ_API_KEY，只跑測試的話填任意值如 dummy 也可以）
+python -m pytest -s -q      # 預期：123 passed, 8 skipped（需要 backend/.env 有 GROQ_API_KEY，只跑測試的話填任意值如 dummy 也可以）
 python ../docs/superpowers/specs/teammate-tests/baseline_assess.py --repeats 3   # 量你機器上的效能基準
 python ../docs/superpowers/specs/teammate-tests/pseudocode_roundtrip.py --problem longest-substring   # 需要 backend/.env 的 GROQ_API_KEY
 git status      # 預期：只多了腳本產生的結果 JSON
