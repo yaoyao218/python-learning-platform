@@ -84,8 +84,11 @@ def _run_subprocess(runner_script: str, timeout: float) -> tuple[str, str, int]:
         # -I：隔離模式，不讀 PYTHON* 環境變數、不把工作目錄加進 sys.path
         # -X utf8：Windows 上也用 UTF-8 輸出，學生 print 中文不會解碼失敗
         # cwd 設在暫存目錄，學生用相對路徑讀不到 backend/ 底下的檔案
+        # "-"：腳本從 stdin 傳入。放在命令列（-c）會受長度上限限制
+        # （Windows 約 3.2 萬字元、Linux 單一參數 128 KB），長測資會直接失敗。
         result = subprocess.run(
-            [sys.executable, "-I", "-X", "utf8", "-c", runner_script],
+            [sys.executable, "-I", "-X", "utf8", "-"],
+            input=runner_script.encode("utf-8"),
             capture_output=True,
             timeout=timeout,
             env=_CHILD_ENV,

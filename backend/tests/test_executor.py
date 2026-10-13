@@ -216,3 +216,16 @@ class Solution:
     result = await run_code(code, "lengthOfLongestSubstring", ("abc",))
     assert result["error_type"] is None
     assert result["actual"] == "3"
+
+
+@pytest.mark.asyncio
+async def test_long_input_beyond_command_line_limit():
+    """程式碼與參數不能放在命令列：Windows 上限約 3.2 萬字元、Linux 單一參數上限 128 KB。"""
+    code = """
+class Solution:
+    def length(self, s: str) -> int:
+        return len(s)
+"""
+    result = await run_code(code, "length", ("a" * 200_000,))
+    assert result["error_type"] is None, result["stderr"]
+    assert result["actual"] == "200000"
