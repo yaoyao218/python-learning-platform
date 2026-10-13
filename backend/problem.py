@@ -6,6 +6,11 @@
 #
 # test_cases 裡每筆測資用 "input"（單一字串參數，向後相容 testgen/ 既有工具）
 # 或 "args"（多參數時用 tuple）二選一表示呼叫參數。
+#
+# pseudocode（可選）：testgen/problems/<id>/pseudocode.json 通過往返檢查（passed）
+# 才載入，只帶 version 與 text，見檔尾。
+import json
+from pathlib import Path
 
 def _stress_input() -> str:
     """長度 = 題目限制上限 5×10⁴ 的壓力測資，擋掉 O(n²) 的寫法。
@@ -368,3 +373,23 @@ PROBLEMS = {
 # Longest Substring 這題，透過這兩個別名沿用舊的呼叫方式。
 TEST_CASES = PROBLEMS["longest-substring"]["test_cases"]
 METHOD = PROBLEMS["longest-substring"]["method"]
+
+
+_PSEUDOCODE_DIR = Path(__file__).resolve().parent / "testgen" / "problems"
+
+
+def _load_pseudocode(problem_id: str, base: Path = _PSEUDOCODE_DIR) -> dict | None:
+    """讀 B2 產出的虛擬碼；沒有檔案或沒通過往返檢查就回傳 None（不上線）。"""
+    path = base / problem_id / "pseudocode.json"
+    if not path.exists():
+        return None
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not data.get("passed"):
+        return None
+    return {"version": data["version"], "text": data["text"]}
+
+
+for _pid, _problem in PROBLEMS.items():
+    _pseudocode = _load_pseudocode(_pid)
+    if _pseudocode is not None:
+        _problem["pseudocode"] = _pseudocode

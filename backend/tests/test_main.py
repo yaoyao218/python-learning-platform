@@ -99,3 +99,37 @@ async def test_get_problem_detail_404():
     ) as client:
         response = await client.get("/problems/does-not-exist")
     assert response.status_code == 404
+
+
+# ── C2：虛擬碼（只有通過往返檢查的才回傳） ─────────────────────────────
+
+@pytest.mark.asyncio
+async def test_get_problem_includes_passed_pseudocode():
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as client:
+        response = await client.get("/problems/best-time-stock")
+    data = response.json()
+    assert set(data["pseudocode"]) == {"version", "text"}
+    assert data["pseudocode"]["text"].strip()
+
+
+@pytest.mark.asyncio
+async def test_get_problem_without_pseudocode_has_no_field():
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as client:
+        response = await client.get("/problems/valid-parentheses")
+    assert "pseudocode" not in response.json()
+
+
+def test_load_pseudocode_skips_unpassed(tmp_path):
+    import json
+    from problem import _load_pseudocode
+    d = tmp_path / "demo"
+    d.mkdir()
+    (d / "pseudocode.json").write_text(json.dumps({"version": "v1", "text": "1. x", "passed": False}), encoding="utf-8")
+    assert _load_pseudocode("demo", tmp_path) is None
+    (d / "pseudocode.json").write_text(json.dumps({"version": "v1", "text": "1. x", "passed": True}), encoding="utf-8")
+    assert _load_pseudocode("demo", tmp_path) == {"version": "v1", "text": "1. x"}
+    assert _load_pseudocode("missing", tmp_path) is None

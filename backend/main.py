@@ -43,7 +43,7 @@ async def get_problem(problem_id: str):
     problem = PROBLEMS.get(problem_id)
     if problem is None:
         raise HTTPException(status_code=404, detail="Problem not found")
-    return {
+    detail = {
         "id": problem_id,
         "title": problem["title"],
         "difficulty": problem["difficulty"],
@@ -52,6 +52,10 @@ async def get_problem(problem_id: str):
         "constraints": problem["constraints"],
         "starter_code": problem["starter_code"],
     }
+    # 虛擬碼是可選欄位：只有通過往返檢查的題目才有（測資內容不送到前端）
+    if "pseudocode" in problem:
+        detail["pseudocode"] = problem["pseudocode"]
+    return detail
 
 
 @app.post("/submit")
