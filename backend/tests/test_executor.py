@@ -74,7 +74,7 @@ class Solution:
             pass
 """
     result = await run_code(code, "lengthOfLongestSubstring", ("abc",), timeout=1.0)
-    assert result["error_type"] == "runtime_error"
+    assert result["error_type"] == "timeout"
     assert "超時" in result["stderr"]
 
 

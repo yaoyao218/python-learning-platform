@@ -59,7 +59,7 @@ async def run_code(code: str, method: str, args: tuple, timeout: float = 5.0) ->
 
     Returns:
         dict: { actual: str|None, error_type: str|None, stderr: str }
-        error_type 可能值: "syntax_error" | "runtime_error" | "no_return" | None
+        error_type 可能值: "syntax_error" | "runtime_error" | "timeout" | "no_return" | None
         actual 是 repr() 過的字串，可用 ast.literal_eval 還原成實際型別。
     """
     forbidden_error = check_forbidden(code)
@@ -89,7 +89,7 @@ print(repr(_result))
     )
 
     if returncode == -1:
-        return {"actual": None, "error_type": "runtime_error", "stderr": stderr_str}
+        return {"actual": None, "error_type": "timeout", "stderr": stderr_str}
 
     if returncode != 0:
         if "SyntaxError" in stderr_str:

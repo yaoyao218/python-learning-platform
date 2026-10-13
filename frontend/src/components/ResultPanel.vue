@@ -120,6 +120,7 @@ const passCount = computed(() =>
 const ERROR_LABELS = {
   syntax_error:  '語法錯誤',
   runtime_error: '執行錯誤',
+  timeout:       '執行超時',
   no_return:     '沒有回傳值',
 }
 

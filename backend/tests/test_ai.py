@@ -110,3 +110,39 @@ async def test_get_hint_calls_api_and_returns_content():
     mock_create.assert_called_once()
     call_kwargs = mock_create.call_args
     assert call_kwargs.kwargs["messages"][0]["content"] == build_prompt(results, TITLE, CONTEXT)
+
+
+# --- timeout（執行超時）---
+
+def make_timeout(index, input_val, expected, is_stress):
+    r = make_result(index, input_val, expected, None, False, "timeout", "執行超時（超過時間限制）")
+    r["is_stress"] = is_stress
+    return r
+
+
+def test_build_prompt_timeout_does_not_ask_for_line_number():
+    """超時沒有 traceback，不能叫學生去看行號。"""
+    prompt = build_prompt([make_timeout(1, "abc", 3, False)], TITLE, CONTEXT)
+    assert "去看錯誤訊息中的行號" not in prompt
+    assert "超過時間限制" in prompt
+
+
+def test_build_prompt_timeout_on_short_input_suggests_infinite_loop():
+    prompt = build_prompt([make_timeout(1, "abc", 3, False)], TITLE, CONTEXT)
+    assert "無窮迴圈" in prompt
+
+
+def test_build_prompt_timeout_on_stress_input_talks_about_efficiency():
+    prompt = build_prompt([make_timeout(18, "abab...", 79, True)], TITLE, CONTEXT)
+    assert "效率" in prompt
+
+
+def test_build_prompt_wrong_answer_summary_excludes_timeouts():
+    """前面答錯、後面壓力測資超時：超時那筆的 Actual 是 None，不該混進數值 pattern 分析。"""
+    results = [
+        make_result(1, "abcabcbb", 3, "8", False, None),
+        make_timeout(18, "ababab...", 79, True),
+    ]
+    prompt = build_prompt(results, TITLE, CONTEXT)
+    assert "abcabcbb" in prompt
+    assert "ababab" not in prompt
