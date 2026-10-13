@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 from judge import judge
 from ai import get_hint
+from hint_guard import check_hint_quality
 from problem import PROBLEMS
 
 PROBLEM_ID = "longest-substring"  # solutions_wrong/ 目前只有這題的 bug 池
@@ -27,8 +28,13 @@ BUG_DESCRIPTIONS = {
 
 SEP = "=" * 60
 
+# check_hint_quality 現在是 hint_guard.py 的一部分：ai.py 的 get_hint() 在正式
+# 環境裡也會用同一份邏輯當作輸出端的安全網（見該檔案註解）。這支腳本只是離線
+# 跑過六種已知 bug，確認這道安全網平常不會被誤觸發、也沒有退化。
 
-async def verify_one(filename: str) -> None:
+
+async def verify_one(filename: str) -> list[str]:
+    """回傳這個 bug 案例的品質問題清單；空 list 代表通過。"""
     path = SOLUTIONS_DIR / filename
     code = path.read_text()
 
@@ -55,10 +61,15 @@ async def verify_one(filename: str) -> None:
     print("AI 提示：")
     problem = PROBLEMS[PROBLEM_ID]
     hint = await get_hint(results, problem["title"], problem["ai_context"])
-    if hint:
-        print(hint)
-    else:
+    if not hint:
         print("（無提示：全部通過 或 API 未設定）")
+        return []
+
+    print(hint)
+    problems = check_hint_quality(hint)
+    if problems:
+        print(f"⚠️  退化警告：{'; '.join(problems)}")
+    return [f"{filename}: {p}" for p in problems]
 
 
 async def main() -> None:
@@ -69,14 +80,20 @@ async def main() -> None:
         print("⚠️  未偵測到 API key，AI 提示欄位會是空的。")
         print("   請先設定 GROQ_API_KEY 或 GEMINI_API_KEY。\n")
 
+    all_problems: list[str] = []
     for filename in BUG_DESCRIPTIONS:
-        await verify_one(filename)
+        all_problems.extend(await verify_one(filename))
 
     print(f"\n{SEP}")
-    print("驗證完成。請確認每個 AI 提示：")
-    print("  ✓ 方向對應該 bug 的根本原因")
-    print("  ✓ 結尾是問句（引導而非直接給答案）")
-    print("  ✓ 沒有出現修正後的程式碼")
+    print("人工複查：請確認每個 AI 提示方向都對應該 bug 的根本原因（語意品質，機器測不出來）。\n")
+
+    if all_problems:
+        print(f"❌ 自動檢查發現 {len(all_problems)} 項退化：")
+        for p in all_problems:
+            print(f"  - {p}")
+        raise SystemExit(1)
+
+    print("✓ 自動檢查通過：沒有提示洩漏程式碼、也都有問句引導。")
 
 
 if __name__ == "__main__":
