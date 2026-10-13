@@ -103,3 +103,49 @@ def test_minimum_test_case_count(quality_report):
     """確保測資數量不少於合理下限。"""
     count = quality_report["_test_count"]
     assert count >= 10, f"TEST_CASES 只有 {count} 筆，少於 10 筆下限"
+
+
+# ── 效能：題目限制 s.length ≤ 5×10⁴，太慢的解法不該全過 ─────────────────────
+
+_QUADRATIC_NO_BREAK = """
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        best = 0
+        for i in range(len(s)):
+            seen = set()
+            for j in range(i, len(s)):
+                seen.add(s[j])
+                if len(seen) == j - i + 1:
+                    best = max(best, j - i + 1)
+        return best
+"""
+
+
+def test_has_stress_case_at_constraint_limit():
+    """至少一筆壓力測資的長度達到題目限制上限。"""
+    mod = importlib.import_module(PROBLEM_MODULE)
+    stress = [tc for tc in mod.TEST_CASES if tc["is_stress"]]
+    assert stress, "沒有任何 is_stress=True 的測資，O(n²) 解法也能全過"
+    assert max(len(tc["input"]) for tc in stress) >= 50_000
+
+
+def test_stress_cases_are_last():
+    """壓力測資放最後，學生看到的「第一個失敗」才會是短、好讀的測資。"""
+    mod = importlib.import_module(PROBLEM_MODULE)
+    flags = [tc["is_stress"] for tc in mod.TEST_CASES]
+    assert flags == sorted(flags)
+
+
+def test_quadratic_solution_times_out_on_stress_case():
+    """沒有提早 break 的 O(n²) 解法，應該在壓力測資超時。"""
+    mod = importlib.import_module(PROBLEM_MODULE)
+    stress = [tc for tc in mod.TEST_CASES if tc["is_stress"]]
+
+    async def run():
+        return await asyncio.gather(*(
+            run_code(_QUADRATIC_NO_BREAK, "lengthOfLongestSubstring", (tc["input"],), timeout=10.0)
+            for tc in stress
+        ))
+
+    results = asyncio.run(run())
+    assert any(r["error_type"] is not None for r in results), "O(n²) 解法通過了所有壓力測資"
