@@ -13,8 +13,8 @@
 ### 三題現在的狀態
 | 題目 | `problem.py` 現有測資 | 現況 | 主線要做的事 |
 |---|---|---|---|
-| `longest-substring` | 18 道（人工迭代 17 道 + 5 萬字元壓力測資） | 已收斂，品質守門員通過；訓練池 TNR 0.889，驗收池 0.47。另有全自動 4 輪的**實驗紀錄**（訓練池 0.780、驗收池 0.566），沒有寫回 `problem.py`（K16） | 完成（E1） |
-| `best-time-stock` | 4 道 | 未收斂（達成率 0.70，停滯）；驗收池漏掉 `global_min_then_max`（K13）；道數太少（K15） | **E5：實驗外補強**，等負責人決定 |
+| `longest-substring` | 18 道（人工迭代 17 道 + 5 萬字元壓力測資） | 已收斂，品質守門員通過；訓練池 TNR 0.889，驗收池 0.47 | 完成（E1） |
+| `best-time-stock` | 10 道（r3 的 4 道 + 實驗外補強 6 道） | 未收斂；實驗紀錄：達成率 0.70、驗收池漏 1 種（K13）。補強後訓練池、驗收池都無漏網 | 完成（E2、E5） |
 | `longest-valid-parentheses` | 54 道 | 未收斂（達成率 0.68）；6 種錯誤都擋到；驗收池 0.537、無漏網 | 完成（E3） |
 
 ### 什麼叫「做好、可以使用」
@@ -32,10 +32,10 @@
 
 ### 下次實測前的檢查清單
 - [x] E1、E2、E3、E4、E6 完成（三題測資定稿並寫入 `problem.py`；全自動流程可運行）
-- [ ] E5 完成（best-time-stock 補到至少 10 道，並擋下 `global_min_then_max`）
+- [x] E5 完成（best-time-stock 補到 10 道，擋下 `global_min_then_max`）
 - [ ] B2 完成（三題虛擬碼）
 - [ ] C1、C2 完成（提示看得到虛擬碼、題目頁顯示虛擬碼）
-- [ ] C3 完成，且同意說明已由負責人確認
+- [ ] C3 完成（同意說明：負責人已確認同意，2026-10-13；草稿中【待確認】欄位的實際內容仍待負責人填入）
 - [ ] 記錄方式已決定（預設：不記錄程式碼）
 - [ ] 後端測試全過
 - [ ] M1 完成（分支同步 main、開 PR、預覽網址實測過），再合併到 main 上線
@@ -72,14 +72,14 @@
 | E2 | 【主線】best-time-stock 測資定稿 | Claude（代組員） | 完成 | 2026-10-13 | backend/problem.py | r1–r3（gpt-oss-120b 提案、AI 代審）：2→4 道，TPR 1.0、訓練池 TNR 0.5→0.5833（達成率 0.70），訓練池無漏網；驗收池跑一次：TNR 0.4167，`global_min_then_max` 漏網（K13）；已用 E4 寫回 problem.py；pytest 104 passed, 8 skipped | 以「可實測」交付、**未達標**，未標收斂；r3 沒有新增任何測資（K15） |
 | E3 | 【主線】longest-valid-parentheses 測資定稿 | Claude（代組員） | 完成 | 2026-10-13 | backend/problem.py | r3–r5（r3 用既有候選、r4–r5 gpt-oss-120b 提案，AI 代審）：14→54 道，TPR 1.0、訓練池 TNR 0.5476→0.6759（達成率 0.68），6 種錯誤都被擋到（含 `left_scan_only`）；驗收池跑一次：TNR 0.5370，無漏網；已用 E4 寫回 problem.py；pytest 104 passed, 8 skipped | 以「可實測」交付、**未達標**（停止條件：3 輪），未標收斂 |
 | E4 | 【主線】最終輪測資寫回 `problem.py` 的匯出工具 | 專題負責人 | 完成 | 2026-10-10 | backend/testgen/export_round_to_problem.py, backend/tests/test_export_round.py | 已實作；15 個單元測試（58 passed）；對三題真實資料 dry-run 過；兩個變異檢查被測試抓到 | E2、E3 用它寫回 problem.py |
-| E5 | 【主線】best-time-stock 實驗外補強（K13、K15） | | 未開始 | 2026-10-13 | backend/problem.py | | **等負責人決定**；做法見任務卡 E5。實驗紀錄（rounds/）不動 |
+| E5 | 【主線】best-time-stock 實驗外補強（K13、K15） | Claude（代組員） | 完成 | 2026-10-13 | backend/problem.py, backend/tests/test_export_round.py | 補 6 道（標「實驗外補強（E5）」），共 10 道；`run_eval --problem best-time-stock`：TPR 1.0、訓練池 TNR 0.3833、無漏網；驗收池（實驗外確認，未寫入 rounds/）0.4667、無漏網；pytest 123 passed, 8 skipped | 訓練池 TNR 比實驗紀錄 0.5833 低：新增的邊界案例（只有 1 天、價格相同）抓不到錯誤，會拉低平均；`rounds/` 實驗紀錄不變 |
 | E6 | 【主線】全自動流程：`pipeline.py`、`auto_review.py`（自動審核升級為正式元件） | Claude（代組員） | 完成 | 2026-10-13 | backend/testgen/pipeline.py, backend/testgen/auto_review.py, backend/tests/test_pipeline.py | 自動審核對 LC121 r1–r3、LC32 r1–r5 重算全部一致；LC3 全自動跑完 4 輪；三題驗收池結果存成 `rounds/heldout_final.json`；`python -m pytest -q` 108 passed, 8 skipped | 拿掉人工審核後的主要流程；結果見計畫第八節 |
-| M1 | 【主線】合併到 main 前的準備 | | 未開始 | 2026-10-13 | | | 依賴 E5、B2、C1、C2；見任務卡 M1 |
+| M1 | 【主線】合併到 main 前的準備 | | 未開始 | 2026-10-13 | | | E5、B2、C1、C2 已完成，可以開始；見任務卡 M1 |
 | B2 | 【主線】三題虛擬碼產出與往返檢查（I8） | Claude（代組員） | 完成 | 2026-10-13 | backend/testgen/problems/longest-substring/pseudocode.json, backend/testgen/problems/best-time-stock/pseudocode.json, backend/testgen/problems/longest-valid-parentheses/pseudocode.json | `pseudocode_roundtrip.py --k 3`（寫手 gpt-oss-20b、實作者 gpt-oss-120b）：三題都第 1 次就通過，各 3/3 實作與 S+ 一致（探測輸入 23,848／21,533／10,194 組）；存成 `problems/<id>/pseudocode.json` | 人工閱讀的小瑕疵記在 format_warnings、沒有改寫：longest-valid-parentheses 全文是英文；longest-substring 第 13 步停止條件寫成「超過長度」、第 4 與 13 步重複 |
 | C1 | 【主線】提示加入虛擬碼與 `hint_guard` 擴充（I11） | Claude（代組員） | 完成 | 2026-10-13 | backend/ai.py, backend/hint_guard.py, backend/tests/test_ai.py | `build_prompt(..., pseudocode)`：runtime_error／timeout／wrong_answer 放入虛擬碼與「可引用步驟編號、不整段複述、不斷言第 N 步錯」規則；簽名測試確認沒有學生程式碼參數。`hint_guard`：逐字抄超過 2 個步驟就擋；三題虛擬碼本身不會被當成程式碼。pytest 123 passed, 8 skipped；真實模型三題各 4 次共 12/12 正常提示 | 加入虛擬碼後 prompt 變長，gpt-oss-20b 預設推理會把 2048 token 用光、回傳空內容（實測 3/4，同 K3）；提示改用 reasoning_effort=low（只在 gpt-oss，Gemini 不帶） |
 | C2 | 【主線】虛擬碼顯示（I15） | Claude（代組員） | 完成 | 2026-10-13 | backend/problem.py, backend/main.py, frontend/src/components/ProblemStatement.vue | `problem.py` 只載入 passed 的 pseudocode.json（version、text）；`GET /problems/{id}` 可選欄位；`ProblemStatement.vue` 收合區塊顯示。新增 3 個測試（有／沒有虛擬碼、未通過不載入）；pytest 112 passed, 8 skipped；瀏覽器實測：沒虛擬碼的題目外觀不變、有的預設收合 | AI 寫的文字先跳脫 HTML，只轉換 **粗體** 與 `程式` 兩種標記 |
-| C3 | 【主線】使用者說明與同意說明（I16） | 專題負責人（草稿） | 進行中 | 2026-10-10 | docs/superpowers/specs/user-facing-draft.md | | 草稿已完成；【待確認】欄位等負責人決定 |
-| T | 【主線】組員測試 T1–T6：重跑虛擬碼往返檢查、人工審閱、確認腳本不改 repo；T7 用 `pipeline --plan` 與 `auto_review --dry-run` 試跑全自動流程 | | 未開始 | 2026-10-13 | | | 見任務卡 T；結果放 PR 描述，不提交結果 JSON |
+| C3 | 【主線】使用者說明與同意說明（I16） | 專題負責人 | 進行中 | 2026-10-13 | docs/superpowers/specs/user-facing-draft.md | 負責人已確認同意（2026-10-13） | 草稿中【待確認】欄位（保存期限、可存取的人、退出後資料處理等）的實際內容待負責人填入 |
+| T | 【主線】組員測試 T1–T7 | | 取消 | 2026-10-13 | | | 負責人決定（2026-10-13）：不另做組員測試，直接用目前版本進行報告與測試 |
 | A1 | 【強化】安全批次執行器（I1） | | 未開始 | 2026-10-10 | backend/testgen/safe_batch.py, backend/tests/test_safe_batch.py | | 不阻擋實測；規格與效能基準已備 |
 | A2 | 【強化】AI 程式的嚴格檢查（I2） | | 未開始 | 2026-10-10 | backend/executor.py, backend/tests/test_executor.py | | 不阻擋實測 |
 | A3 | 【強化】檢查關接批次執行器、`pool_meta.json`（I3） | | 未開始 | 2026-10-10 | backend/testgen/assess_problem.py | | 依賴 A1 |
@@ -176,12 +176,13 @@
 | K10 | 黑名單是名稱檢查，`getattr(__builtins__, 'open')` 等繞過手法擋不住 | 已知、接受（威脅模型：無意誤用） | 嚴格模式只擋名稱；AI 程式另走子程序＋逾時；覺得可疑的程式先人工看 | 否 | 已知 | | 2026-10-10 |
 | K11 | longest-valid-parentheses 的 `left_scan_only` 一直擋不到（單次提案與大量取樣共 69 筆候選 0 筆；看分數再改僅少數次擋到） | 已知：這種錯誤只在特定括號結構才出錯 | 照 E3 的停止條件；未達標就以「可實測」交付並保持未收斂 | 否 | 已知 | | 2026-10-10 |
 | K12 | longest-substring 的 `r0_tests.json` 是舊基準（18 道），不是目前 `problem.py` 的 17 道 | 已確認（r0 的 source 是 `problem_old.TEST_CASES`，TNR 0.4907） | **負責人已決定（2026-10-10）：不補輪次，直接使用現有 17 道**；匯出工具會拒絕丟掉現有案例；不要對這題的 r0 使用匯出 | 否 | 已知 | 專題負責人 | 2026-10-10 |
-| K13 | best-time-stock 驗收池 `global_min_then_max` 沒有被任何測資擋下（驗收 TNR 0.4167） | 照實記錄；驗收池只跑一次，不回頭改測資 | 若上線前要補強，須在實驗紀錄凍結後另做一輪並標明是實驗外修正 | 否 | 已知 | 專題負責人決定 | 2026-10-13 |
+| K13 | best-time-stock 驗收池 `global_min_then_max` 沒有被任何測資擋下（實驗紀錄：驗收 TNR 0.4167） | 實驗紀錄照實保留 | **已處理（E5，2026-10-13）**：實驗外補強加入 `[3, 2, 4, 3, 5, 1]`，補強後驗收池無漏網（0.4667，實驗外確認、未寫入 rounds/） | 否 | 已處理 | 專題負責人 | 2026-10-13 |
 | K14 | `propose --reasoning-effort` 在 `openai==1.51.0`（requirements.txt 釘的版本）會 TypeError | SDK 太舊，不支援 `reasoning_effort` 參數 | **已修正**：requirements.txt 升到 `openai==1.82.0`；`tests/test_openai_sdk.py` 檢查 SDK 支援 propose 用到的參數；實際呼叫 `ai.get_hint`（gpt-oss-20b）與 `propose.call_model`（gpt-oss-120b、reasoning_effort=low）皆正常 | 否 | 已解決 | Claude（代組員） | 2026-10-13 |
-| K15 | best-time-stock 最終只有 4 道測資 | AI 代審的貪婪規則只收「提高平均抓錯數」的候選；r1、r2 各收 1 筆，r3 0 筆 | 照規則交付；道數少可能讓學生較少看到失敗案例，是否另外補教學用案例由負責人決定 | 否 | 已知 | | 2026-10-13 |
-| K16 | longest-substring 在 2026-10-13 用 pipeline 從 `r0_tests.json`（舊基準 18 道）跑了全自動 4 輪，與 K12「不補輪次、不要從 r0 跑新輪次」的決定不一致 | 為了驗證全自動流程能從頭跑到尾；結果只存在 `rounds/r1–r4`，**沒有寫回 `problem.py`**，線上 18 道不變 | 當成實驗紀錄（同題對照：人工 4 輪訓練池 0.882／驗收池 0.471；全自動 4 輪 0.780／0.566）；**不要匯出到 problem.py**；是否保留由負責人決定 | 否 | 待負責人決定 | 專題負責人 | 2026-10-13 |
+| K15 | best-time-stock 最終只有 4 道測資 | AI 代審的貪婪規則只收「提高平均抓錯數」的候選；r1、r2 各收 1 筆，r3 0 筆 | **已處理（E5，2026-10-13）**：負責人決定補到 10 道（6 道實驗外補強，含教學用邊界案例）；匯出工具會擋下重新匯出 r3（否則會丟掉這 6 道），有測試保護 | 否 | 已處理 | 專題負責人 | 2026-10-13 |
+| K16 | longest-substring 在 2026-10-13 用 pipeline 從 `r0_tests.json` 跑了全自動 4 輪，與 K12「不補輪次」的決定不一致 | 只存在 `rounds/r1–r4`，沒有寫回 `problem.py` | **負責人決定刪除（2026-10-13）**：已刪除 r1–r4、`heldout_final.json`、`pipeline_summary.json`，只保留 `r0_tests.json`；論文不引用這 4 輪的數字 | 否 | 已處理 | 專題負責人 | 2026-10-13 |
 | K17 | Groq 回 413「Request too large」，每分鐘 token 上限 8000 | 已知：prompt 和 `max_completion_tokens` 加總計算；推理強度預設時回覆可用滿 8000 | pipeline 預設 `--reasoning-effort low`、`--max-tokens 4000`；propose 遇到 429 等 60 秒重試一次 | 否 | 已排除 | | 2026-10-13 |
 | K18 | 拿掉人工審核 | 2026-10-13 負責人決定：研究改為驗證全自動流程能否運行 | 原計畫的人工效率指標（細看比例、審核秒數、看理由後改判）不再量測，列為研究限制與未來工作；K8 的「測試階段」標註改為正式做法 | 是（已決定） | 已決定 | 專題負責人 | 2026-10-13 |
+| K19 | 虛擬碼是完整解法的逐步說明，C2 會在題目頁顯示給所有人 | 設計上是給受測者用的 | **負責人決定（2026-10-13）：全部開放**，正式網站上所有人都看得到；不加開關 | 是（已決定） | 已決定 | 專題負責人 | 2026-10-13 |
 <!-- ISSUES:END -->
 
 ## 6. 任務卡
@@ -222,7 +223,7 @@ python -m testgen.pipeline --problem <題目id>          # 提案 → 自動審�
 
 **E3 longest-valid-parentheses**：已有 r0～r2（r2 為 14 道，AI 代審）與 r3 候選（46 道過取樣，可直接審）。從第 3 輪續跑。`left_scan_only` 是已知難點（K11）：照停止條件走，未達標就以「可實測」交付並保持未收斂。大小：中。
 
-**E5 best-time-stock 實驗外補強（等負責人決定後才做）**
+**E5 best-time-stock 實驗外補強（已完成，2026-10-13）**
 - 為什麼：自動審核只收「提高平均 TNR」的候選，這題停在 4 道（K15），驗收池也漏掉 `global_min_then_max`（K13）。品質守門員要求至少 10 道，只是因為這題未收斂才被略過。
 - **實驗紀錄不動**：`rounds/` 底下的檔案（含 `heldout_final.json`）都是實驗結果，不修改、不重跑。補強只改 `problem.py`，並在註解標 `# 實驗外補強`。
 - 建議補的測資（已實測）：`[3, 2, 4, 3, 5, 1]`，答案 3。它擋下 `global_min_then_max`，同時抓到訓練池 4 種、驗收池 3 種錯誤。其餘補教學用的邊界案例到總數 ≥ 10，例如只有 1 天、一路上漲、價格全部相同、最低點在最後一天。expected 一律用參考解 `one_pass.py` 算，不要手算。
@@ -341,7 +342,7 @@ python -m testgen.pipeline --problem <題目id>          # 提案 → 自動審�
 ## 7. 順序與回報
 
 **順序（不訂日期）**
-- 主線：E1–E4、E6 已完成。**現在可以立刻開始：T（組員測試）、B2、E5（負責人決定後）、C3 定稿。** B2 完成 → C2、C1 → M1（合併前準備）→ 對照「下次實測前的檢查清單」。
+- 主線：E1–E6、B2、C1、C2 已完成；T 取消（2026-10-13 負責人決定）。**剩下：C3【待確認】欄位填入、M1（合併前準備）**，再對照「下次實測前的檢查清單」。
 - 強化（有空再做，不阻擋實測）：A1 → A2、A3 → B1 → B3、B4、B5；A4、B6、C4 可穿插。
 
 **回報模板**（放在 PR 描述）
