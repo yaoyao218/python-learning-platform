@@ -65,9 +65,9 @@
 <!-- BOARD:START -->
 | ID | 內容 | 負責 | 狀態 | 最後更新 | 產出檔案 | 證據 | 備註 |
 |---|---|---|---|---|---|---|---|
-| E1 | 【主線】longest-substring 測資確認與記錄 | | 未開始 | 2026-10-10 | | | 見任務卡 E1；已決定不補輪次 |
+| E1 | 【主線】longest-substring 測資確認與記錄 | Claude（代組員） | 完成 | 2026-10-13 | | `run_eval --problem longest-substring`：18 道，TPR 1.0000、訓練池 TNR 0.8889，無漏網；順序：官方範例 3 道在前、其餘由短到長、壓力測資在最後 | 18 道 = 人工迭代 17 道 + main #10 加的 5 萬字元壓力測資（擋 O(n²)，TNR 0.8824→0.8889）；驗收池 0.47 是先前紀錄，已用過一次，本次沒有重跑；不補輪次（K12） |
 | E2 | 【主線】best-time-stock 測資定稿 | | 未開始 | 2026-10-10 | backend/problem.py, backend/testgen/registry.py | | 見任務卡 E2 |
-| E3 | 【主線】longest-valid-parentheses 測資定稿 | | 未開始 | 2026-10-10 | backend/problem.py, backend/testgen/registry.py | | 見任務卡 E3 |
+| E3 | 【主線】longest-valid-parentheses 測資定稿 | Claude（代組員） | 進行中 | 2026-10-13 | backend/problem.py, backend/testgen/registry.py | 第 3 輪 AI 代審：14→45 道，TPR 1.0、TNR 0.5476→0.6593（達成率 0.66），6 種錯誤都至少被擋一次（含 `left_scan_only`，pass rate 0.9556） | 第 4、5 輪需要 `propose`（Groq 金鑰，負責人持有）；尚未寫回 problem.py |
 | E4 | 【主線】最終輪測資寫回 `problem.py` 的匯出工具 | 專題負責人 | 完成 | 2026-10-10 | backend/testgen/export_round_to_problem.py, backend/tests/test_export_round.py | 已實作；15 個單元測試（58 passed）；對三題真實資料 dry-run 過；兩個變異檢查被測試抓到 | E2、E3 用它寫回 problem.py |
 | B2 | 【主線】三題虛擬碼產出與往返檢查（I8） | | 未開始 | 2026-10-10 | backend/testgen/problems/longest-substring/pseudocode.json, backend/testgen/problems/best-time-stock/pseudocode.json, backend/testgen/problems/longest-valid-parentheses/pseudocode.json | | 腳本已可跑，三題各試過一次（k=2）都通過；需正式產出並存檔 |
 | C1 | 【主線】提示加入虛擬碼與 `hint_guard` 擴充（I11） | | 未開始 | 2026-10-10 | backend/ai.py, backend/hint_guard.py, backend/tests/test_ai.py | | 依賴 B2 |
