@@ -1,0 +1,15 @@
+{
+  "problem": "longest-substring",
+  "round": 4,
+  "n_cases": 53,
+  "created_at": "2026-10-13T19:36:26",
+  "note": "驗收池（solutions_heldout）只在最後一輪結束後跑一次；不得依結果回頭修改測資",
+  "TPR": 1.0,
+  "heldout_TNR": 0.566,
+  "heldout_pass_rates": {
+    "if_not_while": 0.3208,
+    "no_max_left": 0.6226,
+    "update_only_on_dup": 0.3585
+  },
+  "heldout_uncaught": []
+}

@@ -1,0 +1,17 @@
+{
+  "problem": "best-time-stock",
+  "round": 3,
+  "n_cases": 4,
+  "created_at": "2026-10-13T19:36:39",
+  "note": "驗收池（solutions_heldout）只在最後一輪結束後跑一次；不得依結果回頭修改測資",
+  "TPR": 1.0,
+  "heldout_TNR": 0.4167,
+  "heldout_pass_rates": {
+    "first_valley_peak": 0.5,
+    "global_min_then_max": 1.0,
+    "init_min_zero": 0.25
+  },
+  "heldout_uncaught": [
+    "global_min_then_max"
+  ]
+}

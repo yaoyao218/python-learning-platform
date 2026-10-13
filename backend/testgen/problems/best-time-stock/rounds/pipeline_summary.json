@@ -1,0 +1,97 @@
+{
+  "problem": "best-time-stock",
+  "created_at": "2026-10-13T19:36:39",
+  "settings": {
+    "max_rounds": 4,
+    "target": 0.85,
+    "n": 12,
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.7,
+    "prompt_version": "v2",
+    "reasoning_effort": "low",
+    "max_tokens": 4000
+  },
+  "final_round": 3,
+  "stop_reason": "stalled",
+  "converged": false,
+  "rounds": [
+    {
+      "round": 0,
+      "n_cases": 2,
+      "TPR": 1.0,
+      "TNR": 0.5,
+      "achievement": 0.6,
+      "uncaught": [
+        "skip_last_day"
+      ]
+    },
+    {
+      "round": 1,
+      "n_cases": 3,
+      "TPR": 1.0,
+      "TNR": 0.5556,
+      "achievement": 0.6667,
+      "uncaught": [],
+      "proposed": 12,
+      "invalid_or_dup": 0,
+      "model": "openai/gpt-oss-120b",
+      "prompt_version": "v2",
+      "reasoning_effort": "low",
+      "api_sec": 3.32,
+      "tokens": 2250,
+      "kept": 1,
+      "target_hit_rate": 0.3333
+    },
+    {
+      "round": 2,
+      "n_cases": 4,
+      "TPR": 1.0,
+      "TNR": 0.5833,
+      "achievement": 0.7,
+      "uncaught": [],
+      "proposed": 12,
+      "invalid_or_dup": 0,
+      "model": "openai/gpt-oss-120b",
+      "prompt_version": "v2",
+      "reasoning_effort": "low",
+      "api_sec": 3.72,
+      "tokens": 3609,
+      "kept": 1,
+      "target_hit_rate": 0.25
+    },
+    {
+      "round": 3,
+      "n_cases": 4,
+      "TPR": 1.0,
+      "TNR": 0.5833,
+      "achievement": 0.7,
+      "uncaught": [],
+      "proposed": 12,
+      "invalid_or_dup": 0,
+      "model": "openai/gpt-oss-120b",
+      "prompt_version": "v2",
+      "reasoning_effort": "low",
+      "api_sec": 2.77,
+      "tokens": 3293,
+      "kept": 0,
+      "target_hit_rate": 0.1667
+    }
+  ],
+  "heldout": {
+    "problem": "best-time-stock",
+    "round": 3,
+    "n_cases": 4,
+    "created_at": "2026-10-13T19:36:39",
+    "note": "驗收池（solutions_heldout）只在最後一輪結束後跑一次；不得依結果回頭修改測資",
+    "TPR": 1.0,
+    "heldout_TNR": 0.4167,
+    "heldout_pass_rates": {
+      "first_valley_peak": 0.5,
+      "global_min_then_max": 1.0,
+      "init_min_zero": 0.25
+    },
+    "heldout_uncaught": [
+      "global_min_then_max"
+    ]
+  }
+}

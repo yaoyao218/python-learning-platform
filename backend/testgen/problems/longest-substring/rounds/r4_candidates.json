@@ -1,0 +1,161 @@
+{
+  "problem": "longest-substring",
+  "round": 4,
+  "pilot": false,
+  "meta": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.7,
+    "reasoning_effort": "low",
+    "max_tokens": 4000,
+    "n_requested": 12,
+    "prompt_version": "v2",
+    "created_at": "2026-10-13T19:35:55",
+    "elapsed_sec": 10.4,
+    "usage": {
+      "completion_tokens": 718,
+      "prompt_tokens": 4105,
+      "total_tokens": 4823,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 73,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": null,
+      "queue_time": 0.058111279,
+      "prompt_time": 0.195878809,
+      "completion_time": 1.522988094,
+      "total_time": 1.718866903
+    }
+  },
+  "stats": {
+    "n_returned": 12,
+    "dropped_expected_fields": 0,
+    "unknown_target_bug": 0,
+    "n_accepted": 12,
+    "n_rejected": 0
+  },
+  "candidates": [
+    {
+      "id": "r4c1",
+      "args": [
+        "\"a b c d e f g h i j\""
+      ],
+      "target_bug": "count_unique",
+      "target_bug_raw": "count_unique",
+      "rationale": "包含空白與多種字符，唯一字符數與最長不重複子串長度不同，會同時觸發 always_len、count_unique、inner_return、no_reset_left、no_return、off_by_one_window"
+    },
+    {
+      "id": "r4c2",
+      "args": [
+        "\"!@# $%^ &*()_+\""
+      ],
+      "target_bug": "count_unique",
+      "target_bug_raw": "count_unique",
+      "rationale": "特殊符號與空格混雜，唯一字符數遠大於正確答案，能抓到所有六種錯誤"
+    },
+    {
+      "id": "r4c3",
+      "args": [
+        "\"abc!abc!abc\""
+      ],
+      "target_bug": "count_unique",
+      "target_bug_raw": "count_unique",
+      "rationale": "重複模式含符號，滑動窗口計算會出錯，觸發所有錯誤類型"
+    },
+    {
+      "id": "r4c4",
+      "args": [
+        "\"12345 67890\""
+      ],
+      "target_bug": "count_unique",
+      "target_bug_raw": "count_unique",
+      "rationale": "數字與空格交錯，唯一字符總數與正確長度不一致，會讓所有錯誤失敗"
+    },
+    {
+      "id": "r4c5",
+      "args": [
+        "\"AaBbCcDdEeFf\""
+      ],
+      "target_bug": "count_unique",
+      "target_bug_raw": "count_unique",
+      "rationale": "大小寫交替，唯一字符數與最長子串長度不同，測出全部六種錯誤"
+    },
+    {
+      "id": "r4c6",
+      "args": [
+        "\"!a!b!c!d!e!\""
+      ],
+      "target_bug": "count_unique",
+      "target_bug_raw": "count_unique",
+      "rationale": "每個字母前都有感嘆號，導致窗口長度計算錯誤，能同時捕獲六種錯誤"
+    },
+    {
+      "id": "r4c7",
+      "args": [
+        "\"ABABABABAB\""
+      ],
+      "target_bug": "count_unique",
+      "target_bug_raw": "count_unique",
+      "rationale": "重複的大小寫字母序列，使得 always_len、count_unique、inner_return、no_reset_left、no_return、off_by_one_window 都會錯誤"
+    },
+    {
+      "id": "r4c8",
+      "args": [
+        "\"xyz xyz xyz\""
+      ],
+      "target_bug": "count_unique",
+      "target_bug_raw": "count_unique",
+      "rationale": "空格分隔的重複子串，使所有錯誤類型均被觸發"
+    },
+    {
+      "id": "r4c9",
+      "args": [
+        "\"!@#!!@#!!@#\""
+      ],
+      "target_bug": "count_unique",
+      "target_bug_raw": "count_unique",
+      "rationale": "符號重複且間有額外符號，會同時讓六種錯誤失敗"
+    },
+    {
+      "id": "r4c10",
+      "args": [
+        "\"a1b2c3d4e5f6\""
+      ],
+      "target_bug": "count_unique",
+      "target_bug_raw": "count_unique",
+      "rationale": "字母與數字交錯，唯一字符數遠大於正確答案，抓到所有錯誤"
+    },
+    {
+      "id": "r4c11",
+      "args": [
+        "\"   abc   def   \""
+      ],
+      "target_bug": "count_unique",
+      "target_bug_raw": "count_unique",
+      "rationale": "前後多空格與內部重複，會同時觸發六種錯誤"
+    },
+    {
+      "id": "r4c12",
+      "args": [
+        "\"!a b!c d!e f\""
+      ],
+      "target_bug": "count_unique",
+      "target_bug_raw": "count_unique",
+      "rationale": "混合空格與感嘆號的模式，使所有六種錯誤都會給出錯誤結果"
+    }
+  ],
+  "rejected": [],
+  "messages": [
+    {
+      "role": "system",
+      "content": "你是協助設計程式題測資的助理。目標是提出「能同時讓盡量多種初學者錯誤寫法答錯、但正確寫法一定答對」的測試輸入。\n評分方式：每筆輸入會拿去測全部的錯誤寫法，看它讓幾種錯誤答錯。一筆輸入讓越多種錯誤答錯越好；只針對單一種錯誤的輸入價值低。\n規則：\n1. 只提供輸入，不要提供預期輸出（預期輸出會由參考正解計算）。\n2. 輸入必須完全符合題目限制。\n3. 輸入長度盡量 ≤ 20，讓學生看到失敗時能看懂。\n4. target_bug 填這筆輸入最難抓、目前通過率最高的那一種錯誤；但整筆輸入的目標是同時抓到盡量多種。\n5. 不要重複目前已有的測資，也不要重複先前被丟棄的測資。\n6. 只回覆一個 JSON 物件，不要有其他文字。"
+    },
+    {
+      "role": "user",
+      "content": "# 題目：Longest Substring Without Repeating Characters\n給一個字串，找「不含重複字元的最長子字串」的長度。例如：\"abcabcbb\" → 3，因為 \"abc\" 是最長的無重複子字串。\n\n## 函式簽名\n```python\nclass Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        # 在此撰寫你的解法\n        pass\n```\n\n## 限制\n- 0 ≤ s.length ≤ 5 × 10⁴\n- s 只包含英文字母、數字、符號與空白字元\n\n## 參考正解\n```python\n\"\"\"S+ 正解 1：經典 sliding window（用 set 維護當前視窗）。\n這是 LeetCode 官方題解推薦寫法，O(n) 時間。\"\"\"\n\n\nclass Solution:\n    def lengthOfLongestSubstring(self, s: str) -> int:\n        seen = set()\n        left = 0\n        best = 0\n        for right in range(len(s)):\n            while s[right] in seen:\n                seen.remove(s[left])\n                left += 1\n            seen.add(s[right])\n            best = max(best, right - left + 1)\n        return best\n```\n\n## 要抓的錯誤寫法（target_bug 必須是下列名稱之一）\n- always_len：\"\"\"S- bug 2：偷懶解，直接回傳字串長度。\n- count_unique：\"\"\"S- bug 1：誤把題目讀成「不重複字元的總數」。\n- inner_return：\"\"\"S- bug 5：在內層迴圈遇到重複就直接 return，沒掃完整個字串。\n- no_reset_left：\"\"\"S- bug 4：遇到重複時 left 直接跳到 right，沒有逐步移除中間字元。\n- no_return：\"\"\"S- bug 6：演算法正確，但忘了 return。\n- off_by_one_window：\"\"\"S- bug 3：sliding window 但長度算錯一個。\n\n## 目前的正式測資（第 3 輪結束時，共 50 筆）\n- #1：'abcabcbb'\n- #2：'bbbbb'\n- #3：'pwwkew'\n- #4：''\n- #5：'a'\n- #6：'au'\n- #7：'aa'\n- #8：'abcdefg'\n- #9：'dvdf'\n- #10：'anviaj'\n- #11：'tmmzuxt'\n- #12：'abba'\n- #13：'aab'\n- #14：'a b'\n- #15：'!@#$%'\n- #16：' '\n- #17：'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...（共 50002 字元）\n- #18：'abcdefghijklmnopqrstuvwxyz'\n- #19：'abcbdefgh'\n- #20：'abcbdefghc'\n- #21：'abcbdefghij'\n- #22：'abcbdefghijk'\n- #23：'abcbdefghijkla'\n- #24：'abcbdefghijklb'\n- #25：'aabbccdde'\n- #26：'aabbccddeff'\n- #27：'abacabadabacabae'\n- #28：'abcaefghijka'\n- #29：'abcbdefg'\n- #30：'aabccddeeff'\n- #31：'abcbdefghi'\n- #32：'aabbccddegg'\n- #33：'pqrspqtuv'\n- #34：'!!@@!!##$$'\n- #35：'aaabbbcccddd'\n- #36：'abcbdefghijklm'\n- #37：'abcbdefghij123'\n- #38：'abcbdefgh!@#'\n- #39：\"'abcbefg'\"\n- #40：\"'abcbefgk'\"\n- #41：\"'abcbefgxyz'\"\n- #42：\"'aabccddeffggh'\"\n- #43：\"'kabcabdefgh'\"\n- #44：\"'abcbdefghijklm'\"\n- #45：\"'abcbdefghijklmno'\"\n- #46：\"'abcbdefghijkaq'\"\n- #47：\"'abcbdefgxyza'\"\n- #48：\"'abcbdefgxyzt'\"\n- #49：\"'aabbccddeeffg'\"\n- #50：\"'abcbdefgklmno'\"\n\n## 每種錯誤目前的狀況（通過率越高 = 越難被抓到）\n- always_len：通過率 16%，被測資 [1, 2, 3, 7, 9, 10, 11, 12, 13, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50] 抓到\n- count_unique：通過率 44%，被測資 [3, 19, 20, 21, 22, 24, 25, 26, 27, 29, 30, 31, 32, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 48, 49, 50] 抓到\n- inner_return：通過率 26%，被測資 [3, 9, 10, 11, 13, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50] 抓到\n- no_reset_left：通過率 50%，被測資 [9, 10, 19, 21, 22, 23, 24, 27, 28, 29, 31, 33, 36, 37, 38, 39, 40, 41, 43, 44, 45, 46, 47, 48, 50] 抓到\n- no_return：通過率 0%，被測資 [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50] 抓到\n- off_by_one_window：通過率 2%，被測資 [1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50] 抓到\n\n## 單筆輸入抓到幾種錯誤（越多越好）\n- #1：抓到 3/6 種\n- #2：抓到 3/6 種\n- #3：抓到 5/6 種\n- #4：抓到 1/6 種\n- #5：抓到 2/6 種\n- #6：抓到 2/6 種\n- #7：抓到 3/6 種\n- #8：抓到 2/6 種\n- #9：抓到 5/6 種\n- #10：抓到 5/6 種\n- #11：抓到 4/6 種\n- #12：抓到 3/6 種\n- #13：抓到 4/6 種\n- #14：抓到 2/6 種\n- #15：抓到 2/6 種\n- #16：抓到 2/6 種\n- #17：抓到 3/6 種\n- #18：抓到 2/6 種\n- #19：抓到 6/6 種\n- #20：抓到 5/6 種\n- #21：抓到 6/6 種\n- #22：抓到 6/6 種\n- #23：抓到 5/6 種\n- #24：抓到 6/6 種\n- #25：抓到 5/6 種\n- #26：抓到 5/6 種\n- #27：抓到 6/6 種\n- #28：抓到 5/6 種\n- #29：抓到 6/6 種\n- #30：抓到 5/6 種\n- #31：抓到 6/6 種\n- #32：抓到 5/6 種\n- #33：抓到 5/6 種\n- #34：抓到 5/6 種\n- #35：抓到 5/6 種\n- #36：抓到 6/6 種\n- #37：抓到 6/6 種\n- #38：抓到 6/6 種\n- #39：抓到 6/6 種\n- #40：抓到 6/6 種\n- #41：抓到 6/6 種\n- #42：抓到 5/6 種\n- #43：抓到 6/6 種\n- #44：抓到 6/6 種\n- #45：抓到 6/6 種\n- #46：抓到 5/6 種\n- #47：抓到 5/6 種\n- #48：抓到 6/6 種\n- #49：抓到 5/6 種\n- #50：抓到 6/6 種\n目前正式測資中，單筆最多抓到 6/6 種。\n\n## 第 3 輪的候選與人工裁決\ncaught 是實際評測抓到的錯誤；decision：keep=採用、drop=丟棄、edit=修改後採用。\n```json\n[\n {\n  \"input\": \"\\\"'abcbefg'\\\"\",\n  \"target_bug\": \"count_unique\",\n  \"caught\": [\n   \"always_len\",\n   \"count_unique\",\n   \"inner_return\",\n   \"no_reset_left\",\n   \"no_return\",\n   \"off_by_one_window\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 6\n },\n {\n  \"input\": \"\\\"'abcbefgk'\\\"\",\n  \"target_bug\": \"count_unique\",\n  \"caught\": [\n   \"always_len\",\n   \"count_unique\",\n   \"inner_return\",\n   \"no_reset_left\",\n   \"no_return\",\n   \"off_by_one_window\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 6\n },\n {\n  \"input\": \"\\\"'abcbefgxyz'\\\"\",\n  \"target_bug\": \"count_unique\",\n  \"caught\": [\n   \"always_len\",\n   \"count_unique\",\n   \"inner_return\",\n   \"no_reset_left\",\n   \"no_return\",\n   \"off_by_one_window\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 6\n },\n {\n  \"input\": \"\\\"'aabccddeffggh'\\\"\",\n  \"target_bug\": \"count_unique\",\n  \"caught\": [\n   \"always_len\",\n   \"count_unique\",\n   \"inner_return\",\n   \"no_return\",\n   \"off_by_one_window\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 5\n },\n {\n  \"input\": \"\\\"'kabcabdefgh'\\\"\",\n  \"target_bug\": \"count_unique\",\n  \"caught\": [\n   \"always_len\",\n   \"count_unique\",\n   \"inner_return\",\n   \"no_reset_left\",\n   \"no_return\",\n   \"off_by_one_window\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 6\n },\n {\n  \"input\": \"\\\"'abcbdefghijklm'\\\"\",\n  \"target_bug\": \"count_unique\",\n  \"caught\": [\n   \"always_len\",\n   \"count_unique\",\n   \"inner_return\",\n   \"no_reset_left\",\n   \"no_return\",\n   \"off_by_one_window\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 6\n },\n {\n  \"input\": \"\\\"'abcbdefghijklmno'\\\"\",\n  \"target_bug\": \"count_unique\",\n  \"caught\": [\n   \"always_len\",\n   \"count_unique\",\n   \"inner_return\",\n   \"no_reset_left\",\n   \"no_return\",\n   \"off_by_one_window\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 6\n },\n {\n  \"input\": \"\\\"'abcbdefghijkaq'\\\"\",\n  \"target_bug\": \"count_unique\",\n  \"caught\": [\n   \"always_len\",\n   \"inner_return\",\n   \"no_reset_left\",\n   \"no_return\",\n   \"off_by_one_window\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 5\n },\n {\n  \"input\": \"\\\"'abcbdefgxyza'\\\"\",\n  \"target_bug\": \"count_unique\",\n  \"caught\": [\n   \"always_len\",\n   \"inner_return\",\n   \"no_reset_left\",\n   \"no_return\",\n   \"off_by_one_window\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 5\n },\n {\n  \"input\": \"\\\"'abcbdefgxyzt'\\\"\",\n  \"target_bug\": \"count_unique\",\n  \"caught\": [\n   \"always_len\",\n   \"count_unique\",\n   \"inner_return\",\n   \"no_reset_left\",\n   \"no_return\",\n   \"off_by_one_window\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 6\n },\n {\n  \"input\": \"\\\"'aabbccddeeffg'\\\"\",\n  \"target_bug\": \"count_unique\",\n  \"caught\": [\n   \"always_len\",\n   \"count_unique\",\n   \"inner_return\",\n   \"no_return\",\n   \"off_by_one_window\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 5\n },\n {\n  \"input\": \"\\\"'abcbdefgklmno'\\\"\",\n  \"target_bug\": \"count_unique\",\n  \"caught\": [\n   \"always_len\",\n   \"count_unique\",\n   \"inner_return\",\n   \"no_reset_left\",\n   \"no_return\",\n   \"off_by_one_window\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 6\n }\n]\n```\n上一輪候選中，單筆最多抓到 6/6 種。\n\n## 請回覆\n提出 12 筆新的候選測資。目標是讓「單筆輸入同時抓到的錯誤種類數」盡量高，至少要超過目前的 6 種；只抓到一兩種的輸入價值低。格式：\n```json\n{\"candidates\": [{\"args\": [<第 1 個參數>], \"target_bug\": \"<錯誤名稱>\", \"rationale\": \"<一句話說明為什麼這筆會讓它答錯>\"}]}\n```\nargs 是呼叫 lengthOfLongestSubstring 時的位置參數列表（本題 1 個參數）。不要提供預期輸出。"
+    }
+  ],
+  "raw_response": "{\"candidates\":[{\"args\":[\"\\\"a b c d e f g h i j\\\"\"],\"target_bug\":\"count_unique\",\"rationale\":\"包含空白與多種字符，唯一字符數與最長不重複子串長度不同，會同時觸發 always_len、count_unique、inner_return、no_reset_left、no_return、off_by_one_window\"},{\"args\":[\"\\\"!@# $%^ &*()_+\\\"\"],\"target_bug\":\"count_unique\",\"rationale\":\"特殊符號與空格混雜，唯一字符數遠大於正確答案，能抓到所有六種錯誤\"},{\"args\":[\"\\\"abc!abc!abc\\\"\"],\"target_bug\":\"count_unique\",\"rationale\":\"重複模式含符號，滑動窗口計算會出錯，觸發所有錯誤類型\"},{\"args\":[\"\\\"12345 67890\\\"\"],\"target_bug\":\"count_unique\",\"rationale\":\"數字與空格交錯，唯一字符總數與正確長度不一致，會讓所有錯誤失敗\"},{\"args\":[\"\\\"AaBbCcDdEeFf\\\"\"],\"target_bug\":\"count_unique\",\"rationale\":\"大小寫交替，唯一字符數與最長子串長度不同，測出全部六種錯誤\"},{\"args\":[\"\\\"!a!b!c!d!e!\\\"\"],\"target_bug\":\"count_unique\",\"rationale\":\"每個字母前都有感嘆號，導致窗口長度計算錯誤，能同時捕獲六種錯誤\"},{\"args\":[\"\\\"ABABABABAB\\\"\"],\"target_bug\":\"count_unique\",\"rationale\":\"重複的大小寫字母序列，使得 always_len、count_unique、inner_return、no_reset_left、no_return、off_by_one_window 都會錯誤\"},{\"args\":[\"\\\"xyz xyz xyz\\\"\"],\"target_bug\":\"count_unique\",\"rationale\":\"空格分隔的重複子串，使所有錯誤類型均被觸發\"},{\"args\":[\"\\\"!@#!!@#!!@#\\\"\"],\"target_bug\":\"count_unique\",\"rationale\":\"符號重複且間有額外符號，會同時讓六種錯誤失敗\"},{\"args\":[\"\\\"a1b2c3d4e5f6\\\"\"],\"target_bug\":\"count_unique\",\"rationale\":\"字母與數字交錯，唯一字符數遠大於正確答案，抓到所有錯誤\"},{\"args\":[\"\\\"   abc   def   \\\"\"],\"target_bug\":\"count_unique\",\"rationale\":\"前後多空格與內部重複，會同時觸發六種錯誤\"},{\"args\":[\"\\\"!a b!c d!e f\\\"\"],\"target_bug\":\"count_unique\",\"rationale\":\"混合空格與感嘆號的模式，使所有六種錯誤都會給出錯誤結果\"}]}"
+}

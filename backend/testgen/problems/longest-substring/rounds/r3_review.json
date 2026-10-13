@@ -1,0 +1,300 @@
+{
+  "problem": "longest-substring",
+  "round": 3,
+  "reviewer": "AI（自動審核，非人工）",
+  "rule": "只看 TPR/TNR 數字，不看 AI 理由；上一輪正式測資全保留，候選以貪婪法依 TNR 加入",
+  "created_at": "2026-10-13T19:34:15",
+  "trace": [
+    [
+      "start",
+      null,
+      0.7149
+    ],
+    [
+      "add",
+      "r3c1",
+      0.7222
+    ],
+    [
+      "add",
+      "r3c2",
+      0.7292
+    ],
+    [
+      "add",
+      "r3c3",
+      0.7358
+    ],
+    [
+      "add",
+      "r3c5",
+      0.7421
+    ],
+    [
+      "add",
+      "r3c6",
+      0.7481
+    ],
+    [
+      "add",
+      "r3c7",
+      0.7538
+    ],
+    [
+      "add",
+      "r3c10",
+      0.7593
+    ],
+    [
+      "add",
+      "r3c12",
+      0.7645
+    ],
+    [
+      "add",
+      "r3c4",
+      0.766
+    ],
+    [
+      "add",
+      "r3c8",
+      0.7674
+    ],
+    [
+      "add",
+      "r3c9",
+      0.7687
+    ],
+    [
+      "add",
+      "r3c11",
+      0.77
+    ]
+  ],
+  "items": [
+    {
+      "id": "r3c1",
+      "args": [
+        "'abcbefg'"
+      ],
+      "expected": 6,
+      "target_bug": "count_unique",
+      "kills": [
+        "always_len",
+        "count_unique",
+        "inner_return",
+        "no_reset_left",
+        "no_return",
+        "off_by_one_window"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 6/6（always_len, count_unique, inner_return, no_reset_left, no_return, off_by_one_window）；移除它 TNR 0.7653→0.7700，保留可提高密度"
+    },
+    {
+      "id": "r3c2",
+      "args": [
+        "'abcbefgk'"
+      ],
+      "expected": 7,
+      "target_bug": "count_unique",
+      "kills": [
+        "always_len",
+        "count_unique",
+        "inner_return",
+        "no_reset_left",
+        "no_return",
+        "off_by_one_window"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 6/6（always_len, count_unique, inner_return, no_reset_left, no_return, off_by_one_window）；移除它 TNR 0.7653→0.7700，保留可提高密度"
+    },
+    {
+      "id": "r3c3",
+      "args": [
+        "'abcbefgxyz'"
+      ],
+      "expected": 9,
+      "target_bug": "count_unique",
+      "kills": [
+        "always_len",
+        "count_unique",
+        "inner_return",
+        "no_reset_left",
+        "no_return",
+        "off_by_one_window"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 6/6（always_len, count_unique, inner_return, no_reset_left, no_return, off_by_one_window）；移除它 TNR 0.7653→0.7700，保留可提高密度"
+    },
+    {
+      "id": "r3c4",
+      "args": [
+        "'aabccddeffggh'"
+      ],
+      "expected": 3,
+      "target_bug": "count_unique",
+      "kills": [
+        "always_len",
+        "count_unique",
+        "inner_return",
+        "no_return",
+        "off_by_one_window"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 5/6（always_len, count_unique, inner_return, no_return, off_by_one_window）；移除它 TNR 0.7687→0.7700，保留可提高密度"
+    },
+    {
+      "id": "r3c5",
+      "args": [
+        "'kabcabdefgh'"
+      ],
+      "expected": 9,
+      "target_bug": "count_unique",
+      "kills": [
+        "always_len",
+        "count_unique",
+        "inner_return",
+        "no_reset_left",
+        "no_return",
+        "off_by_one_window"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 6/6（always_len, count_unique, inner_return, no_reset_left, no_return, off_by_one_window）；移除它 TNR 0.7653→0.7700，保留可提高密度"
+    },
+    {
+      "id": "r3c6",
+      "args": [
+        "'abcbdefghijklm'"
+      ],
+      "expected": 13,
+      "target_bug": "count_unique",
+      "kills": [
+        "always_len",
+        "count_unique",
+        "inner_return",
+        "no_reset_left",
+        "no_return",
+        "off_by_one_window"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 6/6（always_len, count_unique, inner_return, no_reset_left, no_return, off_by_one_window）；移除它 TNR 0.7653→0.7700，保留可提高密度"
+    },
+    {
+      "id": "r3c7",
+      "args": [
+        "'abcbdefghijklmno'"
+      ],
+      "expected": 15,
+      "target_bug": "count_unique",
+      "kills": [
+        "always_len",
+        "count_unique",
+        "inner_return",
+        "no_reset_left",
+        "no_return",
+        "off_by_one_window"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 6/6（always_len, count_unique, inner_return, no_reset_left, no_return, off_by_one_window）；移除它 TNR 0.7653→0.7700，保留可提高密度"
+    },
+    {
+      "id": "r3c8",
+      "args": [
+        "'abcbdefghijkaq'"
+      ],
+      "expected": 13,
+      "target_bug": "count_unique",
+      "kills": [
+        "always_len",
+        "inner_return",
+        "no_reset_left",
+        "no_return",
+        "off_by_one_window"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 5/6（always_len, inner_return, no_reset_left, no_return, off_by_one_window）；移除它 TNR 0.7687→0.7700，保留可提高密度"
+    },
+    {
+      "id": "r3c9",
+      "args": [
+        "'abcbdefgxyza'"
+      ],
+      "expected": 11,
+      "target_bug": "count_unique",
+      "kills": [
+        "always_len",
+        "inner_return",
+        "no_reset_left",
+        "no_return",
+        "off_by_one_window"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 5/6（always_len, inner_return, no_reset_left, no_return, off_by_one_window）；移除它 TNR 0.7687→0.7700，保留可提高密度"
+    },
+    {
+      "id": "r3c10",
+      "args": [
+        "'abcbdefgxyzt'"
+      ],
+      "expected": 11,
+      "target_bug": "count_unique",
+      "kills": [
+        "always_len",
+        "count_unique",
+        "inner_return",
+        "no_reset_left",
+        "no_return",
+        "off_by_one_window"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 6/6（always_len, count_unique, inner_return, no_reset_left, no_return, off_by_one_window）；移除它 TNR 0.7653→0.7700，保留可提高密度"
+    },
+    {
+      "id": "r3c11",
+      "args": [
+        "'aabbccddeeffg'"
+      ],
+      "expected": 3,
+      "target_bug": "count_unique",
+      "kills": [
+        "always_len",
+        "count_unique",
+        "inner_return",
+        "no_return",
+        "off_by_one_window"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 5/6（always_len, count_unique, inner_return, no_return, off_by_one_window）；移除它 TNR 0.7687→0.7700，保留可提高密度"
+    },
+    {
+      "id": "r3c12",
+      "args": [
+        "'abcbdefgklmno'"
+      ],
+      "expected": 12,
+      "target_bug": "count_unique",
+      "kills": [
+        "always_len",
+        "count_unique",
+        "inner_return",
+        "no_reset_left",
+        "no_return",
+        "off_by_one_window"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 6/6（always_len, count_unique, inner_return, no_reset_left, no_return, off_by_one_window）；移除它 TNR 0.7653→0.7700，保留可提高密度"
+    }
+  ]
+}
