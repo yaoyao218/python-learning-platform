@@ -189,7 +189,7 @@ async def get_hint(
         from masking import sanitize_hint  # noqa: PLC0415
         content = await sanitize_hint(content, problem_id, problem_title, client, _MODEL)
 
-    safe_hint, problems = guard(content)
+    safe_hint, problems = guard(content, code_blocks_vetted=problem_id is not None)
     if problems:
         _logger.warning("AI hint failed quality guard, using fallback: %s", problems)
     return safe_hint
