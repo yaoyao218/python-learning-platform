@@ -51,6 +51,20 @@ SYSTEM_PROMPT = """你是協助設計程式題測資的助理。目標是提出�
 5. 不要重複目前已有的測資。
 6. 只回覆一個 JSON 物件，不要有其他文字。"""
 
+# v2：把目標明講成「一筆輸入同時抓到的錯誤種類數」。v1 的 target_bug 設計傾向每筆只鎖定一種錯誤，
+# 試跑第 2 輪時單筆最多只抓到 4/6（見 rounds/ 下的紀錄）。v1 保留，供重現。
+SYSTEM_PROMPT_V2 = """你是協助設計程式題測資的助理。目標是提出「能同時讓盡量多種初學者錯誤寫法答錯、但正確寫法一定答對」的測試輸入。
+評分方式：每筆輸入會拿去測全部的錯誤寫法，看它讓幾種錯誤答錯。一筆輸入讓越多種錯誤答錯越好；只針對單一種錯誤的輸入價值低。
+規則：
+1. 只提供輸入，不要提供預期輸出（預期輸出會由參考正解計算）。
+2. 輸入必須完全符合題目限制。
+3. 輸入長度盡量 ≤ 20，讓學生看到失敗時能看懂。
+4. target_bug 填這筆輸入最難抓、目前通過率最高的那一種錯誤；但整筆輸入的目標是同時抓到盡量多種。
+5. 不要重複目前已有的測資，也不要重複先前被丟棄的測資。
+6. 只回覆一個 JSON 物件，不要有其他文字。"""
+
+SYSTEM_PROMPTS = {"v1": SYSTEM_PROMPT, "v2": SYSTEM_PROMPT_V2}
+
 
 def bug_descriptions(problem_id: str) -> dict[str, str]:
     out = {}
@@ -66,24 +80,27 @@ def show_args(args: tuple) -> str:
     return s if len(s) <= _DISPLAY_MAX else s[:_DISPLAY_MAX] + f"...（共 {len(s)} 字元）"
 
 
-def previous_round_record(problem_id: str, n: int) -> list[dict] | None:
-    """第 n 輪（n ≥ 1）每筆候選的評測與人工裁決，結構化。"""
+def previous_round_record(problem_id: str, n: int, with_count: bool = False) -> list[dict] | None:
+    """第 n 輪（n ≥ 1）每筆候選的評測與人工裁決，結構化。with_count：另附抓到的錯誤種類數（v2）。"""
     review_path = rounds.round_path(problem_id, n, "review")
     if not review_path.exists():
         raise SystemExit(f"找不到 {review_path.relative_to(BACKEND)}：第 {n} 輪還沒審核完，不能提第 {n + 1} 輪")
     review = json.loads(review_path.read_text(encoding="utf-8"))
-    return [
-        {
+    out = []
+    for item in review["items"]:
+        rec = {
             "input": show_args(tuple(item["args"])),
             "target_bug": item.get("target_bug"),
             "caught": item.get("kills", []),
             "decision": item.get("decision"),
         }
-        for item in review["items"]
-    ]
+        if with_count:
+            rec["n_caught"] = len(rec["caught"])
+        out.append(rec)
+    return out
 
 
-def build_messages(problem_id: str, n: int, n_candidates: int) -> list[dict]:
+def build_messages(problem_id: str, n: int, n_candidates: int, version: str = "v2") -> list[dict]:
     prob = PROBLEMS[problem_id]
     prev = rounds.load_round_tests(problem_id, n - 1)
     ev = prev["evaluation"]
@@ -113,25 +130,46 @@ def build_messages(problem_id: str, n: int, n_candidates: int) -> list[dict]:
         *[f"- {name}：通過率 {rate * 100:.0f}%，被測資 {ev['S_minus_caught_by'][name] or '（沒有任何一筆）'} 抓到"
           for name, rate in ev["S_minus_pass_rates"].items()],
     ]
+    v2 = version == "v2"
+    max_kills = 0
+    if v2:
+        total = len(ev["S_minus_caught_by"])
+        per_case = {c["index"]: 0 for c in prev["cases"]}
+        for idxs in ev["S_minus_caught_by"].values():
+            for i in idxs:
+                per_case[i] = per_case.get(i, 0) + 1
+        max_kills = max(per_case.values(), default=0)
+        lines += [
+            "",
+            "## 單筆輸入抓到幾種錯誤（越多越好）",
+            *[f"- #{i}：抓到 {k}/{total} 種" for i, k in sorted(per_case.items())],
+            f"目前正式測資中，單筆最多抓到 {max_kills}/{total} 種。",
+        ]
     if n >= 2:
+        record = previous_round_record(problem_id, n - 1, with_count=v2)
         lines += [
             "",
             f"## 第 {n - 1} 輪的候選與人工裁決",
             "caught 是實際評測抓到的錯誤；decision：keep=採用、drop=丟棄、edit=修改後採用。",
-            "```json", json.dumps(previous_round_record(problem_id, n - 1), ensure_ascii=False, indent=1), "```",
+            "```json", json.dumps(record, ensure_ascii=False, indent=1), "```",
         ]
+        if v2:
+            lines.append(f"上一輪候選中，單筆最多抓到 {max((r['n_caught'] for r in record), default=0)}/{total} 種。")
     n_args = len(prev["cases"][0]["args"]) if prev["cases"] and "args" in prev["cases"][0] else 1
+    ask = (f"提出 {n_candidates} 筆新的候選測資。目標是讓「單筆輸入同時抓到的錯誤種類數」盡量高，"
+           f"至少要超過目前的 {max_kills} 種；只抓到一兩種的輸入價值低。格式："
+           if v2 else f"提出 {n_candidates} 筆新的候選測資，優先鎖定通過率高、還沒被抓到的錯誤。格式：")
     lines += [
         "",
         "## 請回覆",
-        f"提出 {n_candidates} 筆新的候選測資，優先鎖定通過率高、還沒被抓到的錯誤。格式：",
+        ask,
         "```json",
         '{"candidates": [{"args": [<第 1 個參數>' + (", ..." if n_args > 1 else "") + '], '
         '"target_bug": "<錯誤名稱>", "rationale": "<一句話說明為什麼這筆會讓它答錯>"}]}',
         "```",
         f"args 是呼叫 {prob['method']} 時的位置參數列表（本題 {n_args} 個參數）。不要提供預期輸出。",
     ]
-    return [{"role": "system", "content": SYSTEM_PROMPT},
+    return [{"role": "system", "content": SYSTEM_PROMPTS[version]},
             {"role": "user", "content": "\n".join(lines)}]
 
 
@@ -160,6 +198,13 @@ def parse_candidates(problem_id: str, raw: str, n: int) -> tuple[list[dict], lis
     bugs = set(bug_descriptions(problem_id))
     prev_cases = rounds.load_round_tests(problem_id, n - 1)["cases"]
     existing = {repr(c["args"] if "args" in c else (c["input"],)) for c in prev_cases}
+    dropped = set()                      # 先前各輪被審核丟棄的輸入，不要再提
+    for k in range(1, n):
+        rp = rounds.round_path(problem_id, k, "review")
+        if rp.exists():
+            for it in json.loads(rp.read_text(encoding="utf-8"))["items"]:
+                if it.get("decision") == "drop":
+                    dropped.add(repr(tuple(it["args"])))
 
     stats = {"n_returned": 0, "dropped_expected_fields": 0, "unknown_target_bug": 0}
     try:
@@ -183,6 +228,8 @@ def parse_candidates(problem_id: str, raw: str, n: int) -> tuple[list[dict], lis
             rejected.append({"item": item, "reason": f"不合法：{reason}"})
         elif key in existing:
             rejected.append({"item": item, "reason": "與目前正式測資重複"})
+        elif key in dropped:
+            rejected.append({"item": item, "reason": "與先前被丟棄的候選重複"})
         elif key in seen:
             rejected.append({"item": item, "reason": "與本輪其他候選重複"})
         else:
@@ -210,6 +257,8 @@ def main():
     p.add_argument("--temperature", type=float, default=0.7)
     p.add_argument("--reasoning-effort", default=None, choices=["low", "medium", "high"],
                    help="推理模型（如 gpt-oss）的推理強度；不給就用模型預設")
+    p.add_argument("--prompt-version", default="v2", choices=list(SYSTEM_PROMPTS),
+                   help="提示版本。v1=每筆鎖定一種錯誤；v2=目標是單筆輸入同時抓到的錯誤種類數（預設）")
     p.add_argument("--dry-run", action="store_true", help="只印出 prompt，不呼叫 API")
     p.add_argument("--force", action="store_true", help="這一輪已有提案時重新提案（舊檔改名保留）")
     p.add_argument("--pilot", action="store_true",
@@ -218,7 +267,7 @@ def main():
     if args.round < 1:
         p.error("--round 必須 ≥ 1（第 0 輪用 rounds.py init 建立）")
 
-    messages = build_messages(args.problem, args.round, args.n)
+    messages = build_messages(args.problem, args.round, args.n, args.prompt_version)
     if args.dry_run:
         for m in messages:
             print(f"----- {m['role']} -----\n{m['content']}\n")
@@ -249,6 +298,7 @@ def main():
         "meta": {
             "provider": args.provider, "model": args.model, "temperature": args.temperature,
             "reasoning_effort": args.reasoning_effort, "n_requested": args.n,
+            "prompt_version": args.prompt_version,
             "created_at": datetime.now().isoformat(timespec="seconds"),
             "elapsed_sec": elapsed, "usage": usage,
         },
