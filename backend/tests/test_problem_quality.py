@@ -138,6 +138,7 @@ def test_stress_cases_are_last():
 
 def test_quadratic_solution_times_out_on_stress_case():
     """沒有提早 break 的 O(n²) 解法，應該在壓力測資超時。"""
+    from executor import run_code  # 放在函式內：feat/ai-assisted-testgen 拿掉了模組層級的 import
     mod = importlib.import_module(PROBLEM_MODULE)
     stress = [tc for tc in mod.TEST_CASES if tc["is_stress"]]
 
