@@ -64,7 +64,7 @@ async def submit(req: SubmitRequest):
 
     t0 = time.perf_counter()
     results = await judge(req.code, req.problem_id)
-    hint = await get_hint(results, title, context)
+    hint = await get_hint(results, title, context, problem_id=req.problem_id)
     elapsed_ms = (time.perf_counter() - t0) * 1000
     # 紀錄這次提交（只在 TESTGEN_SESSION_LOG=1 時實際寫檔）
     if LOG_ENABLED:

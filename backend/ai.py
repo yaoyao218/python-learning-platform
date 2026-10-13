@@ -142,8 +142,20 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str) 
 - 200 字以內"""
 
 
-async def get_hint(results: list[dict], problem_title: str, problem_context: str) -> str | None:
-    """呼叫 Groq/Gemini API 取得 AI 提示。全部通過時回傳 None。API 失敗時回傳 None。"""
+async def get_hint(
+    results: list[dict],
+    problem_title: str,
+    problem_context: str,
+    problem_id: str | None = None,
+) -> str | None:
+    """呼叫 Groq/Gemini API 取得 AI 提示。全部通過時回傳 None。API 失敗時回傳 None。
+
+    Args:
+        results:         judge() 回傳的測資結果清單
+        problem_title:   題目名稱
+        problem_context: 純文字題意（給 AI 當上下文）
+        problem_id:      題目 ID；提供時對 AI 回覆執行遮罩檢查，None 則跳過（向下相容）
+    """
     prompt = build_prompt(results, problem_title, problem_context)
     if prompt is None:
         return None
@@ -156,6 +168,13 @@ async def get_hint(results: list[dict], problem_title: str, problem_context: str
         content = response.choices[0].message.content
         if content is None:
             return None
-        return content
     except openai.OpenAIError:
         return None
+
+    # 有 problem_id 時執行遮罩檢查；本地 import 避免循環依賴
+    # （masking.py 不得在模組層級 import ai.py）
+    if problem_id is not None:
+        from masking import sanitize_hint  # noqa: PLC0415
+        content = await sanitize_hint(content, problem_id, problem_title, client, _MODEL)
+
+    return content
