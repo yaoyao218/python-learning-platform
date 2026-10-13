@@ -274,3 +274,82 @@ async def test_missing_question_still_blocked_with_masking():
 
     from hint_guard import FALLBACK_HINT
     assert hint == FALLBACK_HINT
+
+
+# --- C1：提示加入虛擬碼（題目材料；學生程式碼仍然不給 AI）---
+
+import inspect  # noqa: E402
+
+from hint_guard import check_hint_quality, guard  # noqa: E402
+from problem import PROBLEMS  # noqa: E402
+
+PSEUDO = PROBLEMS["best-time-stock"]["pseudocode"]["text"]
+
+
+def test_build_prompt_has_no_student_code_parameter():
+    params = set(inspect.signature(build_prompt).parameters)
+    assert params == {"results", "problem_title", "problem_context", "pseudocode"}
+
+
+def test_build_prompt_wrong_answer_includes_pseudocode_and_step_rules():
+    results = [make_result(1, "abba", 2, "3", False)]
+    prompt = build_prompt(results, TITLE, CONTEXT, pseudocode=PSEUDO)
+    assert PSEUDO in prompt
+    assert "步驟編號" in prompt
+    assert "不要整段複述虛擬碼" in prompt
+
+
+def test_build_prompt_without_pseudocode_is_unchanged():
+    results = [make_result(1, "abba", 2, "3", False)]
+    assert build_prompt(results, TITLE, CONTEXT) == build_prompt(results, TITLE, CONTEXT, pseudocode=None)
+    assert "虛擬碼" not in build_prompt(results, TITLE, CONTEXT)
+
+
+@pytest.mark.parametrize("pid", ["longest-substring", "best-time-stock", "longest-valid-parentheses"])
+def test_pseudocode_itself_not_mistaken_for_code(pid):
+    text = PROBLEMS[pid]["pseudocode"]["text"]
+    problems = check_hint_quality(text + "\n你覺得呢？", pseudocode=text)
+    assert not [p for p in problems if "程式碼" in p or "def" in p or "class" in p]
+
+
+def test_hint_citing_a_step_passes_guard():
+    hint = "想想看第 4 步：當 p 比 lowest 小時，lowest 會變成多少？之後的利潤要怎麼算？"
+    assert guard(hint, pseudocode=PSEUDO) == (hint, [])
+
+
+def test_hint_restating_whole_pseudocode_is_blocked():
+    hint = "照著做就好：\n" + PSEUDO + "\n這樣懂了嗎？"
+    safe, problems = guard(hint, pseudocode=PSEUDO)
+    assert safe != hint
+    assert any("複述虛擬碼" in p for p in problems)
+
+
+@pytest.mark.asyncio
+async def test_get_hint_passes_pseudocode_to_prompt_and_guard():
+    results = [make_result(1, [2, 4, 1], 2, "0", False)]
+    reply = "照著做：\n" + PSEUDO + "\n懂了嗎？"
+    with patch("ai.client.chat.completions.create", new_callable=AsyncMock, return_value=_llm_reply(reply)) as mock_create:
+        hint = await get_hint(results, TITLE, CONTEXT, pseudocode=PSEUDO)
+    assert PSEUDO in mock_create.call_args.kwargs["messages"][0]["content"]
+    assert hint != reply
+
+
+@pytest.mark.asyncio
+async def test_get_hint_uses_low_reasoning_effort_on_gpt_oss():
+    """gpt-oss 預設推理會把 token 用光、回傳空內容（K3）；提示一律用 low。"""
+    results = [make_result(1, "abba", 2, "3", False)]
+    with patch("ai._MODEL", "openai/gpt-oss-20b"), \
+         patch("ai.client.chat.completions.create", new_callable=AsyncMock,
+               return_value=_llm_reply("想想看？")) as mock_create:
+        await get_hint(results, TITLE, CONTEXT)
+    assert mock_create.call_args.kwargs.get("reasoning_effort") == "low"
+
+
+@pytest.mark.asyncio
+async def test_get_hint_no_reasoning_effort_on_gemini():
+    results = [make_result(1, "abba", 2, "3", False)]
+    with patch("ai._MODEL", "gemini-2.0-flash"), \
+         patch("ai.client.chat.completions.create", new_callable=AsyncMock,
+               return_value=_llm_reply("想想看？")) as mock_create:
+        await get_hint(results, TITLE, CONTEXT)
+    assert "reasoning_effort" not in mock_create.call_args.kwargs
