@@ -1,9 +1,14 @@
+import logging
 import os
 import openai
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 
+from hint_guard import guard
+
 load_dotenv()
+
+_logger = logging.getLogger(__name__)
 
 _api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GROQ_API_KEY", "")
 _use_gemini = bool(os.environ.get("GEMINI_API_KEY"))
@@ -22,6 +27,7 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str) 
     - 全部通過 → 回傳 None
     - syntax_error  → 只送 stderr
     - runtime_error → 送觸發錯誤的 input + stderr
+    - timeout       → 壓力測資超時談效率；一般測資超時談無窮迴圈（沒有行號可看）
     - no_return     → 固定提示
     - wrong_answer  → 送所有失敗的 (input, expected, actual)，蘇格拉底式
 
@@ -67,6 +73,30 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str) 
 
 規則：不要給出修正後的程式碼。繁體中文，語氣友善鼓勵。150 字以內。"""
 
+    if error_type == "timeout":
+        if first_fail.get("is_stress"):
+            situation = "學生程式在一筆很長的壓力測資上超過時間限制，較短的測資都沒有超時，代表寫法正確但效率不夠。"
+            task = """1. 用白話文說明「超過時間限制」代表程式跑太慢，不是答案錯
+2. 引導學生估算：輸入長度變成幾萬時，自己的寫法大概要做幾次操作
+3. 用一個問題引導學生思考：「有哪些重複的計算，可以記下來不用每次重算？」"""
+        else:
+            situation = f"學生程式在一筆很短的測資（輸入：{first_fail['input']!r}）上就超過時間限制，很可能是無窮迴圈。"
+            task = """1. 用白話文說明短輸入也超時，通常代表迴圈停不下來（無窮迴圈）
+2. 引導學生檢查迴圈的結束條件，以及每一輪有沒有讓變數往結束的方向前進
+3. 用一個問題引導學生，拿這筆輸入手動跑幾輪迴圈看看"""
+        return f"""你是一個程式學習助教，幫助大一學生學習 Python。
+
+題目：{problem_title}
+（{problem_context}）
+
+{situation}
+超時沒有錯誤訊息，也沒有行號可以看。
+
+請依序做三件事：
+{task}
+
+規則：不要給出修正後的程式碼或完整演算法。繁體中文，語氣友善鼓勵。150 字以內。"""
+
     if error_type == "no_return":
         return f"""你是一個程式學習助教，幫助大一學生學習 Python。
 
@@ -87,9 +117,11 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str) 
 
     n_fail = len(failed)
     n_total = len(results)
+    # 只放答錯的測資：後面若有超時或執行錯誤，Actual 是 None，會干擾數值 pattern 分析
     failed_summary = "\n".join(
         f"- Input: {truncate(r['input'])} / Expected: {r['expected']} / Actual: {truncate(r['actual'])}"
         for r in failed
+        if r["error_type"] is None
     )
 
     return f"""你是一個程式學習助教，專門幫助大一學生學習解題思維。
@@ -97,7 +129,7 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str) 
 題目：{problem_title}
 定義：{problem_context}
 
-學生有 {n_fail}/{n_total} 筆測資失敗，以下是全部失敗案例：
+學生有 {n_fail}/{n_total} 筆測資失敗，以下是其中答錯（有輸出但數值不對）的案例：
 {failed_summary}
 
 請先分析這些失敗案例的數值 pattern（不要輸出分析過程），
@@ -115,8 +147,26 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str) 
 - 200 字以內"""
 
 
-async def get_hint(results: list[dict], problem_title: str, problem_context: str) -> str | None:
-    """呼叫 Groq/Gemini API 取得 AI 提示。全部通過時回傳 None。API 失敗時回傳 None。"""
+async def get_hint(
+    results: list[dict],
+    problem_title: str,
+    problem_context: str,
+    problem_id: str | None = None,
+) -> str | None:
+    """呼叫 Groq/Gemini API 取得 AI 提示。全部通過時回傳 None。API 失敗時回傳 None。
+
+    AI 回覆在送到學生畫面前會經過兩道輸出端檢查：
+      1. masking（有 problem_id 時）：提示裡的程式碼區塊若能通過測資，
+         把關鍵邏輯遮成 # TODO，其餘文字保留
+      2. hint_guard：檢查程式碼區塊以外的文字（AI 沒用 ``` 包起來的程式碼）
+         和結尾問句，不合格就整段換成安全的替代文字
+
+    Args:
+        results:         judge() 回傳的測資結果清單
+        problem_title:   題目名稱
+        problem_context: 純文字題意（給 AI 當上下文）
+        problem_id:      題目 ID；提供時對 AI 回覆執行遮罩檢查，None 則跳過（向下相容）
+    """
     prompt = build_prompt(results, problem_title, problem_context)
     if prompt is None:
         return None
@@ -129,6 +179,17 @@ async def get_hint(results: list[dict], problem_title: str, problem_context: str
         content = response.choices[0].message.content
         if content is None:
             return None
-        return content
-    except openai.OpenAIError:
+    except openai.OpenAIError as e:
+        _logger.warning("AI hint request failed (%s): %s", _MODEL, e)
         return None
+
+    # 有 problem_id 時執行遮罩檢查；本地 import 避免循環依賴
+    # （masking.py 不得在模組層級 import ai.py）
+    if problem_id is not None:
+        from masking import sanitize_hint  # noqa: PLC0415
+        content = await sanitize_hint(content, problem_id, problem_title, client, _MODEL)
+
+    safe_hint, problems = guard(content, code_blocks_vetted=problem_id is not None)
+    if problems:
+        _logger.warning("AI hint failed quality guard, using fallback: %s", problems)
+    return safe_hint

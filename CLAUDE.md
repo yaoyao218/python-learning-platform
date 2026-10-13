@@ -290,3 +290,19 @@ if LOG_ENABLED:
 - `backend/testgen/PROGRESS.md` — 完整實驗紀錄、四輪迭代的洞察，可當畢業專題報告章節初稿
 - `backend/testgen/QUICKSTART.md` — 三道關卡的標準操作流程
 - `backend/testgen/TESTING_GUIDE.md` — 前端手動測試 6 段 bug 解的清單
+
+---
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live as GitHub issues on `yaoyao218/python-learning-platform`, managed with the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five-role vocabulary (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `CONTEXT.md` plus `docs/adr/` at the repo root, created lazily when needed. See `docs/agents/domain.md`.

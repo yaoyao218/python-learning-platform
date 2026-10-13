@@ -52,6 +52,7 @@ async def _run_one(code: str, method: str, tc: dict) -> dict:
         "passed": passed,
         "error_type": exec_result["error_type"],
         "stderr": exec_result["stderr"],
+        "is_stress": tc["is_stress"],
     }
 
 
@@ -62,7 +63,7 @@ async def judge(code: str, problem_id: str) -> list[dict]:
 
     Returns:
         list[dict]: 結果（順序與該題 test_cases 一致），每筆包含
-            index, input（截斷顯示）, expected, actual, passed, error_type, stderr
+            index, input（截斷顯示）, expected, actual, passed, error_type, stderr, is_stress
     """
     problem = PROBLEMS[problem_id]
     test_cases = problem["test_cases"]

@@ -22,7 +22,7 @@
         <ProblemStatement v-if="problem" :problem="problem" />
         <CodeEditor v-model="code" />
         <div class="submit-row">
-          <button class="submit-btn" :disabled="loading" @click="handleSubmit">
+          <button class="submit-btn" :disabled="loading || !problemId" @click="handleSubmit">
             <Loader2 v-if="loading" :size="14" class="btn-spinner" />
             <Play v-else :size="14" />
             <span>{{ loading ? '執行中...' : '提交程式碼' }}</span>
@@ -65,6 +65,20 @@ const hint        = ref(null)
 const loading     = ref(false)
 const error       = ref(null)
 
+// 非同步請求的編號：回來時若編號已經不是最新的，代表使用者已經換題或
+// 重新提交，結果直接丟掉，避免舊題的結果蓋到新題上
+let problemSeq = 0
+let submitSeq  = 0
+
+function describeError(err, fallback) {
+  if (err.code === 'ECONNABORTED') return '後端回應逾時（免費主機可能還在喚醒，請稍等幾十秒再試）'
+  const status = err.response?.status
+  if (status === 404) return '找不到這個題目'
+  if (status === 422) return '送出的資料格式不正確'
+  if (status) return `後端發生錯誤（HTTP ${status}），請稍後再試`
+  return fallback
+}
+
 onMounted(async () => {
   try {
     problemList.value = await fetchProblemList()
@@ -78,8 +92,12 @@ onMounted(async () => {
 })
 
 async function selectProblem(id) {
+  const seq = ++problemSeq
   try {
     const data      = await fetchProblem(id)
+    if (seq !== problemSeq) return
+    submitSeq++            // 換題成功：丟棄還在跑的提交
+    loading.value   = false
     problem.value   = data
     problemId.value = id
     code.value      = data.starter_code
@@ -87,8 +105,9 @@ async function selectProblem(id) {
     hint.value       = null
     error.value      = null
   } catch (err) {
+    if (seq !== problemSeq) return
     console.error('Load problem error:', err)
-    error.value = '無法載入題目'
+    error.value = describeError(err, '無法載入題目')
   }
 }
 
@@ -97,6 +116,8 @@ function onProblemChange(event) {
 }
 
 async function handleSubmit() {
+  if (!problemId.value) return
+  const seq = ++submitSeq
   loading.value = true
   results.value = []
   hint.value    = null
@@ -104,13 +125,15 @@ async function handleSubmit() {
 
   try {
     const data    = await submitCode(code.value, problemId.value)
+    if (seq !== submitSeq) return
     results.value = data.results
     hint.value    = data.hint
   } catch (err) {
+    if (seq !== submitSeq) return
     console.error('Submit error:', err)
-    error.value = '無法連線到後端，請稍後再試'
+    error.value = describeError(err, '無法連線到後端，請稍後再試')
   } finally {
-    loading.value = false
+    if (seq === submitSeq) loading.value = false
   }
 }
 </script>

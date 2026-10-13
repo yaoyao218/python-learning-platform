@@ -7,6 +7,21 @@
 # test_cases 裡每筆測資用 "input"（單一字串參數，向後相容 testgen/ 既有工具）
 # 或 "args"（多參數時用 tuple）二選一表示呼叫參數。
 
+def _stress_input() -> str:
+    """長度 = 題目限制上限 5×10⁴ 的壓力測資，擋掉 O(n²) 的寫法。
+
+    不能只用 'a' * 50000 這種單調字串：count_unique、no_reset_left 等錯誤解
+    在上面剛好會答對，反而拉低 TNR。這裡的結構是：
+      "abab..." 填充（最長只有 2）
+      + x y [10 個字元] y         ← 類似 'abba' 的陷阱，擋 no_reset_left
+      + [68 個不重複字元]           ← 答案 79，不等於全字串的不重複字元數 82
+    遇到重複就 break 的暴力解（S+ 的 brute_force.py）內圈最多跑約 80 步，仍可在時限內通過。
+    """
+    pool = [chr(c) for c in range(32, 127) if chr(c) not in "ab"]
+    tail = pool[0] + pool[1] + "".join(pool[2:12]) + pool[1] + "".join(pool[12:80])
+    return ("ab" * 25000)[:50000 - len(tail)] + tail
+
+
 _LONGEST_SUBSTRING_CASES = [
     # LC 官方範例 1
     {"index":  1, "input": 'abcabcbb', "expected": 3, "is_stress": False},
@@ -42,6 +57,8 @@ _LONGEST_SUBSTRING_CASES = [
     {"index": 16, "input": 'wwzzooueyudmficvgrxnjp', "expected": 15, "is_stress": False},
     # v4: catch 6/6 from combo_kill      --n 5 --tail_len 10 --se
     {"index": 17, "input": 'qqccffzzkkidaiwntpherjlm', "expected": 13, "is_stress": False},
+    # 手動加的壓力測試，見下方 _stress_input()
+    {"index": 18, "input": _stress_input(), "expected": 79, "is_stress": True},
 ]
 
 # 手動設計，涵蓋 LC 官方範例 + 邊界 + 壓力測試。

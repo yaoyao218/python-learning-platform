@@ -1,12 +1,58 @@
 import ast
 import asyncio
+import os
 import subprocess
 import sys
+import tempfile
 from concurrent.futures import ThreadPoolExecutor
 
 FORBIDDEN_MODULES = {"os", "sys", "subprocess", "socket", "multiprocessing", "threading", "ctypes", "importlib"}
 
 _thread_pool = ThreadPoolExecutor(max_workers=8)
+
+# 回傳值前面加的標記：學生自己 print 的內容都在標記之前，判題只看標記之後
+_RESULT_MARKER = "\x00__RESULT__\x00"
+
+# 子程序只帶最少的環境變數，不繼承後端的 GROQ_API_KEY / GEMINI_API_KEY。
+# Windows 少了 SYSTEMROOT 會讓 Python 啟動失敗，所以有的話保留。
+_CHILD_ENV = {k: os.environ[k] for k in ("SYSTEMROOT",) if k in os.environ}
+
+# 子程序裡的執行包裝。學生程式碼用 exec(compile(..., "<student>")) 執行，
+# 錯誤訊息的行號才會對應學生自己的程式碼。
+#
+# 安全性：AST 檢查（check_forbidden）擋得住 `import os`，但擋不住
+# `__import__("os")`。這裡再用 audit hook 擋掉「讀密鑰」與「開子程序／網路」
+# 這類動作，hook 一旦裝上，同一個程序內的程式碼就移除不了。
+# 這不是完整的沙箱（沒有限制記憶體、沒有隔離檔案系統），只是補上最危險的洞。
+_RUNNER_TEMPLATE = """\
+import io as _io
+import sys as _sys
+
+_BLOCKED_PREFIXES = ("subprocess.", "os.system", "os.exec", "os.posix_spawn",
+                     "os.spawn", "os.fork", "os.forkpty", "socket.", "ctypes.")
+
+def _guard(event, args):
+    if event == "open":
+        path = args[0]
+        if isinstance(path, bytes):
+            path = path.decode(errors="replace")
+        if isinstance(path, str):
+            name = path.replace("\\\\", "/").rsplit("/", 1)[-1]
+            if path.startswith("/proc") or name.startswith(".env"):
+                raise PermissionError("不允許讀取這個檔案")
+    elif event.startswith(_BLOCKED_PREFIXES):
+        raise PermissionError(f"不允許的操作：{{event}}")
+
+_sys.addaudithook(_guard)
+
+_out = _sys.stdout
+_ns = {{"__name__": "__main__"}}
+exec(compile({code!r}, "<student>", "exec"), _ns)
+if "Solution" not in _ns:
+    raise NameError("name 'Solution' is not defined")
+_result = _ns["Solution"]().{method}(*{args!r})
+_out.write("\\n" + {marker!r} + repr(_result))
+"""
 
 
 def check_forbidden(code: str) -> str | None:
@@ -40,15 +86,20 @@ def _run_subprocess(runner_script: str, timeout: float) -> tuple[str, str, int]:
     stdin 讀完程式後就是 EOF，學生程式呼叫 input() 會立刻得到 EOFError，不會卡到超時。
     """
     try:
+        # -I：隔離模式，不讀 PYTHON* 環境變數、不把工作目錄加進 sys.path
+        # -X utf8：Windows 上也用 UTF-8 輸出，學生 print 中文不會解碼失敗
+        # cwd 設在暫存目錄，學生用相對路徑讀不到 backend/ 底下的檔案
         result = subprocess.run(
-            [sys.executable, "-"],
-            input=runner_script.encode(),
+            [sys.executable, "-I", "-X", "utf8", "-"],
+            input=runner_script.encode("utf-8"),
             capture_output=True,
             timeout=timeout,
+            env=_CHILD_ENV,
+            cwd=tempfile.gettempdir(),
         )
         return (
-            result.stdout.decode().strip(),
-            result.stderr.decode().strip(),
+            result.stdout.decode(errors="replace").strip(),
+            result.stderr.decode(errors="replace").strip(),
             result.returncode,
         )
     except subprocess.TimeoutExpired:
@@ -65,7 +116,7 @@ async def run_code(code: str, method: str, args: tuple, timeout: float = 5.0) ->
 
     Returns:
         dict: { actual: str|None, error_type: str|None, stderr: str }
-        error_type 可能值: "syntax_error" | "runtime_error" | "no_return" | None
+        error_type 可能值: "syntax_error" | "runtime_error" | "timeout" | "no_return" | None
         actual 是 repr() 過的字串，可用 ast.literal_eval 還原成實際型別。
     """
     forbidden_error = check_forbidden(code)
@@ -82,12 +133,9 @@ async def run_code(code: str, method: str, args: tuple, timeout: float = 5.0) ->
                 lines.append("  " + " " * (e.offset - 1) + "^")
         return {"actual": None, "error_type": "syntax_error", "stderr": "\n".join(lines)}
 
-    runner_script = f"""{code}
-
-_sol = Solution()
-_result = _sol.{method}(*{args!r})
-print(repr(_result))
-"""
+    runner_script = _RUNNER_TEMPLATE.format(
+        code=code, method=method, args=args, marker=_RESULT_MARKER
+    )
 
     loop = asyncio.get_running_loop()
     stdout_str, stderr_str, returncode = await loop.run_in_executor(
@@ -95,14 +143,19 @@ print(repr(_result))
     )
 
     if returncode == -1:
-        return {"actual": None, "error_type": "runtime_error", "stderr": stderr_str}
+        return {"actual": None, "error_type": "timeout", "stderr": stderr_str}
 
     if returncode != 0:
         if "SyntaxError" in stderr_str:
             return {"actual": None, "error_type": "syntax_error", "stderr": stderr_str}
         return {"actual": None, "error_type": "runtime_error", "stderr": stderr_str}
 
-    if stdout_str in ("None", ""):
+    if _RESULT_MARKER not in stdout_str:
+        # 程式正常結束卻沒走到回傳那步（例如學生自己呼叫了 exit()）
+        return {"actual": None, "error_type": "runtime_error", "stderr": "程式提前結束，沒有回傳結果"}
+
+    actual = stdout_str.rsplit(_RESULT_MARKER, 1)[1].strip()
+    if actual == "None":
         return {"actual": None, "error_type": "no_return", "stderr": ""}
 
-    return {"actual": stdout_str, "error_type": None, "stderr": ""}
+    return {"actual": actual, "error_type": None, "stderr": ""}
