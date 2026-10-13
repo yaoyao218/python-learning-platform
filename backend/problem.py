@@ -106,16 +106,28 @@ _MEDIAN_CASES = [
 # 第 0 輪：只有 LC 官方範例（AI 輔助測資實驗的起點，見
 # docs/superpowers/plans/2026-10-07-ai-assisted-testgen.md）。
 # 單一參數是 list 時用 args=(prices,)，因為 judge 的截斷顯示只處理字串型的 "input"。
-# 由 testgen/export_round_to_problem.py 從 r3_tests.json 產生：共 4 道，前 2 道為 LC 官方範例，其餘依輸入長度由短到長，壓力測資在最後。
+# best-time-stock：r3_tests.json 的 4 道 + 實驗外補強 6 道（E5，2026-10-13，K13／K15；rounds/ 實驗紀錄不變），共 10 道，用 export_round_to_problem.py 的排序規則：前 2 道為 LC 官方範例，其餘依輸入長度由短到長，壓力測資在最後。
 _BEST_TIME_STOCK_CASES = [
     # LC 官方範例 1
     {"index": 1, "args": ([7, 1, 5, 3, 6, 4],), "expected": 5, "is_stress": False},
     # LC 官方範例 2
     {"index": 2, "args": ([7, 6, 4, 3, 1],), "expected": 0, "is_stress": False},
+    # 實驗外補強（E5）
+    {"index": 3, "args": ([5],), "expected": 0, "is_stress": False},
+    # 實驗外補強（E5）
+    {"index": 4, "args": ([1, 2],), "expected": 1, "is_stress": False},
+    # 實驗外補強（E5）
+    {"index": 5, "args": ([3, 3, 3],), "expected": 0, "is_stress": False},
+    # 實驗外補強（E5）
+    {"index": 6, "args": ([1, 2, 3, 4, 5],), "expected": 4, "is_stress": False},
+    # 實驗外補強（E5）
+    {"index": 7, "args": ([5, 4, 3, 8, 1],), "expected": 5, "is_stress": False},
+    # 實驗外補強（E5）
+    {"index": 8, "args": ([3, 2, 4, 3, 5, 1],), "expected": 3, "is_stress": False},
     # r3
-    {"index": 3, "args": ([2, 5, 1, 6, 0, 7, 3, 8],), "expected": 8, "is_stress": False},
+    {"index": 9, "args": ([2, 5, 1, 6, 0, 7, 3, 8],), "expected": 8, "is_stress": False},
     # r3
-    {"index": 4, "args": ([10, 1, 2, 3, 4, 5, 6, 7, 8, 9],), "expected": 8, "is_stress": False},
+    {"index": 10, "args": ([10, 1, 2, 3, 4, 5, 6, 7, 8, 9],), "expected": 8, "is_stress": False},
 ]
 
 # 由 testgen/export_round_to_problem.py 從 r5_tests.json 產生：共 54 道，前 3 道為 LC 官方範例，其餘依輸入長度由短到長，壓力測資在最後。

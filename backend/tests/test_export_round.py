@@ -214,7 +214,7 @@ def _latest_round(pid):
     return max(int(f.name[1:-len("_tests.json")]) for f in rounds.rounds_dir(pid).glob("r*_tests.json"))
 
 
-@pytest.mark.parametrize("pid,official", [("longest-valid-parentheses", 3), ("best-time-stock", 2)])
+@pytest.mark.parametrize("pid,official", [("longest-valid-parentheses", 3)])
 def test_real_rounds_contain_current_problem_cases(pid, official):
     # 用該題最新一輪：舊輪次本來就不含之後才加進 problem.py 的案例
     from testgen import rounds
@@ -223,3 +223,16 @@ def test_real_rounds_contain_current_problem_cases(pid, official):
     source = (BACKEND / "problem.py").read_text(encoding="utf-8")
     text, info = ex.build_new_source(source, pid, cases, official, rnd)
     assert info["total"] >= info["previous_total"]
+
+
+def test_reexport_refuses_to_drop_post_experiment_cases():
+    # best-time-stock 在實驗之後另補了 6 道（E5，標「實驗外補強」），不在任何 rounds 紀錄裡。
+    # 重新匯出最後一輪會把它們丟掉，匯出工具必須擋下來。
+    from testgen import rounds
+    pid = "best-time-stock"
+    rnd = _latest_round(pid)
+    cases = rounds.load_round_tests(pid, rnd)["cases"]
+    source = (BACKEND / "problem.py").read_text(encoding="utf-8")
+    assert source.count("# 實驗外補強（E5）") == 6
+    with pytest.raises(SystemExit, match="丟掉"):
+        ex.build_new_source(source, pid, cases, 2, rnd)
