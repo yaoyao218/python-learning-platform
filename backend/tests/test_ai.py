@@ -101,12 +101,12 @@ async def test_get_hint_calls_api_and_returns_content():
 
     mock_response = AsyncMock()
     mock_response.choices = [AsyncMock()]
-    mock_response.choices[0].message.content = "這是 AI 提示"
+    mock_response.choices[0].message.content = "這是 AI 提示，你覺得問題在哪裡？"
 
     with patch("ai.client.chat.completions.create", new_callable=AsyncMock, return_value=mock_response) as mock_create:
         hint = await get_hint(results, TITLE, CONTEXT)
 
-    assert hint == "這是 AI 提示"
+    assert hint == "這是 AI 提示，你覺得問題在哪裡？"
     mock_create.assert_called_once()
     call_kwargs = mock_create.call_args
     assert call_kwargs.kwargs["messages"][0]["content"] == build_prompt(results, TITLE, CONTEXT)
@@ -146,3 +146,40 @@ def test_build_prompt_wrong_answer_summary_excludes_timeouts():
     prompt = build_prompt(results, TITLE, CONTEXT)
     assert "abcabcbb" in prompt
     assert "ababab" not in prompt
+
+
+# --- hint_guard: output-side safety net (second line of defense) ---
+
+@pytest.mark.asyncio
+async def test_get_hint_falls_back_when_llm_leaks_code():
+    """就算 LLM 沒聽話、夾了程式碼，學生也不該看到它。"""
+    results = [make_result(1, "abc", 3, "5", False, None)]
+
+    mock_response = AsyncMock()
+    mock_response.choices = [AsyncMock()]
+    mock_response.choices[0].message.content = (
+        "你可以這樣寫：\n```python\ndef lengthOfLongestSubstring(self, s):\n    return len(set(s))\n```"
+    )
+
+    with patch("ai.client.chat.completions.create", new_callable=AsyncMock, return_value=mock_response):
+        hint = await get_hint(results, TITLE, CONTEXT)
+
+    from hint_guard import FALLBACK_HINT
+    assert hint == FALLBACK_HINT
+    assert "```" not in hint and "def " not in hint
+
+
+@pytest.mark.asyncio
+async def test_get_hint_falls_back_when_no_question_mark():
+    """沒有問句代表 AI 直接給了答案而不是引導，一樣不該原樣顯示。"""
+    results = [make_result(1, "abc", 3, "5", False, None)]
+
+    mock_response = AsyncMock()
+    mock_response.choices = [AsyncMock()]
+    mock_response.choices[0].message.content = "你的程式碼邏輯是對的，只是少了一個條件判斷。"
+
+    with patch("ai.client.chat.completions.create", new_callable=AsyncMock, return_value=mock_response):
+        hint = await get_hint(results, TITLE, CONTEXT)
+
+    from hint_guard import FALLBACK_HINT
+    assert hint == FALLBACK_HINT
