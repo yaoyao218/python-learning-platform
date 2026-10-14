@@ -224,13 +224,48 @@ const pseudocodeHtml = computed(() => {
 }
 
 .pseudocode-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--teal-dim);
+  border: 1px solid var(--teal);
+  border-left-width: 4px;
+  border-radius: 6px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-3);
+  color: var(--teal);
   cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: filter 0.15s;
+}
+.pseudocode-header::-webkit-details-marker {
+  display: none;
+}
+.pseudocode-header::before {
+  content: '▸';
+  font-size: 14px;
+  transition: transform 0.15s;
+}
+.pseudocode[open] .pseudocode-header::before {
+  transform: rotate(90deg);
+}
+.pseudocode-header::after {
+  content: '點開看解題步驟';
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+  opacity: 0.75;
+}
+.pseudocode[open] .pseudocode-header::after {
+  content: '點一下收合';
+}
+.pseudocode-header:hover {
+  filter: brightness(1.25);
 }
 
 .pseudocode-body {

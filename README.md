@@ -35,6 +35,7 @@
 
 | 日期 | 內容 |
 |---|---|
+| 2026-10-14 | 題目頁的「虛擬碼」收合列改成青綠色色塊，加上展開箭頭與「點開看解題步驟」提示，比較顯眼 |
 | 2026-10-14 | valid-parentheses、median-two-sorted-arrays 也改用 AI 輔助產生測資：各建 3 份正解、6 份訓練用錯解、3 份驗收用錯解，跑全自動流程後寫回 `problem.py`（12→19 道、11→45 道）。修正 `propose.py`：AI 回覆整份讀不出 JSON 時不再算成一輪 |
 | 2026-10-14 | valid-parentheses、median-two-sorted-arrays 補上虛擬碼（同一套往返檢查，第 1 次通過），五題都有虛擬碼；兩題各新增一份正解與輸入規格（`backend/testgen/problems/<id>/`），只用來產生虛擬碼，沒有跑測資流程 |
 | 2026-10-14 | longest-valid-parentheses、longest-substring 的虛擬碼改用中文重新產生，並重新通過往返檢查（原本一題是英文、一題有一步寫錯） |
