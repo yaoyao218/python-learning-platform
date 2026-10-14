@@ -1,7 +1,9 @@
 # 組員指南：實作與使用者說明
 
+> **2026-10-14 更新**：已合併到 `main` 並上線，GitHub 只保留 `main` 一個分支；最新進度、尚未實作的功能與接下來的任務以根目錄 `README.md` 的「目前進度」為準。本指南保留任務與問題紀錄。
+
 ## 一頁摘要
-- **最終目的**：把**三題**（`longest-substring`、`best-time-stock`、`longest-valid-parentheses`）的測試案例做好，並能在平台上使用，**下次就能給使用者實測**。
+- **最終目的**：把題目的測試案例做好，並能在平台上使用，**下次就能給使用者實測**。原本是三題（`longest-substring`、`best-time-stock`、`longest-valid-parentheses`），2026-10-14 起 `valid-parentheses`、`median-two-sorted-arrays` 也走同一套流程，共五題。
 - **怎麼做**：用已經決定好的方法把它做出來，不是重新設計方法。
 - **分兩類任務**：【主線】= 下次實測前一定要完成；【強化】= 讓流程更完整，**不阻擋實測**，有空再做。
 - **遇到問題**：不要自己換方法，照第 4 節處理並寫進第 5 節的問題紀錄，然後繼續其他任務。
@@ -16,6 +18,8 @@
 | `longest-substring` | 18 道（人工迭代 17 道 + 5 萬字元壓力測資） | 已收斂，品質守門員通過；訓練池 TNR 0.889，驗收池 0.47 | 完成（E1） |
 | `best-time-stock` | 10 道（r3 的 4 道 + 實驗外補強 6 道） | 未收斂；實驗紀錄：達成率 0.70、驗收池漏 1 種（K13）。補強後訓練池、驗收池都無漏網 | 完成（E2、E5） |
 | `longest-valid-parentheses` | 54 道 | 未收斂（達成率 0.68）；6 種錯誤都擋到；驗收池 0.537、無漏網 | 完成（E3） |
+| `valid-parentheses` | 19 道（原手寫 12 道 + AI 輔助 2 輪） | 未收斂（上限 0.5，達成率 0.44）；6 種錯誤都擋到；驗收池 0.123、無漏網（驗收池第二次使用，見 K20） | 完成（E7） |
+| `median-two-sorted-arrays` | 45 道（原手寫 11 道 + AI 輔助 4 輪） | 未收斂（達成率 0.58）；6 種錯誤都擋到；驗收池 0.615、無漏網 | 完成（E8） |
 
 ### 什麼叫「做好、可以使用」
 **可實測（必須達到，三題都要）**
@@ -33,12 +37,12 @@
 ### 下次實測前的檢查清單
 - [x] E1、E2、E3、E4、E6 完成（三題測資定稿並寫入 `problem.py`；全自動流程可運行）
 - [x] E5 完成（best-time-stock 補到 10 道，擋下 `global_min_then_max`）
-- [ ] B2 完成（三題虛擬碼）
-- [ ] C1、C2 完成（提示看得到虛擬碼、題目頁顯示虛擬碼）
+- [x] B2 完成（三題虛擬碼；2026-10-14 五題都有中文虛擬碼）
+- [x] C1、C2 完成（提示看得到虛擬碼、題目頁顯示虛擬碼）
 - [ ] C3 完成（同意說明：負責人已確認同意，2026-10-13；草稿中【待確認】欄位的實際內容仍待負責人填入）
 - [ ] 記錄方式已決定（預設：不記錄程式碼）
-- [ ] 後端測試全過
-- [ ] M1 完成（分支同步 main、開 PR、預覽網址實測過），再合併到 main 上線
+- [x] 後端測試全過
+- [x] M1 完成：PR #21 於 2026-10-14 合併到 main 上線（預覽網址連的是正式後端，改在正式網站實測）
 
 ---
 
@@ -74,7 +78,12 @@
 | E4 | 【主線】最終輪測資寫回 `problem.py` 的匯出工具 | 專題負責人 | 完成 | 2026-10-10 | backend/testgen/export_round_to_problem.py, backend/tests/test_export_round.py | 已實作；15 個單元測試（58 passed）；對三題真實資料 dry-run 過；兩個變異檢查被測試抓到 | E2、E3 用它寫回 problem.py |
 | E5 | 【主線】best-time-stock 實驗外補強（K13、K15） | Claude（代組員） | 完成 | 2026-10-13 | backend/problem.py, backend/tests/test_export_round.py | 補 6 道（標「實驗外補強（E5）」），共 10 道；`run_eval --problem best-time-stock`：TPR 1.0、訓練池 TNR 0.3833、無漏網；驗收池（實驗外確認，未寫入 rounds/）0.4667、無漏網；pytest 123 passed, 8 skipped | 訓練池 TNR 比實驗紀錄 0.5833 低：新增的邊界案例（只有 1 天、價格相同）抓不到錯誤，會拉低平均；`rounds/` 實驗紀錄不變 |
 | E6 | 【主線】全自動流程：`pipeline.py`、`auto_review.py`（自動審核升級為正式元件） | Claude（代組員） | 完成 | 2026-10-13 | backend/testgen/pipeline.py, backend/testgen/auto_review.py, backend/tests/test_pipeline.py | 自動審核對 LC121 r1–r3、LC32 r1–r5 重算全部一致；LC3 全自動跑完 4 輪；三題驗收池結果存成 `rounds/heldout_final.json`；`python -m pytest -q` 108 passed, 8 skipped | 拿掉人工審核後的主要流程；結果見計畫第八節 |
-| M1 | 【主線】合併到 main 前的準備 | | 未開始 | 2026-10-13 | | | E5、B2、C1、C2 已完成，可以開始；見任務卡 M1 |
+| M1 | 【主線】合併到 main 前的準備 | Claude（代組員） | 完成 | 2026-10-14 | | PR #21 合併；正式網站 5 題、虛擬碼、提示實測正常 | Vercel 預覽網址會連正式後端（main），所以預覽看不到後端改動，改為合併後在正式網站實測；GitHub 只保留 `main` |
+| B2b | 【主線】虛擬碼補齊與中文化 | Claude（代組員） | 完成 | 2026-10-14 | backend/testgen/problems/*/pseudocode.json, pseudocode_roundtrip.py | `--zh` 重跑 LVP、LC3；新增 VP、median 的 S+ 與 spec.py 後產生；四份都第 1 次通過、3/3 一致 | `--zh` 是新增選項（寫手 prompt 加一句「用繁體中文書寫」），預設不開 |
+| E7 | 【主線】valid-parentheses AI 輔助測資 | Claude（代組員） | 完成 | 2026-10-14 | backend/problem.py, backend/testgen/problems/valid-parentheses/ | 12→19 道，TNR 0.1528→0.2193（上限 0.5），訓練池無漏網；驗收池 0.1228、無漏網 | 第一次執行因 K20 作廢（紀錄在 `rounds/void_20261014/`）；重跑第 2 輪因 K21 停滯 |
+| E8 | 【主線】median-two-sorted-arrays AI 輔助測資 | Claude（代組員） | 完成 | 2026-10-14 | backend/problem.py, backend/testgen/problems/median-two-sorted-arrays/ | 11→45 道，TNR 0.2576→0.5778，訓練池無漏網；驗收池 0.6148、無漏網 | 錯解池由組員依常見錯誤手寫（9 份，評測前先分訓練／驗收） |
+| F1 | 【延伸】遮照填空（extension-plan 第 2 節） | Claude（代組員） | 完成 | 2026-10-14 | backend/cloze.py, frontend/src/components/ClozePanel.vue | 五題「填回全過、挖洞過不了」；瀏覽器實測：連錯 3 次出現、通過收起 | 第 1–4 階升階提示（extension-plan 第 1 節）尚未實作 |
+| F2 | 【修正】無窮迴圈等待過久、提示粗體顯示星號 | Claude（代組員） | 完成 | 2026-10-14 | backend/judge.py, frontend/src/markdown.js | 正式網站實測無窮迴圈 42 秒；修正後一筆超時就略過其餘（本機 35→5 秒）；提示改用與虛擬碼相同的轉換 | 略過的測資標 `skipped`，不送給 AI |
 | B2 | 【主線】三題虛擬碼產出與往返檢查（I8） | Claude（代組員） | 完成 | 2026-10-13 | backend/testgen/problems/longest-substring/pseudocode.json, backend/testgen/problems/best-time-stock/pseudocode.json, backend/testgen/problems/longest-valid-parentheses/pseudocode.json | `pseudocode_roundtrip.py --k 3`（寫手 gpt-oss-20b、實作者 gpt-oss-120b）：三題都第 1 次就通過，各 3/3 實作與 S+ 一致（探測輸入 23,848／21,533／10,194 組）；存成 `problems/<id>/pseudocode.json` | 人工閱讀的小瑕疵記在 format_warnings、沒有改寫：longest-valid-parentheses 全文是英文；longest-substring 第 13 步停止條件寫成「超過長度」、第 4 與 13 步重複 |
 | C1 | 【主線】提示加入虛擬碼與 `hint_guard` 擴充（I11） | Claude（代組員） | 完成 | 2026-10-13 | backend/ai.py, backend/hint_guard.py, backend/tests/test_ai.py | `build_prompt(..., pseudocode)`：runtime_error／timeout／wrong_answer 放入虛擬碼與「可引用步驟編號、不整段複述、不斷言第 N 步錯」規則；簽名測試確認沒有學生程式碼參數。`hint_guard`：逐字抄超過 2 個步驟就擋；三題虛擬碼本身不會被當成程式碼。pytest 123 passed, 8 skipped；真實模型三題各 4 次共 12/12 正常提示 | 加入虛擬碼後 prompt 變長，gpt-oss-20b 預設推理會把 2048 token 用光、回傳空內容（實測 3/4，同 K3）；提示改用 reasoning_effort=low（只在 gpt-oss，Gemini 不帶） |
 | C2 | 【主線】虛擬碼顯示（I15） | Claude（代組員） | 完成 | 2026-10-13 | backend/problem.py, backend/main.py, frontend/src/components/ProblemStatement.vue | `problem.py` 只載入 passed 的 pseudocode.json（version、text）；`GET /problems/{id}` 可選欄位；`ProblemStatement.vue` 收合區塊顯示。新增 3 個測試（有／沒有虛擬碼、未通過不載入）；pytest 112 passed, 8 skipped；瀏覽器實測：沒虛擬碼的題目外觀不變、有的預設收合 | AI 寫的文字先跳脫 HTML，只轉換 **粗體** 與 `程式` 兩種標記 |
@@ -97,7 +106,7 @@
 
 > 【主線】任務**不依賴**【強化】任務：三題測資用現有的人工池與輪次流程就能完成（評測本來就經由 `executor` 的子程序執行）。
 
-**已完成的事（供對照）**：效能基準與答錯集合指紋（`baseline_assess.json`）、Groq 模型與額度限制查明、推理 token 拆解、虛擬碼往返檢查腳本、使用者說明草稿、設計文件整理、全自動測資流程（E6）。後端測試目前：`151 passed, 16 skipped`（16 個 skip = 四題未收斂 × 4 項品質守門員，屬正常）。
+**已完成的事（供對照）**：效能基準與答錯集合指紋（`baseline_assess.json`）、Groq 模型與額度限制查明、推理 token 拆解、虛擬碼往返檢查腳本、使用者說明草稿、設計文件整理、全自動測資流程（E6）。後端測試目前：`154 passed, 16 skipped`（16 個 skip = 四題未收斂 × 4 項品質守門員，屬正常）。
 
 ## 4. 規則與預設做法
 
@@ -183,6 +192,9 @@
 | K17 | Groq 回 413「Request too large」，每分鐘 token 上限 8000 | 已知：prompt 和 `max_completion_tokens` 加總計算；推理強度預設時回覆可用滿 8000 | pipeline 預設 `--reasoning-effort low`、`--max-tokens 4000`；propose 遇到 429 等 60 秒重試一次 | 否 | 已排除 | | 2026-10-13 |
 | K18 | 拿掉人工審核 | 2026-10-13 負責人決定：研究改為驗證全自動流程能否運行 | 原計畫的人工效率指標（細看比例、審核秒數、看理由後改判）不再量測，列為研究限制與未來工作；K8 的「測試階段」標註改為正式做法 | 是（已決定） | 已決定 | 專題負責人 | 2026-10-13 |
 | K19 | 虛擬碼是完整解法的逐步說明，C2 會在題目頁顯示給所有人 | 設計上是給受測者用的 | **負責人決定（2026-10-13）：全部開放**，正式網站上所有人都看得到；不加開關 | 是（已決定） | 已決定 | 專題負責人 | 2026-10-13 |
+| K20 | `propose.py` 讀不出 AI 回覆的 JSON 時，仍寫成 0 筆的 `rN_candidates.json`，pipeline 因此判定停滯並提早用掉驗收池 | 已確認：valid-parentheses 第一次執行第 1 輪，AI 多包了一層陣列 | **已修正（2026-10-14）**：整份讀不出時另存 `rN_candidates.unparsed.*.json` 並失敗退出，pipeline 從同一輪接續；加回歸測試。作廢的執行原樣保留在 `rounds/void_20261014/` | 否 | 已處理 | Claude（代組員） | 2026-10-14 |
+| K21 | 字串輸入的題目，AI 提案把字串多包一層引號（如 `"\"](){\""`），整輪 12 筆都被判不合法 | valid-parentheses 重跑第 2 輪；這是方法本身的結果，照規則停滯，沒有作廢 | 尚未處理：要改提示詞才能避免，屬於改流程 | 是 | 未處理 | | 2026-10-14 |
+| K22 | 驗收池使用超過一次 | valid-parentheses 因 K20 作廢後重跑，驗收池是第二次使用；第一次只看到 TNR 0.1389，流程全自動、未據此做任何選擇 | README 與 `void_20261014/README.md` 註明 | 否 | 已記錄 | 目前負責 repo 的組員決定 | 2026-10-14 |
 <!-- ISSUES:END -->
 
 ## 6. 任務卡
@@ -190,7 +202,7 @@
 ### 開工前（第一天，約 20 分鐘）
 ```bash
 cd backend
-python -m pytest -s -q      # 預期：123 passed, 8 skipped（需要 backend/.env 有 GROQ_API_KEY，只跑測試的話填任意值如 dummy 也可以）
+python -m pytest -s -q      # 預期：154 passed, 16 skipped（需要 backend/.env 有 GROQ_API_KEY，只跑測試的話填任意值如 dummy 也可以）
 python ../docs/superpowers/specs/teammate-tests/baseline_assess.py --repeats 3   # 量你機器上的效能基準
 python ../docs/superpowers/specs/teammate-tests/pseudocode_roundtrip.py --problem longest-substring   # 需要 backend/.env 的 GROQ_API_KEY
 git status      # 預期：只多了腳本產生的結果 JSON
@@ -342,7 +354,7 @@ python -m testgen.pipeline --problem <題目id>          # 提案 → 自動審�
 ## 7. 順序與回報
 
 **順序（不訂日期）**
-- 主線：E1–E6、B2、C1、C2 已完成；T 取消（2026-10-13 負責人決定）。**剩下：C3【待確認】欄位填入、M1（合併前準備）**，再對照「下次實測前的檢查清單」。
+- 主線：E1–E8、B2、B2b、C1、C2、M1 已完成；T 取消（2026-10-13 負責人決定）。**剩下：C3【待確認】欄位填入**。完整待辦見 README「接下來的任務」。
 - 強化（有空再做，不阻擋實測）：A1 → A2、A3 → B1 → B3、B4、B5；A4、B6、C4 可穿插。
 
 **回報模板**（放在 PR 描述）

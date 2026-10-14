@@ -92,7 +92,7 @@
         <div class="section-header">
           <span class="section-label hint-label">AI 分析</span>
         </div>
-        <div class="hint-body">{{ hint }}</div>
+        <div class="hint-body" v-html="hintHtml"></div>
       </div>
     </template>
   </div>
@@ -100,6 +100,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { renderLite } from '../markdown.js'
 
 const props = defineProps({
   results: { type: Array,    default: () => [] },
@@ -136,6 +137,9 @@ const errorDetail = computed(() => {
     message: firstFail.stderr || (firstFail.error_type === 'no_return' ? NO_RETURN_MESSAGE : ''),
   }
 })
+
+// AI 提示：先跳脫 HTML，再轉換 **粗體**、`程式`、程式碼區塊（原本會直接顯示星號）
+const hintHtml = computed(() => renderLite(props.hint))
 
 const allPassed = computed(() =>
   props.results.length > 0 && props.results.every((r) => r.passed)
@@ -375,6 +379,21 @@ const allPassed = computed(() =>
 
 /* AI Hint */
 .hint-section { border-bottom: none; }
+.hint-body :deep(strong) { color: var(--text); font-weight: 600; }
+.hint-body :deep(code) {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--teal);
+}
+.hint-body :deep(.md-code) {
+  margin: 8px 0;
+  padding: 10px 12px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: pre;
+}
+.hint-body :deep(.md-code code) { color: var(--text); }
 
 .hint-body {
   padding: 20px;

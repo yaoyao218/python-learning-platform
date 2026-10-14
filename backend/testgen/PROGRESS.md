@@ -1,5 +1,7 @@
 # 測資生成研究 — 進度紀錄
 
+> **歷史文件**：內容停在 longest-substring 的人工迭代（baseline → v4），只保留作紀錄。目前五題的狀態與最新進度請看根目錄 [`README.md`](../../README.md) 的「目前進度」。
+
 > 目標：把現有 `problem.py` 的 18 筆 hardcoded 測資，改成「資料驅動、可驗證品質」的版本。
 > 方法論：依據論文 *CodeContests-O: Powering LLMs via Feedback-Driven Iterative Test Case Generation*。
 

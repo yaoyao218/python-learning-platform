@@ -42,7 +42,7 @@ python-learning-platform/
 │   ├── main.py          # FastAPI app，GET /problems、GET /problems/{id}、GET /problems/{id}/cloze、POST /submit
 │   ├── executor.py      # ThreadPoolExecutor 執行學生程式碼 + AST 安全過濾（跨平台）
 │   ├── judge.py         # 依 problem_id 比對該題 test case，回傳完整 results 陣列
-│   ├── ai.py            # Groq / Gemini 自動切換，4 種 prompt 分支
+│   ├── ai.py            # Groq / Gemini 自動切換，5 種 prompt 分支
 │   ├── masking.py       # 提示夾帶完整解答時遮蔽
 │   ├── hint_guard.py    # 提示品質檢查
 │   ├── cloze.py         # 遮照填空：標準答案挖洞（AST，不經 AI）
@@ -95,9 +95,9 @@ pytest -v
 
 ## 關鍵架構決策
 
-- **後端跑該題全部 test case**，前端只渲染到第一個失敗（含）為止
+- **後端跑該題全部 test case**，前端只渲染到第一個失敗（含）為止；例外：一筆超時後，還沒開始的測資直接標 `skipped`（避免無窮迴圈等 40 秒以上）
 - `judge.py` 用 `asyncio.gather` 並行跑全部 test case，單次 submission 回應時間縮短約一半
-- AI prompt 有 4 個分支：`syntax_error` → 強調「語法錯誤無法執行」；`runtime_error` → 強調「執行時錯誤」；`no_return` → 提醒 return；`wrong_answer`（error_type=None）→ 傳所有失敗的 (input, expected, actual) 三元組，AI 從數值 pattern 推斷 bug 類型，給蘇格拉底式分層提示（不讀學生程式碼）
+- AI prompt 有 5 個分支：`syntax_error` → 強調「語法錯誤無法執行」；`runtime_error` → 強調「執行時錯誤」；`timeout` → 壓力測資談效率、短測資談無窮迴圈；`no_return` → 提醒 return；`wrong_answer`（error_type=None）→ 傳所有失敗的 (input, expected, actual) 三元組，AI 從數值 pattern 推斷 bug 類型，給蘇格拉底式分層提示（不讀學生程式碼）
 - wrong_answer prompt 的 failed_summary 會截斷超過 50 字元的字串，避免壓力測試 case（`"a"*50000`）讓 prompt 過大導致 AI API 失敗
 - executor 用 AST 過濾禁止模組（os, sys, subprocess, socket 等），用 `ThreadPoolExecutor + subprocess.run` 執行，跨平台相容（Windows / Linux）
 - executor 在跑 subprocess 前先用 `compile()` 做語法檢查，語法錯誤直接 early return，stderr 格式帶上問題那行原碼與 `^` 指針
@@ -153,6 +153,8 @@ allow_origin_regex=r"http://localhost:\d+|https://.*\.vercel\.app"
 ---
 
 ## 測資生成工具（testgen/）
+
+> 本節前半是 longest-substring 最早的人工迭代（`gen.py`、`commands_v*.txt`、`tests_v*.py`）。五題目前用的是 AI 輔助全自動流程：`python -m testgen.pipeline --problem <id>`，每題資料在 `backend/testgen/problems/<id>/`（`rounds/`、S+／S- 池、`spec.py`、`pseudocode.json`），結果見 README「目前進度」。
 
 依據論文 *CodeContests-O: Powering LLMs via Feedback-Driven Iterative Test Case Generation* 實作的離線測資生成 pipeline，**完全跟線上服務解耦**——不啟用就跟原本沒差。
 
@@ -282,7 +284,7 @@ except ImportError:
 # /submit handler 結尾
 if LOG_ENABLED:
     await log_submission(code=req.code, results=results, hint=hint,
-                         ai_prompt=build_prompt(req.code, results),
+                         ai_prompt=build_prompt(results, title, context, pseudocode),
                          elapsed_ms=elapsed_ms)
 ```
 

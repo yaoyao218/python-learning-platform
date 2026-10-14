@@ -1,5 +1,7 @@
 # testgen/ — 一頁快速 onboarding
 
+> **歷史文件**：內容停在 longest-substring 的人工迭代時期（現在的 AI 輔助流程見 `pipeline.py`），只保留作紀錄。目前五題的狀態與最新進度請看根目錄 [`README.md`](../../README.md) 的「目前進度」。
+
 > 完整背景見 [`/CLAUDE.md`](../../CLAUDE.md) 跟 [`PROGRESS.md`](PROGRESS.md)。
 > 這份是給「打開 testgen/ 後想立刻動手」的最精簡入門。
 

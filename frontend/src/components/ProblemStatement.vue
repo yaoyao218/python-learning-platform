@@ -44,6 +44,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import { renderLite } from '../markdown.js'
 
 const props = defineProps({
   problem: { type: Object, required: true },
@@ -58,18 +59,8 @@ const DIFF_MAP = {
 const diffLabel = computed(() => DIFF_MAP[props.problem.difficulty]?.label ?? '題目')
 const diffClass = computed(() => DIFF_MAP[props.problem.difficulty]?.cls ?? '')
 
-// 虛擬碼是 AI 寫的文字：先跳脫 HTML，再只轉換 **粗體** 與 `程式` 兩種標記
-function escapeHtml(text) {
-  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;')
-}
-
-const pseudocodeHtml = computed(() => {
-  const text = props.problem.pseudocode?.text ?? ''
-  return escapeHtml(text)
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-})
+// 虛擬碼是 AI 寫的文字：先跳脫 HTML，再只轉換少數標記（見 markdown.js）
+const pseudocodeHtml = computed(() => renderLite(props.problem.pseudocode?.text ?? ''))
 </script>
 
 <style scoped>

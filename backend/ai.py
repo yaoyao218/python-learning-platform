@@ -49,7 +49,7 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str,
         pseudocode: 該題通過往返檢查的虛擬碼（可選）；runtime_error、timeout、
             wrong_answer 會放進題目材料
     """
-    failed = [r for r in results if not r["passed"]]
+    failed = [r for r in results if not r["passed"] and not r.get("skipped")]   # 超時後被略過的沒有執行結果，不給 AI
     pseudo_material, pseudo_rules = _pseudocode_parts(pseudocode)
     if not failed:
         return None

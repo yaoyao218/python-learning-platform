@@ -1,5 +1,7 @@
 # 上線前端到端測試指引
 
+> **歷史文件**：內容停在 longest-substring 只有 17 筆測資的時期，只保留作紀錄。目前五題的狀態與最新進度請看根目錄 [`README.md`](../../README.md) 的「目前進度」。
+
 新 `problem.py`（17 筆測資、TNR=0.88）已 swap 到位、`problem_old.py` 是備份。
 此檔列出本機完整測試清單，**所有步驟都跑通才能 push 到 Vercel/Render**。
 

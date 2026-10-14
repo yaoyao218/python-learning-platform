@@ -353,3 +353,14 @@ async def test_get_hint_no_reasoning_effort_on_gemini():
                return_value=_llm_reply("想想看？")) as mock_create:
         await get_hint(results, TITLE, CONTEXT)
     assert "reasoning_effort" not in mock_create.call_args.kwargs
+
+
+def test_skipped_cases_are_not_sent_to_ai():
+    results = [
+        {"index": 1, "input": "()", "expected": 2, "actual": None, "passed": False,
+         "error_type": "timeout", "stderr": "", "is_stress": False},
+        {"index": 2, "input": "((SKIPPED-INPUT))", "expected": 4, "actual": None, "passed": False,
+         "error_type": "timeout", "stderr": "", "is_stress": False, "skipped": True},
+    ]
+    prompt = build_prompt(results, "Longest Valid Parentheses", "括號")
+    assert "SKIPPED-INPUT" not in prompt

@@ -97,15 +97,15 @@ Phung et al. [5] 研究 GPT-4 在程式除錯輔助中的應用，發現引導�
 | `ai.py` | 依錯誤類型組 prompt、呼叫 LLM，見第 V 章 |
 | `hint_guard.py` | LLM 輸出的檢查，見 V.C |
 
-目前登錄的題目如下。**只有 longest-substring 完成第 IV 章的量化迭代**；兩道人工設計題未經量化收斂；最後兩題僅有第 0 輪測資（官方範例），測資集尚未收斂。
+目前登錄的題目如下（2026-10-14 更新）。**只有 longest-substring 完成第 IV 章的量化迭代並收斂**；其餘四題都以 AI 輔助全自動流程延伸測資，均未達收斂門檻。
 
 | 題目 id | 難度 | 測資數 | 測資來源 |
 |---|---|---|---|
-| `longest-substring` | medium | 17 | 第 IV 章迭代（已收斂） |
-| `valid-parentheses` | easy | 12 | 人工設計 |
-| `median-two-sorted-arrays` | hard | 11 | 人工設計 |
-| `best-time-stock` | easy | 2 | 第 0 輪（官方範例） |
-| `longest-valid-parentheses` | hard | 3 | 第 0 輪（官方範例） |
+| `longest-substring` | medium | 18 | 第 IV 章迭代（已收斂，17 道）＋ 5 萬字元壓力測資 |
+| `valid-parentheses` | easy | 19 | 人工設計 12 道 ＋ AI 輔助 2 輪（未收斂） |
+| `median-two-sorted-arrays` | hard | 45 | 人工設計 11 道 ＋ AI 輔助 4 輪（未收斂） |
+| `best-time-stock` | easy | 10 | AI 輔助 3 輪（4 道）＋ 實驗外補強 6 道（未收斂） |
+| `longest-valid-parentheses` | hard | 54 | AI 輔助 5 輪（未收斂） |
 
 ### C. 程式碼執行安全機制
 

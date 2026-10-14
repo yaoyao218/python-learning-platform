@@ -70,3 +70,27 @@ async def test_judge_results_include_is_stress():
     results = await judge(code, "valid-parentheses")
     flags = [tc["is_stress"] for tc in PROBLEMS["valid-parentheses"]["test_cases"]]
     assert [r["is_stress"] for r in results] == flags
+
+
+@pytest.mark.asyncio
+async def test_infinite_loop_stops_early_instead_of_waiting_for_every_case():
+    """有一筆超時後，還沒開始的測資不再執行；54 道的題目不該等滿 7 批 × 5 秒。"""
+    import time
+    code = "class Solution:\n    def longestValidParentheses(self, s):\n        while True:\n            pass\n"
+    t0 = time.perf_counter()
+    results = await judge(code, "longest-valid-parentheses")
+    elapsed = time.perf_counter() - t0
+    assert len(results) == 54
+    assert elapsed < 15
+    ran = [r for r in results if not r.get("skipped")]
+    skipped = [r for r in results if r.get("skipped")]
+    assert skipped and all(r["error_type"] == "timeout" and not r["passed"] for r in skipped)
+    assert results[0]["error_type"] == "timeout" and not results[0].get("skipped")
+    assert max(r["index"] for r in ran) < min(r["index"] for r in skipped)
+
+
+@pytest.mark.asyncio
+async def test_no_case_is_skipped_without_a_timeout():
+    code = "class Solution:\n    def longestValidParentheses(self, s):\n        return 0\n"
+    results = await judge(code, "longest-valid-parentheses")
+    assert not any(r.get("skipped") for r in results)
