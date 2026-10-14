@@ -35,7 +35,7 @@
               {{ result.passed ? 'PASS' : 'FAIL' }}
             </span>
             <span class="result-num">{{ result.index }}</span>
-            <span class="result-input">"{{ result.input }}"</span>
+            <span class="result-input">{{ result.input }}</span>
             <div class="result-values">
               <span class="val-expected">→ {{ result.expected }}</span>
               <span v-if="!result.passed" class="val-got">

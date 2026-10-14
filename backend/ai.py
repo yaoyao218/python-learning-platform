@@ -78,7 +78,7 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str,
 （{problem_context}）{pseudo_material}
 
 學生程式在以下輸入時發生執行期錯誤：
-- 輸入：{first_fail['input']!r}
+- 輸入：{first_fail['input']}
 - 錯誤訊息：{first_fail['stderr']}
 
 請依序做三件事：
@@ -95,7 +95,7 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str,
 2. 引導學生估算：輸入長度變成幾萬時，自己的寫法大概要做幾次操作
 3. 用一個問題引導學生思考：「有哪些重複的計算，可以記下來不用每次重算？」"""
         else:
-            situation = f"學生程式在一筆很短的測資（輸入：{first_fail['input']!r}）上就超過時間限制，很可能是無窮迴圈。"
+            situation = f"學生程式在一筆很短的測資（輸入：{first_fail['input']}）上就超過時間限制，很可能是無窮迴圈。"
             task = """1. 用白話文說明短輸入也超時，通常代表迴圈停不下來（無窮迴圈）
 2. 引導學生檢查迴圈的結束條件，以及每一輪有沒有讓變數往結束的方向前進
 3. 用一個問題引導學生，拿這筆輸入手動跑幾輪迴圈看看"""
@@ -127,7 +127,9 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str,
 
     # wrong_answer（error_type is None）
     def truncate(v, n=50):
-        s = repr(v)
+        # input 已由 judge 排成顯示用字串（字串帶引號、陣列不帶），actual 是執行結果的 repr，
+        # 都直接用；再套 repr 會多一層引號，AI 會把陣列 [7, 1, 5] 誤認成字串 '[7, 1, 5]'
+        s = str(v)
         return s if len(s) <= n else s[:n] + "..."
 
     n_fail = len(failed)

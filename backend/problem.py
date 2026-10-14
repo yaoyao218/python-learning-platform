@@ -353,9 +353,9 @@ PROBLEMS = {
         "description": '給定一個字串 <code>s</code>，請找出不含重複字元的<strong>最長子字串</strong>的長度。',
         "ai_context": '給一個字串，找「不含重複字元的最長子字串」的長度。例如："abcabcbb" → 3，因為 "abc" 是最長的無重複子字串。',
         "examples": [
-            {"input": 'abcabcbb', "output": 3, "explanation": '最長不重複子字串為 "abc"，長度為 3'},
-            {"input": 'bbbbb',    "output": 1, "explanation": '最長子字串為 "b"，長度為 1'},
-            {"input": 'pwwkew',   "output": 3, "explanation": '最長不重複子字串為 "wke"，長度為 3'},
+            {"input": 's = "abcabcbb"', "output": 3, "explanation": '最長不重複子字串為 "abc"，長度為 3'},
+            {"input": 's = "bbbbb"',    "output": 1, "explanation": '最長子字串為 "b"，長度為 1'},
+            {"input": 's = "pwwkew"',   "output": 3, "explanation": '最長不重複子字串為 "wke"，長度為 3'},
         ],
         "constraints": [
             "0 ≤ s.length ≤ 5 × 10⁴",
@@ -381,9 +381,9 @@ PROBLEMS = {
         ),
         "ai_context": '給一個只含括號的字串，判斷括號是否成對且順序正確地閉合。例如："()[]{}" → true，"([)]" → false（順序錯誤）。',
         "examples": [
-            {"input": '()',     "output": 'true',  "explanation": '一組小括號，順序正確'},
-            {"input": '()[]{}', "output": 'true',  "explanation": '三種括號皆正確配對'},
-            {"input": '(]',     "output": 'false', "explanation": '括號類型不匹配'},
+            {"input": 's = "()"',     "output": 'true',  "explanation": '一組小括號，順序正確'},
+            {"input": 's = "()[]{}"', "output": 'true',  "explanation": '三種括號皆正確配對'},
+            {"input": 's = "(]"',     "output": 'false', "explanation": '括號類型不匹配'},
         ],
         "constraints": [
             "1 ≤ s.length ≤ 10⁴",
@@ -465,9 +465,9 @@ PROBLEMS = {
         ),
         "ai_context": '給一個只含 ( 和 ) 的字串，找出「括號正確配對且連續」的最長子字串長度。例如：")()())" → 4（最長合法子字串是 "()()"）。',
         "examples": [
-            {"input": '(()', "output": 2, "explanation": '最長合法子字串為 "()"'},
-            {"input": ')()())', "output": 4, "explanation": '最長合法子字串為 "()()"'},
-            {"input": '', "output": 0, "explanation": '空字串沒有合法子字串'},
+            {"input": 's = "(()"', "output": 2, "explanation": '最長合法子字串為 "()"'},
+            {"input": 's = ")()())"', "output": 4, "explanation": '最長合法子字串為 "()()"'},
+            {"input": 's = ""', "output": 0, "explanation": '空字串沒有合法子字串'},
         ],
         "constraints": [
             "0 ≤ s.length ≤ 3 × 10⁴",

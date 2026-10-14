@@ -70,7 +70,7 @@ def test_build_prompt_wrong_answer_includes_all_failures():
     prompt = build_prompt(results, TITLE, CONTEXT)
     assert "bbbbb" in prompt
     assert "pwwkew" in prompt
-    assert "Actual: '6'" in prompt
+    assert "Actual: 6" in prompt and "Actual: '6'" not in prompt   # 6 是整數，不能被包成字串 '6'
 
 
 def test_build_prompt_wrong_answer_ends_with_question_instruction():
@@ -364,3 +364,23 @@ def test_skipped_cases_are_not_sent_to_ai():
     ]
     prompt = build_prompt(results, "Longest Valid Parentheses", "括號")
     assert "SKIPPED-INPUT" not in prompt
+
+
+def test_array_input_is_not_shown_to_ai_as_a_string():
+    """陣列輸入不能被多包一層引號，否則 AI 會說「輸入是字串，不是列表」。"""
+    from judge import _display_input
+    tc = {"index": 1, "args": ([7, 1, 5, 3, 6, 4],), "expected": 5, "is_stress": False}
+    shown = _display_input(tc)
+    assert shown == "[7, 1, 5, 3, 6, 4]"
+    base = {"index": 1, "input": shown, "expected": 5, "is_stress": False}
+    wrong = build_prompt([{**base, "actual": "6", "passed": False, "error_type": None, "stderr": ""}], "BTS", "股票")
+    runtime = build_prompt([{**base, "actual": None, "passed": False, "error_type": "runtime_error", "stderr": "IndexError"}], "BTS", "股票")
+    for prompt in (wrong, runtime):
+        assert "[7, 1, 5, 3, 6, 4]" in prompt
+        assert "'[7, 1, 5, 3, 6, 4]'" not in prompt and '"[7, 1, 5, 3, 6, 4]"' not in prompt
+    assert "Actual: 6" in wrong
+
+
+def test_string_input_keeps_its_quotes():
+    from judge import _display_input
+    assert _display_input({"index": 1, "input": "abcabcbb", "expected": 3, "is_stress": False}) == '"abcabcbb"'

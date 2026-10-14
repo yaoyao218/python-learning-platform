@@ -1,5 +1,6 @@
 import ast
 import asyncio
+import re
 import os
 import subprocess
 import sys
@@ -106,6 +107,15 @@ def _run_subprocess(runner_script: str, timeout: float) -> tuple[str, str, int]:
         return ("", "執行超時（超過時間限制）", -1)
 
 
+_RUNNER_FRAME = re.compile(r'^\s*File "<stdin>", line \d+, in .*\n?', re.MULTILINE)
+
+
+def _hide_runner_frames(stderr: str) -> str:
+    """去掉 traceback 裡平台包裝腳本（從 stdin 執行）的那幾層，只留學生程式（<student>）的行號。
+    否則學生和 AI 會看到「line 26」這種學生程式裡根本不存在的行號。"""
+    return _RUNNER_FRAME.sub("", stderr)
+
+
 async def run_code(code: str, method: str, args: tuple, timeout: float = 5.0) -> dict:
     """
     在 ThreadPoolExecutor 執行學生程式碼，跨平台相容（Linux / Windows）。
@@ -146,6 +156,7 @@ async def run_code(code: str, method: str, args: tuple, timeout: float = 5.0) ->
         return {"actual": None, "error_type": "timeout", "stderr": stderr_str}
 
     if returncode != 0:
+        stderr_str = _hide_runner_frames(stderr_str)
         if "SyntaxError" in stderr_str:
             return {"actual": None, "error_type": "syntax_error", "stderr": stderr_str}
         return {"actual": None, "error_type": "runtime_error", "stderr": stderr_str}

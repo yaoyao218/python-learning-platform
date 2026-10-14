@@ -80,4 +80,8 @@ const editorOptions = {
   padding: 2px 8px;
   border-radius: 2px;
 }
+
+@media (max-width: 900px) {
+  .editor-label { padding: 0 16px; }
+}
 </style>

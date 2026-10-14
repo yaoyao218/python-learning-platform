@@ -375,4 +375,22 @@ strong { font-weight: 600; }
   gap: 8px;
 }
 
+
+/* 窄螢幕（手機、平板直向）：左右兩欄改成上下排，右欄不再固定 500px 寬與 sticky */
+@media (max-width: 900px) {
+  .topbar { padding: 0 16px; gap: 12px; }
+  .problem-select { min-width: 0; max-width: none; flex: 1; }
+  .main-layout { flex-direction: column; align-items: stretch; }
+  .right-col {
+    width: 100%;
+    height: auto;
+    position: static;
+    overflow: visible;
+    border-top: 1px solid var(--border);
+  }
+  .submit-row, .error-banner { padding-left: 16px; padding-right: 16px; }
+}
+@media (max-width: 480px) {
+  .brand-text { display: none; }
+}
 </style>

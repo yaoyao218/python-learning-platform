@@ -14,7 +14,7 @@
         <div class="example-body">
           <div class="io-row">
             <span class="io-key">in</span>
-            <span class="io-val input-val">"{{ ex.input }}"</span>
+            <span class="io-val input-val">{{ ex.input }}</span>
           </div>
           <div class="io-row">
             <span class="io-key">out</span>
@@ -35,7 +35,7 @@
     </div>
 
     <!-- 虛擬碼：只有通過往返檢查的題目才有；預設收合，想自己想的人可以不看 -->
-    <details v-if="problem.pseudocode" class="pseudocode">
+    <details v-if="problem.pseudocode" :key="problem.id" class="pseudocode">
       <summary class="pseudocode-header">虛擬碼</summary>
       <div class="pseudocode-body" v-html="pseudocodeHtml"></div>
     </details>
@@ -105,7 +105,7 @@ const pseudocodeHtml = computed(() => renderLite(props.problem.pseudocode?.text 
 
 .examples {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   border-top: 1px solid var(--border);
 }
 
@@ -272,5 +272,11 @@ const pseudocodeHtml = computed(() => renderLite(props.problem.pseudocode?.text 
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--teal);
+}
+
+@media (max-width: 900px) {
+  .problem-header { padding: 20px 16px 18px; }
+  .constraints, .pseudocode { padding-left: 16px; padding-right: 16px; }
+  .example-card { border-right: none; border-bottom: 1px solid var(--border); }
 }
 </style>

@@ -229,3 +229,14 @@ class Solution:
     result = await run_code(code, "length", ("a" * 200_000,))
     assert result["error_type"] is None, result["stderr"]
     assert result["actual"] == "200000"
+
+
+@pytest.mark.asyncio
+async def test_runtime_error_traceback_hides_runner_frames():
+    """traceback 只留學生程式的行號，不出現平台包裝腳本（<stdin>）那一層。"""
+    code = "class Solution:\n    def f(self, xs):\n        return xs[100]\n"
+    result = await run_code(code, "f", ([1, 2],))
+    assert result["error_type"] == "runtime_error"
+    assert "<stdin>" not in result["stderr"]
+    assert 'File "<student>", line 3' in result["stderr"]
+    assert "IndexError" in result["stderr"]

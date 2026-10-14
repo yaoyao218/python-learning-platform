@@ -1,5 +1,6 @@
 import ast
 import asyncio
+import json
 
 from executor import run_code
 from problem import PROBLEMS
@@ -12,11 +13,14 @@ def get_args(tc: dict) -> tuple:
     return tc["args"] if "args" in tc else (tc["input"],)
 
 
+def _show(value) -> str:
+    """字串加雙引號（與題目範例 s = "..." 一致），其他型別照 Python 寫法（例如 [7, 1, 5]）。"""
+    return json.dumps(value, ensure_ascii=False) if isinstance(value, str) else repr(value)
+
+
 def _display_input(tc: dict) -> str:
-    if "args" in tc:
-        s = ", ".join(repr(a) for a in tc["args"])
-    else:
-        s = tc["input"]
+    """給前端與 AI 看的輸入。字串會帶引號、陣列不帶，才分得出 "[1, 2]"（字串）和 [1, 2]（陣列）。"""
+    s = ", ".join(_show(a) for a in get_args(tc))
     return s if len(s) <= _DISPLAY_MAX_LEN else s[:_DISPLAY_MAX_LEN] + "..."
 
 
