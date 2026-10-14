@@ -6,6 +6,11 @@
 #
 # test_cases 裡每筆測資用 "input"（單一字串參數，向後相容 testgen/ 既有工具）
 # 或 "args"（多參數時用 tuple）二選一表示呼叫參數。
+#
+# pseudocode（可選）：testgen/problems/<id>/pseudocode.json 通過往返檢查（passed）
+# 才載入，只帶 version 與 text，見檔尾。
+import json
+from pathlib import Path
 
 def _stress_input() -> str:
     """長度 = 題目限制上限 5×10⁴ 的壓力測資，擋掉 O(n²) 的寫法。
@@ -98,6 +103,145 @@ _MEDIAN_CASES = [
     {"index": 11, "args": ([100000], [100000]), "expected": 100000.0, "is_stress": False},
 ]
 
+# 第 0 輪：只有 LC 官方範例（AI 輔助測資實驗的起點，見
+# docs/superpowers/plans/2026-10-07-ai-assisted-testgen.md）。
+# 單一參數是 list 時用 args=(prices,)，因為 judge 的截斷顯示只處理字串型的 "input"。
+# best-time-stock：r3_tests.json 的 4 道 + 實驗外補強 6 道（E5，2026-10-13，K13／K15；rounds/ 實驗紀錄不變），共 10 道，用 export_round_to_problem.py 的排序規則：前 2 道為 LC 官方範例，其餘依輸入長度由短到長，壓力測資在最後。
+_BEST_TIME_STOCK_CASES = [
+    # LC 官方範例 1
+    {"index": 1, "args": ([7, 1, 5, 3, 6, 4],), "expected": 5, "is_stress": False},
+    # LC 官方範例 2
+    {"index": 2, "args": ([7, 6, 4, 3, 1],), "expected": 0, "is_stress": False},
+    # 實驗外補強（E5）
+    {"index": 3, "args": ([5],), "expected": 0, "is_stress": False},
+    # 實驗外補強（E5）
+    {"index": 4, "args": ([1, 2],), "expected": 1, "is_stress": False},
+    # 實驗外補強（E5）
+    {"index": 5, "args": ([3, 3, 3],), "expected": 0, "is_stress": False},
+    # 實驗外補強（E5）
+    {"index": 6, "args": ([1, 2, 3, 4, 5],), "expected": 4, "is_stress": False},
+    # 實驗外補強（E5）
+    {"index": 7, "args": ([5, 4, 3, 8, 1],), "expected": 5, "is_stress": False},
+    # 實驗外補強（E5）
+    {"index": 8, "args": ([3, 2, 4, 3, 5, 1],), "expected": 3, "is_stress": False},
+    # r3
+    {"index": 9, "args": ([2, 5, 1, 6, 0, 7, 3, 8],), "expected": 8, "is_stress": False},
+    # r3
+    {"index": 10, "args": ([10, 1, 2, 3, 4, 5, 6, 7, 8, 9],), "expected": 8, "is_stress": False},
+]
+
+# 由 testgen/export_round_to_problem.py 從 r5_tests.json 產生：共 54 道，前 3 道為 LC 官方範例，其餘依輸入長度由短到長，壓力測資在最後。
+_LONGEST_VALID_PARENTHESES_CASES = [
+    # LC 官方範例 1
+    {"index": 1, "input": '(()', "expected": 2, "is_stress": False},
+    # LC 官方範例 2
+    {"index": 2, "input": ')()())', "expected": 4, "is_stress": False},
+    # LC 官方範例 3
+    {"index": 3, "input": '', "expected": 0, "is_stress": False},
+    # r5
+    {"index": 4, "input": '(())()', "expected": 6, "is_stress": False},
+    # r5
+    {"index": 5, "input": '())(()', "expected": 2, "is_stress": False},
+    # r5
+    {"index": 6, "input": '(((())', "expected": 4, "is_stress": False},
+    # r5
+    {"index": 7, "input": ')()(()', "expected": 2, "is_stress": False},
+    # r5
+    {"index": 8, "input": '(())()()', "expected": 8, "is_stress": False},
+    # r5
+    {"index": 9, "input": '(()())(()', "expected": 6, "is_stress": False},
+    # r5
+    {"index": 10, "input": '()(())()(()', "expected": 8, "is_stress": False},
+    # r5
+    {"index": 11, "input": '())()(()())', "expected": 8, "is_stress": False},
+    # r5
+    {"index": 12, "input": '((())())(()', "expected": 8, "is_stress": False},
+    # r5
+    {"index": 13, "input": '(()())())(()', "expected": 8, "is_stress": False},
+    # r5
+    {"index": 14, "input": '())((()))()(', "expected": 8, "is_stress": False},
+    # r5
+    {"index": 15, "input": '(()())(()(()))(()', "expected": 14, "is_stress": False},
+    # r5
+    {"index": 16, "input": '(()))(()())())(()', "expected": 8, "is_stress": False},
+    # r5
+    {"index": 17, "input": '())()(()())()(()))', "expected": 14, "is_stress": False},
+    # r5
+    {"index": 18, "input": '())()(()())(()()))', "expected": 14, "is_stress": False},
+    # r5
+    {"index": 19, "input": ')()(()())(()())(()', "expected": 14, "is_stress": False},
+    # r5
+    {"index": 20, "input": '())(()())()(()))(()', "expected": 12, "is_stress": False},
+    # r5
+    {"index": 21, "input": '()(()))(()())(()())', "expected": 12, "is_stress": False},
+    # r5
+    {"index": 22, "input": '((())())(()(()))(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 23, "input": '((())())(()))(()())', "expected": 12, "is_stress": False},
+    # r5
+    {"index": 24, "input": '(()())()(()(()))(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 25, "input": '((()()))(()(()))(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 26, "input": '()((()))()(()())(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 27, "input": '((())())(()())())(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 28, "input": '(()(()))()(()()))(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 29, "input": '())((()))(()())(()))', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 30, "input": '())()(()())((()))(()', "expected": 14, "is_stress": False},
+    # r5
+    {"index": 31, "input": ')()()((()))(()())(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 32, "input": '((()()))(()))(()(()))', "expected": 12, "is_stress": False},
+    # r5
+    {"index": 33, "input": '((()))()(()))((())())', "expected": 12, "is_stress": False},
+    # r5
+    {"index": 34, "input": '(()))(()())()(()(()))', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 35, "input": '(()(()))()()((()))(()', "expected": 18, "is_stress": False},
+    # r5
+    {"index": 36, "input": '())((()))()(()()))(()', "expected": 14, "is_stress": False},
+    # r5
+    {"index": 37, "input": '())((()))()(()))(()())', "expected": 12, "is_stress": False},
+    # r5
+    {"index": 38, "input": '())()()((()))(()())(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 39, "input": '(()())((()))()(()))(()', "expected": 18, "is_stress": False},
+    # r5
+    {"index": 40, "input": '()(()))((()))(()())(()', "expected": 12, "is_stress": False},
+    # r5
+    {"index": 41, "input": '())((()))(()())()(()))', "expected": 18, "is_stress": False},
+    # r5
+    {"index": 42, "input": '()((()))(()())())(()())', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 43, "input": '((())())()(()()))(()())', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 44, "input": '())((()))()(()())(()())', "expected": 20, "is_stress": False},
+    # r5
+    {"index": 45, "input": '(()(()))()(()()))(()())', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 46, "input": '(()())()((()))(()())(()', "expected": 20, "is_stress": False},
+    # r5
+    {"index": 47, "input": '())()(()())((()))(()())', "expected": 20, "is_stress": False},
+    # r5
+    {"index": 48, "input": '()(()())((()))(()()))(()', "expected": 20, "is_stress": False},
+    # r5
+    {"index": 49, "input": '(()())((()))()(()()))(()', "expected": 20, "is_stress": False},
+    # r5
+    {"index": 50, "input": '())()((()))(()())(()(()))', "expected": 22, "is_stress": False},
+    # r5
+    {"index": 51, "input": '()(()))((()))(()())(()())', "expected": 18, "is_stress": False},
+    # r5
+    {"index": 52, "input": '())((()))()(()())(()(()))', "expected": 22, "is_stress": False},
+    # r5
+    {"index": 53, "input": '(()(()))()(()()))((()))(()', "expected": 16, "is_stress": False},
+    # r5
+    {"index": 54, "input": '())()((()))(()())(()())(()', "expected": 20, "is_stress": False},
+]
+
 
 PROBLEMS = {
     "longest-substring": {
@@ -180,9 +324,84 @@ PROBLEMS = {
         ),
         "test_cases": _MEDIAN_CASES,
     },
+    "best-time-stock": {
+        "title": "Best Time to Buy and Sell Stock",
+        "difficulty": "easy",
+        "method": "maxProfit",
+        "description": (
+            '給定一個陣列 <code>prices</code>，<code>prices[i]</code> 是某支股票第 i 天的價格。'
+            '你只能選擇<strong>某一天買入</strong>，並在<strong>之後的某一天賣出</strong>。'
+            '回傳你能獲得的最大利潤；如果無法獲利，回傳 <code>0</code>。'
+        ),
+        "ai_context": '給一個每日股價陣列，只能買一次、之後賣一次，求最大利潤，無法獲利回傳 0。例如：[7,1,5,3,6,4] → 5（第 2 天以 1 買入、第 5 天以 6 賣出）。',
+        "examples": [
+            {"input": 'prices = [7,1,5,3,6,4]', "output": 5,
+             "explanation": '第 2 天（價格 1）買入、第 5 天（價格 6）賣出，利潤 6-1 = 5；不能先賣後買'},
+            {"input": 'prices = [7,6,4,3,1]', "output": 0,
+             "explanation": '價格一路下跌，沒有任何交易能獲利，回傳 0'},
+        ],
+        "constraints": [
+            "1 ≤ prices.length ≤ 10⁵",
+            "0 ≤ prices[i] ≤ 10⁴",
+        ],
+        "starter_code": (
+            "from typing import List\n\n"
+            "class Solution:\n"
+            "    def maxProfit(self, prices: List[int]) -> int:\n"
+            "        # 在此撰寫你的解法\n"
+            "        pass\n"
+        ),
+        "test_cases": _BEST_TIME_STOCK_CASES,
+    },
+    "longest-valid-parentheses": {
+        "title": "Longest Valid Parentheses",
+        "difficulty": "hard",
+        "method": "longestValidParentheses",
+        "description": (
+            '給定一個只包含 <code>(</code> 與 <code>)</code> 的字串 <code>s</code>，'
+            '回傳<strong>最長的合法（括號正確配對）且連續的子字串</strong>的長度。'
+        ),
+        "ai_context": '給一個只含 ( 和 ) 的字串，找出「括號正確配對且連續」的最長子字串長度。例如：")()())" → 4（最長合法子字串是 "()()"）。',
+        "examples": [
+            {"input": '(()', "output": 2, "explanation": '最長合法子字串為 "()"'},
+            {"input": ')()())', "output": 4, "explanation": '最長合法子字串為 "()()"'},
+            {"input": '', "output": 0, "explanation": '空字串沒有合法子字串'},
+        ],
+        "constraints": [
+            "0 ≤ s.length ≤ 3 × 10⁴",
+            "s[i] 只會是 '(' 或 ')'",
+        ],
+        "starter_code": (
+            "class Solution:\n"
+            "    def longestValidParentheses(self, s: str) -> int:\n"
+            "        # 在此撰寫你的解法\n"
+            "        pass\n"
+        ),
+        "test_cases": _LONGEST_VALID_PARENTHESES_CASES,
+    },
 }
 
 # 向後相容別名：testgen/ 既有工具（run_eval.py、smoke_test.py 等）預設操作
 # Longest Substring 這題，透過這兩個別名沿用舊的呼叫方式。
 TEST_CASES = PROBLEMS["longest-substring"]["test_cases"]
 METHOD = PROBLEMS["longest-substring"]["method"]
+
+
+_PSEUDOCODE_DIR = Path(__file__).resolve().parent / "testgen" / "problems"
+
+
+def _load_pseudocode(problem_id: str, base: Path = _PSEUDOCODE_DIR) -> dict | None:
+    """讀 B2 產出的虛擬碼；沒有檔案或沒通過往返檢查就回傳 None（不上線）。"""
+    path = base / problem_id / "pseudocode.json"
+    if not path.exists():
+        return None
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not data.get("passed"):
+        return None
+    return {"version": data["version"], "text": data["text"]}
+
+
+for _pid, _problem in PROBLEMS.items():
+    _pseudocode = _load_pseudocode(_pid)
+    if _pseudocode is not None:
+        _problem["pseudocode"] = _pseudocode

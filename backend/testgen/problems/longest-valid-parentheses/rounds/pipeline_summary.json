@@ -1,0 +1,130 @@
+{
+  "problem": "longest-valid-parentheses",
+  "created_at": "2026-10-13T19:36:47",
+  "settings": {
+    "max_rounds": 4,
+    "target": 0.85,
+    "n": 12,
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.7,
+    "prompt_version": "v2",
+    "reasoning_effort": "low",
+    "max_tokens": 4000
+  },
+  "final_round": 5,
+  "stop_reason": "max_rounds",
+  "converged": false,
+  "rounds": [
+    {
+      "round": 0,
+      "n_cases": 3,
+      "TPR": 1.0,
+      "TNR": 0.2778,
+      "achievement": 0.2778,
+      "uncaught": [
+        "count_adjacent_pairs",
+        "total_pairs"
+      ]
+    },
+    {
+      "round": 1,
+      "n_cases": 9,
+      "TPR": 1.0,
+      "TNR": 0.463,
+      "achievement": 0.463,
+      "uncaught": [],
+      "proposed": 12,
+      "invalid_or_dup": 1,
+      "model": "openai/gpt-oss-120b",
+      "prompt_version": "v1",
+      "reasoning_effort": null,
+      "api_sec": 9.29,
+      "tokens": 4277,
+      "kept": 6,
+      "target_hit_rate": 0.9091
+    },
+    {
+      "round": 2,
+      "n_cases": 14,
+      "TPR": 1.0,
+      "TNR": 0.5476,
+      "achievement": 0.5476,
+      "uncaught": [],
+      "proposed": 23,
+      "invalid_or_dup": 11,
+      "model": "openai/gpt-oss-120b",
+      "prompt_version": "v2",
+      "reasoning_effort": null,
+      "api_sec": 8.56,
+      "tokens": 5060,
+      "kept": 5,
+      "target_hit_rate": 1.0
+    },
+    {
+      "round": 3,
+      "n_cases": 45,
+      "TPR": 1.0,
+      "TNR": 0.6593,
+      "achievement": 0.6593,
+      "uncaught": [],
+      "proposed": 46,
+      "invalid_or_dup": 0,
+      "model": "openai/gpt-oss-120b",
+      "prompt_version": "v2",
+      "reasoning_effort": "low",
+      "api_sec": 8.25,
+      "tokens": 5240,
+      "kept": 31,
+      "target_hit_rate": 0.0
+    },
+    {
+      "round": 4,
+      "n_cases": 50,
+      "TPR": 1.0,
+      "TNR": 0.6633,
+      "achievement": 0.6633,
+      "uncaught": [],
+      "proposed": 12,
+      "invalid_or_dup": 6,
+      "model": "openai/gpt-oss-120b",
+      "prompt_version": "v2",
+      "reasoning_effort": "low",
+      "api_sec": 15.38,
+      "tokens": 6975,
+      "kept": 5,
+      "target_hit_rate": 0.0
+    },
+    {
+      "round": 5,
+      "n_cases": 54,
+      "TPR": 1.0,
+      "TNR": 0.6759,
+      "achievement": 0.6759,
+      "uncaught": [],
+      "proposed": 12,
+      "invalid_or_dup": 3,
+      "model": "openai/gpt-oss-120b",
+      "prompt_version": "v2",
+      "reasoning_effort": "low",
+      "api_sec": 17.45,
+      "tokens": 4429,
+      "kept": 4,
+      "target_hit_rate": 0.6667
+    }
+  ],
+  "heldout": {
+    "problem": "longest-valid-parentheses",
+    "round": 5,
+    "n_cases": 54,
+    "created_at": "2026-10-13T19:36:47",
+    "note": "驗收池（solutions_heldout）只在最後一輪結束後跑一次；不得依結果回頭修改測資",
+    "TPR": 1.0,
+    "heldout_TNR": 0.537,
+    "heldout_pass_rates": {
+      "dp_missing_concat": 0.2407,
+      "forget_new_base": 0.5556,
+      "right_scan_only": 0.5926
+    },
+    "heldout_uncaught": []
+  }
+}

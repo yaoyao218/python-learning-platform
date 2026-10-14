@@ -1,0 +1,74 @@
+{
+  "problem": "best-time-stock",
+  "round": 0,
+  "source": "problem.PROBLEMS['best-time-stock']['test_cases']",
+  "created_at": "2026-10-07T15:37:06",
+  "evaluation": {
+    "TPR": 1.0,
+    "TNR": 0.5,
+    "ceiling": 0.8333,
+    "achievement": 0.6,
+    "S_minus_pass_rates": {
+      "adjacent_only": 0.5,
+      "buy_first_day": 0.5,
+      "max_minus_min": 0.0,
+      "no_clamp_zero": 0.5,
+      "skip_last_day": 1.0,
+      "sum_positive_diffs": 0.5
+    },
+    "S_minus_caught_by": {
+      "adjacent_only": [
+        1
+      ],
+      "buy_first_day": [
+        1
+      ],
+      "max_minus_min": [
+        1,
+        2
+      ],
+      "no_clamp_zero": [
+        2
+      ],
+      "skip_last_day": [],
+      "sum_positive_diffs": [
+        1
+      ]
+    },
+    "uncaught": [
+      "skip_last_day"
+    ],
+    "S_plus_failures": []
+  },
+  "cases": [
+    {
+      "index": 1,
+      "args": [
+        [
+          7,
+          1,
+          5,
+          3,
+          6,
+          4
+        ]
+      ],
+      "expected": 5,
+      "is_stress": false
+    },
+    {
+      "index": 2,
+      "args": [
+        [
+          7,
+          6,
+          4,
+          3,
+          1
+        ]
+      ],
+      "expected": 0,
+      "is_stress": false
+    }
+  ]
+}

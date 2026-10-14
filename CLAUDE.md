@@ -2,11 +2,19 @@
 
 ## 專案概述
 
-給大一學生的 Python 程式學習平台（LeetCode 風格）。學生提交程式碼後，系統執行程式碼、比對 17 組測試案例，Groq AI 分析錯誤 pattern 並給予引導式提示（不直接給答案）。
+給大一學生的 Python 程式學習平台（LeetCode 風格）。學生提交程式碼後，系統執行程式碼、比對該題測試案例，Groq AI 分析錯誤 pattern 並給予引導式提示（不直接給答案）。
 
-目前只有一題：**Longest Substring Without Repeating Characters（LeetCode #3）**
+目前有 5 題（`backend/problem.py` 的 `PROBLEMS`，前端從 `GET /problems` 取得清單）：
 
-**測資集已套用論文方法重做**（細節見「測資生成工具」章節）：TNR 從 0.49 → 0.88，全程 TPR=1.0。原本 18 筆 hardcoded 改成 17 筆由 `testgen/` 離線收斂出來的版本（首 3 筆保留 LC 官方範例做學生熱身），舊版備份在 `backend/problem_old.py`。
+| 題目 id | 題目 | 難度 | 測資數 | 虛擬碼 |
+|---|---|---|---|---|
+| `longest-substring` | Longest Substring Without Repeating Characters（LC #3） | 中 | 18 | 有 |
+| `valid-parentheses` | Valid Parentheses（LC #20） | 易 | 12 | 無 |
+| `median-two-sorted-arrays` | Median of Two Sorted Arrays（LC #4） | 難 | 11 | 無 |
+| `best-time-stock` | Best Time to Buy and Sell Stock（LC #121） | 易 | 10 | 有 |
+| `longest-valid-parentheses` | Longest Valid Parentheses（LC #32） | 難 | 54 | 有 |
+
+**Longest Substring 的測資集已套用論文方法重做**（細節見「測資生成工具」章節）：TNR 從 0.49 → 0.88，全程 TPR=1.0。原本 18 筆 hardcoded 改成 17 筆由 `testgen/` 離線收斂出來的版本（首 3 筆保留 LC 官方範例做學生熱身），舊版備份在 `backend/problem_old.py`。
 
 ## 啟動方式
 
@@ -31,11 +39,13 @@ npm run dev
 ```
 python-learning-platform/
 ├── backend/
-│   ├── main.py          # FastAPI app，POST /submit（唯一 endpoint）
+│   ├── main.py          # FastAPI app，GET /problems、GET /problems/{id}、POST /submit
 │   ├── executor.py      # ThreadPoolExecutor 執行學生程式碼 + AST 安全過濾（跨平台）
-│   ├── judge.py         # 17 組 test case 比對，回傳完整 results 陣列
+│   ├── judge.py         # 依 problem_id 比對該題 test case，回傳完整 results 陣列
 │   ├── ai.py            # Groq / Gemini 自動切換，4 種 prompt 分支
-│   ├── problem.py       # 題目定義 + 17 組 TEST_CASES
+│   ├── masking.py       # 提示夾帶完整解答時遮蔽
+│   ├── hint_guard.py    # 提示品質檢查
+│   ├── problem.py       # 5 題的題目定義與測資（PROBLEMS）
 │   ├── requirements.txt
 │   ├── pytest.ini
 │   ├── .env             # GROQ_API_KEY=gsk_... 或 GEMINI_API_KEY=AIza...（不 commit）
@@ -49,9 +59,9 @@ python-learning-platform/
 │   ├── index.html
 │   └── src/
 │       ├── App.vue          # 左右兩欄佈局，handleSubmit，全域樣式
-│       ├── api.js           # axios POST /submit（DEV 自動指向 localhost:8000）
+│       ├── api.js           # axios GET /problems、POST /submit（DEV 自動指向 localhost:8000）
 │       └── components/
-│           ├── ProblemStatement.vue  # 題目 + 3 個範例卡片
+│           ├── ProblemStatement.vue  # 題目、範例、限制條件、虛擬碼
 │           ├── CodeEditor.vue        # Monaco Editor（Python，vs-dark）
 │           └── ResultPanel.vue       # 測試結果（到第一個失敗為止）+ AI 提示
 └── backend/testgen/                 # 離線測資生成工具（論文方法的實作，不影響線上）
@@ -83,8 +93,8 @@ pytest -v
 
 ## 關鍵架構決策
 
-- **後端跑全部 17 筆 test case**，前端只渲染到第一個失敗（含）為止
-- `judge.py` 用 `asyncio.gather` 並行跑 17 個 test case，單次 submission 回應時間縮短約一半
+- **後端跑該題全部 test case**，前端只渲染到第一個失敗（含）為止
+- `judge.py` 用 `asyncio.gather` 並行跑全部 test case，單次 submission 回應時間縮短約一半
 - AI prompt 有 4 個分支：`syntax_error` → 強調「語法錯誤無法執行」；`runtime_error` → 強調「執行時錯誤」；`no_return` → 提醒 return；`wrong_answer`（error_type=None）→ 傳所有失敗的 (input, expected, actual) 三元組，AI 從數值 pattern 推斷 bug 類型，給蘇格拉底式分層提示（不讀學生程式碼）
 - wrong_answer prompt 的 failed_summary 會截斷超過 50 字元的字串，避免壓力測試 case（`"a"*50000`）讓 prompt 過大導致 AI API 失敗
 - executor 用 AST 過濾禁止模組（os, sys, subprocess, socket 等），用 `ThreadPoolExecutor + subprocess.run` 執行，跨平台相容（Windows / Linux）
@@ -110,7 +120,7 @@ cd frontend && npm install
 
 | 選項 | Provider | Model | 端點 |
 |---|---|---|---|
-| 主要（推薦） | Groq Cloud | `llama-3.1-8b-instant` | `https://api.groq.com/openai/v1` |
+| 主要（推薦） | Groq Cloud | `openai/gpt-oss-20b` | `https://api.groq.com/openai/v1` |
 | 備用 | Google Gemini | `gemini-2.0-flash` | `https://generativelanguage.googleapis.com/v1beta/openai/` |
 
 `ai.py` 透過環境變數自動切換，兩者均使用 openai Python SDK（OpenAI 相容格式）。

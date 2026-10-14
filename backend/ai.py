@@ -21,7 +21,19 @@ client = AsyncOpenAI(
 _MODEL = "gemini-2.0-flash" if _use_gemini else "openai/gpt-oss-20b"
 
 
-def build_prompt(results: list[dict], problem_title: str, problem_context: str) -> str | None:
+def _pseudocode_parts(pseudocode: str | None) -> tuple[str, str]:
+    """虛擬碼是題目材料（學生手上也有），不是學生程式碼。回傳 (材料段落, 額外規則)。"""
+    if not pseudocode:
+        return "", ""
+    material = f"\n\n虛擬碼（學生手上也有同一份，步驟有編號）：\n{pseudocode.strip()}"
+    rules = ("\n- 可以引用虛擬碼的步驟編號與意思（例如「想想第 4 步在這個輸入上會發生什麼？」），"
+             "但不要整段複述虛擬碼"
+             "\n- 不要斷言學生「第 N 步錯了」，用問句引導學生自己檢查")
+    return material, rules
+
+
+def build_prompt(results: list[dict], problem_title: str, problem_context: str,
+                 pseudocode: str | None = None) -> str | None:
     """
     組裝 AI prompt，完全不讀學生程式碼。
     - 全部通過 → 回傳 None
@@ -34,8 +46,11 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str) 
     Args:
         problem_title: 題目名稱（如 "Valid Parentheses"）
         problem_context: 題目定義的純文字描述（給 AI 當上下文，不含 HTML）
+        pseudocode: 該題通過往返檢查的虛擬碼（可選）；runtime_error、timeout、
+            wrong_answer 會放進題目材料
     """
     failed = [r for r in results if not r["passed"]]
+    pseudo_material, pseudo_rules = _pseudocode_parts(pseudocode)
     if not failed:
         return None
 
@@ -60,7 +75,7 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str) 
         return f"""你是一個程式學習助教，幫助大一學生學習 Python。
 
 題目：{problem_title}
-（{problem_context}）
+（{problem_context}）{pseudo_material}
 
 學生程式在以下輸入時發生執行期錯誤：
 - 輸入：{first_fail['input']!r}
@@ -71,7 +86,7 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str) 
 2. 引導學生去看錯誤訊息中的行號
 3. 問學生：「這個輸入有什麼特別的地方，可能讓程式在那行出錯？」
 
-規則：不要給出修正後的程式碼。繁體中文，語氣友善鼓勵。150 字以內。"""
+規則：不要給出修正後的程式碼。繁體中文，語氣友善鼓勵。150 字以內。{pseudo_rules}"""
 
     if error_type == "timeout":
         if first_fail.get("is_stress"):
@@ -87,7 +102,7 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str) 
         return f"""你是一個程式學習助教，幫助大一學生學習 Python。
 
 題目：{problem_title}
-（{problem_context}）
+（{problem_context}）{pseudo_material}
 
 {situation}
 超時沒有錯誤訊息，也沒有行號可以看。
@@ -95,7 +110,7 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str) 
 請依序做三件事：
 {task}
 
-規則：不要給出修正後的程式碼或完整演算法。繁體中文，語氣友善鼓勵。150 字以內。"""
+規則：不要給出修正後的程式碼或完整演算法。繁體中文，語氣友善鼓勵。150 字以內。{pseudo_rules}"""
 
     if error_type == "no_return":
         return f"""你是一個程式學習助教，幫助大一學生學習 Python。
@@ -127,7 +142,7 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str) 
     return f"""你是一個程式學習助教，專門幫助大一學生學習解題思維。
 
 題目：{problem_title}
-定義：{problem_context}
+定義：{problem_context}{pseudo_material}
 
 學生有 {n_fail}/{n_total} 筆測資失敗，以下是其中答錯（有輸出但數值不對）的案例：
 {failed_summary}
@@ -144,7 +159,7 @@ def build_prompt(results: list[dict], problem_title: str, problem_context: str) 
 - 不要給出正確程式碼或完整演算法步驟
 - 結尾必須是一個問句
 - 繁體中文，語氣像在討論題目的學長姐
-- 200 字以內"""
+- 200 字以內{pseudo_rules}"""
 
 
 async def get_hint(
@@ -152,6 +167,7 @@ async def get_hint(
     problem_title: str,
     problem_context: str,
     problem_id: str | None = None,
+    pseudocode: str | None = None,
 ) -> str | None:
     """呼叫 Groq/Gemini API 取得 AI 提示。全部通過時回傳 None。API 失敗時回傳 None。
 
@@ -166,15 +182,19 @@ async def get_hint(
         problem_title:   題目名稱
         problem_context: 純文字題意（給 AI 當上下文）
         problem_id:      題目 ID；提供時對 AI 回覆執行遮罩檢查，None 則跳過（向下相容）
+        pseudocode:      該題虛擬碼（可選）；放進 prompt，並讓 hint_guard 擋整段複述
     """
-    prompt = build_prompt(results, problem_title, problem_context)
+    prompt = build_prompt(results, problem_title, problem_context, pseudocode)
     if prompt is None:
         return None
 
     try:
+        # gpt-oss 預設推理可能把 2048 token 全用在推理、回傳空內容（K3），一律壓到 low
+        extra = {"reasoning_effort": "low"} if "gpt-oss" in _MODEL else {}
         response = await client.chat.completions.create(
             model=_MODEL,
             messages=[{"role": "user", "content": prompt}],
+            **extra,
         )
         content = response.choices[0].message.content
         if content is None:
@@ -189,7 +209,7 @@ async def get_hint(
         from masking import sanitize_hint  # noqa: PLC0415
         content = await sanitize_hint(content, problem_id, problem_title, client, _MODEL)
 
-    safe_hint, problems = guard(content, code_blocks_vetted=problem_id is not None)
+    safe_hint, problems = guard(content, code_blocks_vetted=problem_id is not None, pseudocode=pseudocode)
     if problems:
         _logger.warning("AI hint failed quality guard, using fallback: %s", problems)
     return safe_hint

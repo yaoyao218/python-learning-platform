@@ -1,0 +1,18 @@
+{
+  "version": "ef5e0747021603f1",
+  "text": "**輸入**：一個字串 `s`  \n**輸出**：長度最大的無重複子字串的長度  \n\n1. 建立空集合 `seen` 以儲存目前滑窗內的字元。  \n2. 設定左指標 `left` 為 0，右指標 `right` 從 0 開始遞增。  \n3. 設定最佳長度 `best` 為 0。  \n4. 當 `right` 小於字串長度時，重複以下步驟。  \n5. 若 `s[right]` 已存在於 `seen`，則執行下列子步驟。  \n6. 從 `seen` 移除 `s[left]`。  \n7. 將 `left` 右移一位。  \n8. 重複步驟 5–7 直至 `s[right]` 不在 `seen`。  \n9. 將 `s[right]` 加入 `seen`。  \n10. 計算目前滑窗長度 `right - left + 1`。  \n11. 若此長度大於 `best`，則更新 `best` 為此長度。  \n12. 將 `right` 右移一位。  \n13. 重複步驟 5–12 直至 `right` 超過字串長度。  \n14. 回傳 `best`。",
+  "source_s_plus": "sliding_window.py",
+  "writer": "openai/gpt-oss-20b",
+  "implementer": "openai/gpt-oss-120b",
+  "k": 3,
+  "attempts": 1,
+  "passed": true,
+  "created_at": "2026-10-13T20:10:54",
+  "format_warnings": [
+    "含索引寫法 x[i]",
+    "人工閱讀：第 13 步寫「直至 right 超過字串長度」，實際應在 right 等於長度時停止",
+    "人工閱讀：第 4 步與第 13 步重複描述同一個迴圈"
+  ],
+  "n_probe_inputs": 23848,
+  "note": "同系列模型（K7）；單次結果（K9）；格式軟規則只記錄警告、未改寫（K4）"
+}

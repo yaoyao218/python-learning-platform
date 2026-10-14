@@ -1,0 +1,136 @@
+{
+  "problem": "longest-valid-parentheses",
+  "round": 1,
+  "pilot": true,
+  "reviewer": "AI（測試階段代審，非人工）",
+  "rule": "只看 TPR/TNR 數字，不看 AI 理由；貪婪法依 TNR 加入候選，r0 原測資全保留；每個 S- 至少被抓一次",
+  "created_at": "2026-10-09T15:39:26",
+  "source_candidates": "r1_candidates.20261007-153837.json",
+  "evaluation": {
+    "TPR": 1.0,
+    "TNR": 0.463,
+    "ceiling": 1.0,
+    "achievement": 0.463,
+    "S_minus_pass_rates": {
+      "count_adjacent_pairs": 0.5556,
+      "left_scan_only": 0.7778,
+      "max_depth": 0.1111,
+      "no_concat": 0.6667,
+      "reset_without_base": 0.4444,
+      "total_pairs": 0.6667
+    },
+    "S_minus_caught_by": {
+      "count_adjacent_pairs": [
+        4,
+        6,
+        7,
+        9
+      ],
+      "left_scan_only": [
+        1,
+        7
+      ],
+      "max_depth": [
+        1,
+        2,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "no_concat": [
+        2,
+        4,
+        6
+      ],
+      "reset_without_base": [
+        1,
+        5,
+        7,
+        8,
+        9
+      ],
+      "total_pairs": [
+        5,
+        8,
+        9
+      ]
+    },
+    "uncaught": [],
+    "S_plus_failures": []
+  },
+  "cases": [
+    {
+      "index": 1,
+      "input": "(()",
+      "expected": 2,
+      "is_stress": false
+    },
+    {
+      "index": 2,
+      "input": ")()())",
+      "expected": 4,
+      "is_stress": false
+    },
+    {
+      "index": 3,
+      "input": "",
+      "expected": 0,
+      "is_stress": false
+    },
+    {
+      "args": [
+        "(())()"
+      ],
+      "expected": 6,
+      "is_stress": false,
+      "index": 4
+    },
+    {
+      "args": [
+        "())(()"
+      ],
+      "expected": 2,
+      "is_stress": false,
+      "index": 5
+    },
+    {
+      "args": [
+        "(())()()"
+      ],
+      "expected": 8,
+      "is_stress": false,
+      "index": 6
+    },
+    {
+      "args": [
+        "(((())"
+      ],
+      "expected": 4,
+      "is_stress": false,
+      "index": 7
+    },
+    {
+      "args": [
+        ")()(()"
+      ],
+      "expected": 2,
+      "is_stress": false,
+      "index": 8
+    },
+    {
+      "args": [
+        "(()())(()"
+      ],
+      "expected": 6,
+      "is_stress": false,
+      "index": 9
+    }
+  ],
+  "test_phase": true,
+  "note": "測試階段：候選為試跑提案（2026-10-07），審核由 AI 代審，非人工；不計入正式實驗結果，僅用來測試迭代流程。",
+  "copied_from": "pilot/r1_tests.pilot.json",
+  "source": "AI 代審（測試階段）：r0 + 保留的試跑候選"
+}

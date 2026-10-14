@@ -14,6 +14,7 @@
     cd backend
     python -m testgen.run_eval                                    # baseline（problem.TEST_CASES）
     python -m testgen.run_eval --tests testgen.tests_v1 --label v1
+    python -m testgen.run_eval --problem longest-substring --label current   # 指定題目
 """
 from __future__ import annotations
 import argparse
@@ -153,27 +154,57 @@ def print_report(report: dict, s_plus: dict, s_minus: dict):
 
 async def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--tests", default="problem",
-                   help="Python 模組路徑（含 TEST_CASES）。default: problem (= 原本的 problem.py)")
+    p.add_argument("--problem", default=None,
+                   help="題目 id（見 testgen/registry.py）。給了就從 problem.PROBLEMS 取 method / "
+                        "test_cases，S+/S- 讀該題的池子。不給 = 舊行為（LC3、testgen/ 根目錄的池子）")
+    p.add_argument("--tests", default=None,
+                   help="Python 模組路徑（含 TEST_CASES）。不給時：有 --problem 用該題的 "
+                        "test_cases，否則用 problem（= 原本的 problem.py）")
     p.add_argument("--label", default="baseline",
                    help="輸出 feedback_<label>.json 的標籤")
+    p.add_argument("--heldout", action="store_true",
+                   help="S- 改用驗收池（solutions_heldout/）。只在最後一輪結束後驗收時使用，"
+                        "迭代期間不要跑（需搭配 --problem）")
     args = p.parse_args()
+    if args.heldout and not args.problem:
+        p.error("--heldout 需要搭配 --problem")
 
-    # 動態載入指定模組的 TEST_CASES / METHOD
     global TEST_CASES, METHOD
-    mod = importlib.import_module(args.tests)
-    TEST_CASES = mod.TEST_CASES
-    METHOD = getattr(mod, "METHOD", "lengthOfLongestSubstring")
-    print(f"[testgen] 載入 {args.tests}.TEST_CASES（{len(TEST_CASES)} 筆，method={METHOD}）、S+、S- ...")
+    if args.problem:
+        from problem import PROBLEMS
+        from testgen import registry
+        prob = PROBLEMS[args.problem]
+        METHOD = prob["method"]
+        if args.tests:
+            TEST_CASES = importlib.import_module(args.tests).TEST_CASES
+        else:
+            TEST_CASES = prob["test_cases"]
+        correct_dir = registry.pool_dir(args.problem, "correct")
+        wrong_dir = registry.pool_dir(args.problem, "heldout" if args.heldout else "wrong")
+        out_dir = registry.feedback_dir(args.problem)
+        source = args.tests or f"problem.PROBLEMS[{args.problem!r}]"
+    else:
+        # 舊行為：動態載入指定模組的 TEST_CASES / METHOD
+        tests_module = args.tests or "problem"
+        mod = importlib.import_module(tests_module)
+        TEST_CASES = mod.TEST_CASES
+        METHOD = getattr(mod, "METHOD", "lengthOfLongestSubstring")
+        correct_dir, wrong_dir, out_dir = HERE / "solutions_correct", HERE / "solutions_wrong", HERE
+        source = tests_module
+    pool_name = "S- 驗收池" if args.heldout else "S-"
+    print(f"[testgen] 載入 {source} 的 TEST_CASES（{len(TEST_CASES)} 筆，method={METHOD}）、S+、{pool_name} ...")
 
-    s_plus = await evaluate_pool(HERE / "solutions_correct", METHOD)
-    s_minus = await evaluate_pool(HERE / "solutions_wrong", METHOD)
+    s_plus = await evaluate_pool(correct_dir, METHOD)
+    s_minus = await evaluate_pool(wrong_dir, METHOD)
     report = summarise(s_plus, s_minus)
-    report["tests_module"] = args.tests
+    report["tests_module"] = source
+    if args.problem:
+        report["problem"] = args.problem
+    report["S_minus_pool"] = "heldout" if args.heldout else "wrong"
     report["raw_S_plus"] = s_plus
     report["raw_S_minus"] = s_minus
 
-    out_path = HERE / f"feedback_{args.label}.json"
+    out_path = out_dir / f"feedback_{args.label}.json"
     out_path.write_text(json.dumps(report, indent=2, ensure_ascii=False))
     print_report(report, s_plus, s_minus)
     print(f"\n完整反饋已寫入 {out_path.name}")

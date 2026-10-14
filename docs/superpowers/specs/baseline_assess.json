@@ -1,0 +1,211 @@
+{
+  "python": "3.14.3",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "cpu_count": 16,
+  "n_random": 20000,
+  "seed": 0,
+  "repeats": 3,
+  "problems": {
+    "longest-substring": {
+      "assess_seconds": [
+        0.75,
+        0.66,
+        0.66
+      ],
+      "assess_median": 0.66,
+      "n_inputs": 41845,
+      "n_solutions": 12,
+      "fingerprint_seconds": 1.35,
+      "fingerprints": {
+        "S+": {
+          "brute_force": {
+            "n_killed": 0,
+            "sha256_16": "4f53cda18c2baa0c"
+          },
+          "hash_map": {
+            "n_killed": 0,
+            "sha256_16": "4f53cda18c2baa0c"
+          },
+          "sliding_window": {
+            "n_killed": 0,
+            "sha256_16": "4f53cda18c2baa0c"
+          }
+        },
+        "S-": {
+          "always_len": {
+            "n_killed": 35807,
+            "sha256_16": "4523a2d3ed798cbc"
+          },
+          "count_unique": {
+            "n_killed": 12663,
+            "sha256_16": "5fa5d6860c0ef8a6"
+          },
+          "inner_return": {
+            "n_killed": 20596,
+            "sha256_16": "ef39f761d091417f"
+          },
+          "no_reset_left": {
+            "n_killed": 6402,
+            "sha256_16": "e0d7b0010312d640"
+          },
+          "no_return": {
+            "n_killed": 41845,
+            "sha256_16": "74f690c8981f217a"
+          },
+          "off_by_one_window": {
+            "n_killed": 40256,
+            "sha256_16": "f7d24f8f07e311ca"
+          }
+        },
+        "heldout": {
+          "if_not_while": {
+            "n_killed": 23373,
+            "sha256_16": "4e3c2ce61c68b4db"
+          },
+          "no_max_left": {
+            "n_killed": 15658,
+            "sha256_16": "dd4e70c3aa90e33b"
+          },
+          "update_only_on_dup": {
+            "n_killed": 9938,
+            "sha256_16": "b5d6c2d41bf39a8f"
+          }
+        }
+      }
+    },
+    "best-time-stock": {
+      "assess_seconds": [
+        1.72,
+        1.35,
+        1.38
+      ],
+      "assess_median": 1.38,
+      "n_inputs": 39530,
+      "n_solutions": 12,
+      "fingerprint_seconds": 1.21,
+      "fingerprints": {
+        "S+": {
+          "brute_force": {
+            "n_killed": 0,
+            "sha256_16": "4f53cda18c2baa0c"
+          },
+          "kadane_diff": {
+            "n_killed": 0,
+            "sha256_16": "4f53cda18c2baa0c"
+          },
+          "one_pass": {
+            "n_killed": 0,
+            "sha256_16": "4f53cda18c2baa0c"
+          }
+        },
+        "S-": {
+          "adjacent_only": {
+            "n_killed": 11325,
+            "sha256_16": "b069c6fa8e7f4f2f"
+          },
+          "buy_first_day": {
+            "n_killed": 19913,
+            "sha256_16": "7e9a3e06a4a0c19b"
+          },
+          "max_minus_min": {
+            "n_killed": 13339,
+            "sha256_16": "cc9e91ce713ed8db"
+          },
+          "no_clamp_zero": {
+            "n_killed": 1554,
+            "sha256_16": "90c41b2476a6c88f"
+          },
+          "skip_last_day": {
+            "n_killed": 9305,
+            "sha256_16": "7da8a6357bc3c549"
+          },
+          "sum_positive_diffs": {
+            "n_killed": 18019,
+            "sha256_16": "b17bc6a2e872f219"
+          }
+        },
+        "heldout": {
+          "first_valley_peak": {
+            "n_killed": 8932,
+            "sha256_16": "ff1c29c352a96f7f"
+          },
+          "global_min_then_max": {
+            "n_killed": 5305,
+            "sha256_16": "3fa5618764ac92a9"
+          },
+          "init_min_zero": {
+            "n_killed": 25815,
+            "sha256_16": "97d1931fb2d67eb6"
+          }
+        }
+      }
+    },
+    "longest-valid-parentheses": {
+      "assess_seconds": [
+        1.72,
+        1.5,
+        1.42
+      ],
+      "assess_median": 1.5,
+      "n_inputs": 28191,
+      "n_solutions": 12,
+      "fingerprint_seconds": 1.4,
+      "fingerprints": {
+        "S+": {
+          "brute_force": {
+            "n_killed": 0,
+            "sha256_16": "4f53cda18c2baa0c"
+          },
+          "stack_index": {
+            "n_killed": 0,
+            "sha256_16": "4f53cda18c2baa0c"
+          },
+          "two_scan": {
+            "n_killed": 0,
+            "sha256_16": "4f53cda18c2baa0c"
+          }
+        },
+        "S-": {
+          "count_adjacent_pairs": {
+            "n_killed": 9119,
+            "sha256_16": "33e4469210bf170f"
+          },
+          "left_scan_only": {
+            "n_killed": 6995,
+            "sha256_16": "7dde275b033f0446"
+          },
+          "max_depth": {
+            "n_killed": 17949,
+            "sha256_16": "be65814aadc360ea"
+          },
+          "no_concat": {
+            "n_killed": 7436,
+            "sha256_16": "e7afe7153374cc14"
+          },
+          "reset_without_base": {
+            "n_killed": 9572,
+            "sha256_16": "977d7ae969065989"
+          },
+          "total_pairs": {
+            "n_killed": 9494,
+            "sha256_16": "6bcf326703a446c6"
+          }
+        },
+        "heldout": {
+          "dp_missing_concat": {
+            "n_killed": 2331,
+            "sha256_16": "56a2f4d0b84d9f04"
+          },
+          "forget_new_base": {
+            "n_killed": 6867,
+            "sha256_16": "14d17099e85869ef"
+          },
+          "right_scan_only": {
+            "n_killed": 6816,
+            "sha256_16": "72e2777ede6284c5"
+          }
+        }
+      }
+    }
+  }
+}

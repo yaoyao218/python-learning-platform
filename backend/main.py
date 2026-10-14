@@ -43,7 +43,7 @@ async def get_problem(problem_id: str):
     problem = PROBLEMS.get(problem_id)
     if problem is None:
         raise HTTPException(status_code=404, detail="Problem not found")
-    return {
+    detail = {
         "id": problem_id,
         "title": problem["title"],
         "difficulty": problem["difficulty"],
@@ -52,6 +52,10 @@ async def get_problem(problem_id: str):
         "constraints": problem["constraints"],
         "starter_code": problem["starter_code"],
     }
+    # 虛擬碼是可選欄位：只有通過往返檢查的題目才有（測資內容不送到前端）
+    if "pseudocode" in problem:
+        detail["pseudocode"] = problem["pseudocode"]
+    return detail
 
 
 @app.post("/submit")
@@ -61,10 +65,11 @@ async def submit(req: SubmitRequest):
 
     problem = PROBLEMS[req.problem_id]
     title, context = problem["title"], problem["ai_context"]
+    pseudocode = problem.get("pseudocode", {}).get("text")
 
     t0 = time.perf_counter()
     results = await judge(req.code, req.problem_id)
-    hint = await get_hint(results, title, context, problem_id=req.problem_id)
+    hint = await get_hint(results, title, context, problem_id=req.problem_id, pseudocode=pseudocode)
     elapsed_ms = (time.perf_counter() - t0) * 1000
     # 紀錄這次提交（只在 TESTGEN_SESSION_LOG=1 時實際寫檔）
     if LOG_ENABLED:
@@ -72,7 +77,7 @@ async def submit(req: SubmitRequest):
             code=req.code,
             results=results,
             hint=hint,
-            ai_prompt=build_prompt(results, title, context),
+            ai_prompt=build_prompt(results, title, context, pseudocode),
             elapsed_ms=elapsed_ms,
         )
     return {"results": results, "hint": hint}

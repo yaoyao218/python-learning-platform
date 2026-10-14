@@ -1,0 +1,14 @@
+{
+  "version": "e8b81047ffd5335b",
+  "text": "**輸入**：一列整數 `prices`，代表每天的股價。  \n**輸出**：一個整數 `best`，代表可得到的最大利潤。\n\n1. 設 `lowest` 為第一天的價格。  \n2. 設 `best` 為 0。  \n3. 對於每一天的價格 `p`：  \n4.   若 `p` 小於 `lowest`，則把 `lowest` 更新為 `p`。  \n5.   計算當前利潤 `profit = p - lowest`。  \n6.   若 `profit` 大於 `best`，則把 `best` 更新為 `profit`。  \n7. 迴圈結束後，回傳 `best`。",
+  "source_s_plus": "one_pass.py",
+  "writer": "openai/gpt-oss-20b",
+  "implementer": "openai/gpt-oss-120b",
+  "k": 3,
+  "attempts": 1,
+  "passed": true,
+  "created_at": "2026-10-13T20:11:00",
+  "format_warnings": [],
+  "n_probe_inputs": 21533,
+  "note": "同系列模型（K7）；單次結果（K9）；格式軟規則只記錄警告、未改寫（K4）"
+}

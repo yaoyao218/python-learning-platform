@@ -1,0 +1,62 @@
+{
+  "problem": "longest-valid-parentheses",
+  "round": 0,
+  "source": "problem.PROBLEMS['longest-valid-parentheses']['test_cases']",
+  "created_at": "2026-10-07T15:37:07",
+  "evaluation": {
+    "TPR": 1.0,
+    "TNR": 0.2778,
+    "ceiling": 1.0,
+    "achievement": 0.2778,
+    "S_minus_pass_rates": {
+      "count_adjacent_pairs": 1.0,
+      "left_scan_only": 0.6667,
+      "max_depth": 0.3333,
+      "no_concat": 0.6667,
+      "reset_without_base": 0.6667,
+      "total_pairs": 1.0
+    },
+    "S_minus_caught_by": {
+      "count_adjacent_pairs": [],
+      "left_scan_only": [
+        1
+      ],
+      "max_depth": [
+        1,
+        2
+      ],
+      "no_concat": [
+        2
+      ],
+      "reset_without_base": [
+        1
+      ],
+      "total_pairs": []
+    },
+    "uncaught": [
+      "count_adjacent_pairs",
+      "total_pairs"
+    ],
+    "S_plus_failures": []
+  },
+  "cases": [
+    {
+      "index": 1,
+      "input": "(()",
+      "expected": 2,
+      "is_stress": false
+    },
+    {
+      "index": 2,
+      "input": ")()())",
+      "expected": 4,
+      "is_stress": false
+    },
+    {
+      "index": 3,
+      "input": "",
+      "expected": 0,
+      "is_stress": false
+    }
+  ]
+}

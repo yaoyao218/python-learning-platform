@@ -1,0 +1,246 @@
+{
+  "metrics": {
+    "TPR": 1.0,
+    "TNR": 0.2778,
+    "n_test_cases": 3,
+    "n_S_plus": 3,
+    "n_S_minus": 6
+  },
+  "S_plus_pass_rates": {
+    "brute_force.py": 1.0,
+    "stack_index.py": 1.0,
+    "two_scan.py": 1.0
+  },
+  "S_minus_pass_rates": {
+    "count_adjacent_pairs.py": 1.0,
+    "left_scan_only.py": 0.6667,
+    "max_depth.py": 0.3333,
+    "no_concat.py": 0.6667,
+    "reset_without_base.py": 0.6667,
+    "total_pairs.py": 1.0
+  },
+  "command_value": {
+    "1": 3,
+    "2": 2,
+    "3": 0
+  },
+  "false_positives": [
+    "count_adjacent_pairs.py",
+    "total_pairs.py"
+  ],
+  "false_negatives": [],
+  "tests_module": "problem.PROBLEMS['longest-valid-parentheses']",
+  "problem": "longest-valid-parentheses",
+  "S_minus_pool": "wrong",
+  "raw_S_plus": {
+    "brute_force.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "stack_index.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "two_scan.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ]
+  },
+  "raw_S_minus": {
+    "count_adjacent_pairs.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "left_scan_only.py": [
+      {
+        "index": 1,
+        "passed": false,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "max_depth.py": [
+      {
+        "index": 1,
+        "passed": false,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": false,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "no_concat.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": false,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "reset_without_base.py": [
+      {
+        "index": 1,
+        "passed": false,
+        "actual": "3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "total_pairs.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "2",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "4",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ]
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "problem": "longest-valid-parentheses",
+  "round": 1,
+  "pilot": true,
+  "meta": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.7,
+    "reasoning_effort": null,
+    "n_requested": 12,
+    "created_at": "2026-10-07T15:38:46",
+    "elapsed_sec": 9.29,
+    "usage": {
+      "completion_tokens": 3186,
+      "prompt_tokens": 1091,
+      "total_tokens": 4277,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 2604,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": null,
+      "queue_time": 0.34755709,
+      "prompt_time": 0.059234957,
+      "completion_time": 6.694285032,
+      "total_time": 6.753519989
+    }
+  },
+  "stats": {
+    "n_returned": 12,
+    "dropped_expected_fields": 0,
+    "unknown_target_bug": 0,
+    "n_accepted": 11,
+    "n_rejected": 1
+  },
+  "candidates": [
+    {
+      "id": "r1c1",
+      "args": [
+        "(())"
+      ],
+      "target_bug": "count_adjacent_pairs",
+      "target_bug_raw": "count_adjacent_pairs",
+      "rationale": "只相鄰的 \"()\" 會得到長度 2，而正確答案應為嵌套的 4"
+    },
+    {
+      "id": "r1c2",
+      "args": [
+        "((()))"
+      ],
+      "target_bug": "count_adjacent_pairs",
+      "target_bug_raw": "count_adjacent_pairs",
+      "rationale": "嵌套深度 3 只會被算成一個相鄰 \"()\"，長度錯為 2"
+    },
+    {
+      "id": "r1c3",
+      "args": [
+        "()()()"
+      ],
+      "target_bug": "max_depth",
+      "target_bug_raw": "max_depth",
+      "rationale": "最大巢深度為 1，錯誤程式會回傳 2 而非正確的 6"
+    },
+    {
+      "id": "r1c4",
+      "args": [
+        "(())()"
+      ],
+      "target_bug": "max_depth",
+      "target_bug_raw": "max_depth",
+      "rationale": "最大深度 2 乘以 2 得 4，實際最長合法子字串長度是 6"
+    },
+    {
+      "id": "r1c5",
+      "args": [
+        "())(())"
+      ],
+      "target_bug": "total_pairs",
+      "target_bug_raw": "total_pairs",
+      "rationale": "可配對的括號共有 3 對，錯誤程式會回傳 6，但最長連續合法子字串只有 4"
+    },
+    {
+      "id": "r1c6",
+      "args": [
+        "())(()"
+      ],
+      "target_bug": "total_pairs",
+      "target_bug_raw": "total_pairs",
+      "rationale": "總共可以配對 3 對，錯誤程式會回傳 6，實際最長連續合法子字串只有 2"
+    },
+    {
+      "id": "r1c7",
+      "args": [
+        "(())()()"
+      ],
+      "target_bug": "no_concat",
+      "target_bug_raw": "no_concat",
+      "rationale": "兩個合法區段相接，正確答案 8，錯誤程式會只取較大的區段 4"
+    },
+    {
+      "id": "r1c8",
+      "args": [
+        "(((())"
+      ],
+      "target_bug": "left_scan_only",
+      "target_bug_raw": "left_scan_only",
+      "rationale": "左掃只會看到平衡不到的 '('，錯過中間的 \"(())\" 長度 4"
+    },
+    {
+      "id": "r1c9",
+      "args": [
+        "(()())("
+      ],
+      "target_bug": "left_scan_only",
+      "target_bug_raw": "left_scan_only",
+      "rationale": "最後多餘的 '(' 讓左掃演算法無法取得前面的完整長度 6"
+    },
+    {
+      "id": "r1c10",
+      "args": [
+        ")()(()"
+      ],
+      "target_bug": "reset_without_base",
+      "target_bug_raw": "reset_without_base",
+      "rationale": "多餘的 ')' 會重設起點，結尾留下未配對 '('，錯誤程式會錯過唯一的 \"()\" 長度 2"
+    },
+    {
+      "id": "r1c11",
+      "args": [
+        "(()())(()"
+      ],
+      "target_bug": "reset_without_base",
+      "target_bug_raw": "reset_without_base",
+      "rationale": "在重設起點後，結尾的未配對 '(' 使程式無法正確計算前面的 \"(()())\" 長度 6"
+    }
+  ],
+  "rejected": [
+    {
+      "item": {
+        "args": [
+          "()()()"
+        ],
+        "target_bug": "no_concat",
+        "rationale": "多個相鄰合法區段應合併成長度 6，錯誤程式只會計算單一區段長度 2"
+      },
+      "reason": "與本輪其他候選重複"
+    }
+  ],
+  "messages": [
+    {
+      "role": "system",
+      "content": "你是協助設計程式題測資的助理。目標是提出「能讓特定初學者錯誤寫法答錯、但正確寫法一定答對」的測試輸入。\n規則：\n1. 只提供輸入，不要提供預期輸出（預期輸出會由參考正解計算）。\n2. 輸入必須完全符合題目限制。\n3. 優先提出短小、人類一眼看得懂的輸入（長度盡量 ≤ 20），方便學生看到失敗時理解。\n4. 一筆輸入可以同時抓到多種錯誤；target_bug 填你最主要鎖定的那一個。\n5. 不要重複目前已有的測資。\n6. 只回覆一個 JSON 物件，不要有其他文字。"
+    },
+    {
+      "role": "user",
+      "content": "# 題目：Longest Valid Parentheses\n給一個只含 ( 和 ) 的字串，找出「括號正確配對且連續」的最長子字串長度。例如：\")()())\" → 4（最長合法子字串是 \"()()\"）。\n\n## 函式簽名\n```python\nclass Solution:\n    def longestValidParentheses(self, s: str) -> int:\n        # 在此撰寫你的解法\n        pass\n```\n\n## 限制\n- 0 ≤ s.length ≤ 3 × 10⁴\n- s[i] 只會是 '(' 或 ')'\n\n## 參考正解\n```python\n# 正解（S*）：stack 存索引，底部放「上一個不合法位置」當基準點，O(n)\nclass Solution:\n    def longestValidParentheses(self, s: str) -> int:\n        stack = [-1]\n        best = 0\n        for i, c in enumerate(s):\n            if c == '(':\n                stack.append(i)\n            else:\n                stack.pop()\n                if not stack:\n                    stack.append(i)\n                else:\n                    best = max(best, i - stack[-1])\n        return best\n```\n\n## 要抓的錯誤寫法（target_bug 必須是下列名稱之一）\n- count_adjacent_pairs：只認相鄰的 \"()\"，不認巢狀的 \"(())\"\n- left_scan_only：只從左往右掃一次，漏掉左括號多出來的情況（如 \"(()\"）\n- max_depth：回傳最大巢狀深度 × 2，把「深度」誤當成「長度」\n- no_concat：只計算單一配對區段的長度，沒把相鄰的合法區段（如 \"()()\"）接起來\n- reset_without_base：遇到多餘的 ')' 會重設起點，但沒處理結尾多出來、沒配對的 '('\n- total_pairs：計算全部能配對的括號數 × 2，沒要求子字串必須連續\n\n## 目前的正式測資（第 0 輪結束時，共 3 筆）\n- #1：'(()'\n- #2：')()())'\n- #3：''\n\n## 每種錯誤目前的狀況（通過率越高 = 越難被抓到）\n- count_adjacent_pairs：通過率 100%，被測資 （沒有任何一筆） 抓到\n- left_scan_only：通過率 67%，被測資 [1] 抓到\n- max_depth：通過率 33%，被測資 [1, 2] 抓到\n- no_concat：通過率 67%，被測資 [2] 抓到\n- reset_without_base：通過率 67%，被測資 [1] 抓到\n- total_pairs：通過率 100%，被測資 （沒有任何一筆） 抓到\n\n## 請回覆\n提出 12 筆新的候選測資，優先鎖定通過率高、還沒被抓到的錯誤。格式：\n```json\n{\"candidates\": [{\"args\": [<第 1 個參數>], \"target_bug\": \"<錯誤名稱>\", \"rationale\": \"<一句話說明為什麼這筆會讓它答錯>\"}]}\n```\nargs 是呼叫 longestValidParentheses 時的位置參數列表（本題 1 個參數）。不要提供預期輸出。"
+    }
+  ],
+  "raw_response": "{\"candidates\":[{\"args\":[\"(())\"],\"target_bug\":\"count_adjacent_pairs\",\"rationale\":\"只相鄰的 \\\"()\\\" 會得到長度 2，而正確答案應為嵌套的 4\"},{\"args\":[\"((()))\"],\"target_bug\":\"count_adjacent_pairs\",\"rationale\":\"嵌套深度 3 只會被算成一個相鄰 \\\"()\\\"，長度錯為 2\"},{\"args\":[\"()()()\"],\"target_bug\":\"max_depth\",\"rationale\":\"最大巢深度為 1，錯誤程式會回傳 2 而非正確的 6\"},{\"args\":[\"(())()\"],\"target_bug\":\"max_depth\",\"rationale\":\"最大深度 2 乘以 2 得 4，實際最長合法子字串長度是 6\"},{\"args\":[\"())(())\"],\"target_bug\":\"total_pairs\",\"rationale\":\"可配對的括號共有 3 對，錯誤程式會回傳 6，但最長連續合法子字串只有 4\"},{\"args\":[\"())(()\"],\"target_bug\":\"total_pairs\",\"rationale\":\"總共可以配對 3 對，錯誤程式會回傳 6，實際最長連續合法子字串只有 2\"},{\"args\":[\"()()()\"],\"target_bug\":\"no_concat\",\"rationale\":\"多個相鄰合法區段應合併成長度 6，錯誤程式只會計算單一區段長度 2\"},{\"args\":[\"(())()()\"],\"target_bug\":\"no_concat\",\"rationale\":\"兩個合法區段相接，正確答案 8，錯誤程式會只取較大的區段 4\"},{\"args\":[\"(((())\"],\"target_bug\":\"left_scan_only\",\"rationale\":\"左掃只會看到平衡不到的 '('，錯過中間的 \\\"(())\\\" 長度 4\"},{\"args\":[\"(()())(\"],\"target_bug\":\"left_scan_only\",\"rationale\":\"最後多餘的 '(' 讓左掃演算法無法取得前面的完整長度 6\"},{\"args\":[\")()(()\"],\"target_bug\":\"reset_without_base\",\"rationale\":\"多餘的 ')' 會重設起點，結尾留下未配對 '('，錯誤程式會錯過唯一的 \\\"()\\\" 長度 2\"},{\"args\":[\"(()())(()\"],\"target_bug\":\"reset_without_base\",\"rationale\":\"在重設起點後，結尾的未配對 '(' 使程式無法正確計算前面的 \\\"(()())\\\" 長度 6\"}]}",
+  "test_phase": true,
+  "note": "測試階段：候選為試跑提案（2026-10-07），審核由 AI 代審，非人工；不計入正式實驗結果，僅用來測試迭代流程。",
+  "copied_from": "pilot/r1_candidates.20261007-153837.json"
+}

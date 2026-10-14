@@ -1,0 +1,190 @@
+{
+  "problem": "longest-valid-parentheses",
+  "round": 5,
+  "test_phase": true,
+  "note": "測試階段：審核由 AI 代審（非人工），規則為只看 TPR/TNR 數字；不計入正式實驗結果。",
+  "reviewer": "AI（測試階段代審，非人工）",
+  "rule": "只看 TPR/TNR 數字，不看 AI 理由；上一輪正式測資全保留，候選以貪婪法依 TNR 加入",
+  "created_at": "2026-10-13T18:57:03",
+  "trace": [
+    [
+      "start",
+      null,
+      0.6633
+    ],
+    [
+      "add",
+      "r5c2",
+      0.6667
+    ],
+    [
+      "add",
+      "r5c4",
+      0.6699
+    ],
+    [
+      "add",
+      "r5c6",
+      0.673
+    ],
+    [
+      "add",
+      "r5c9",
+      0.6759
+    ]
+  ],
+  "items": [
+    {
+      "id": "r5c1",
+      "args": [
+        "(()())(()(()))(()())"
+      ],
+      "expected": 20,
+      "target_bug": "reset_without_base",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6759→0.6727（下降）"
+    },
+    {
+      "id": "r5c2",
+      "args": [
+        "((()()))(()(()))(()"
+      ],
+      "expected": 16,
+      "target_bug": "left_scan_only",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "reset_without_base",
+        "total_pairs"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 5/6（count_adjacent_pairs, max_depth, no_concat, reset_without_base, total_pairs）；移除它 TNR 0.6730→0.6759，保留可提高密度"
+    },
+    {
+      "id": "r5c3",
+      "args": [
+        "((()))()(()())(()())"
+      ],
+      "expected": 20,
+      "target_bug": "max_depth",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": true,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6759→0.6727（下降）"
+    },
+    {
+      "id": "r5c4",
+      "args": [
+        ")()(()())(()())(()"
+      ],
+      "expected": 14,
+      "target_bug": "reset_without_base",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "reset_without_base",
+        "total_pairs"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 5/6（count_adjacent_pairs, max_depth, no_concat, reset_without_base, total_pairs）；移除它 TNR 0.6730→0.6759，保留可提高密度"
+    },
+    {
+      "id": "r5c5",
+      "args": [
+        "((())())(()())(()())"
+      ],
+      "expected": 20,
+      "target_bug": "count_adjacent_pairs",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": true,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6759→0.6727（下降）"
+    },
+    {
+      "id": "r5c6",
+      "args": [
+        "()((()))()(()())(()"
+      ],
+      "expected": 16,
+      "target_bug": "no_concat",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "reset_without_base",
+        "total_pairs"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 5/6（count_adjacent_pairs, max_depth, no_concat, reset_without_base, total_pairs）；移除它 TNR 0.6730→0.6759，保留可提高密度"
+    },
+    {
+      "id": "r5c7",
+      "args": [
+        "((()))(()())()(()())"
+      ],
+      "expected": 20,
+      "target_bug": "max_depth",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": true,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6759→0.6727（下降）"
+    },
+    {
+      "id": "r5c8",
+      "args": [
+        "(()())(()())(()(()))"
+      ],
+      "expected": 20,
+      "target_bug": "total_pairs",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 3/6（count_adjacent_pairs, max_depth, no_concat）；加入保留集 TNR 0.6759→0.6727（下降）"
+    },
+    {
+      "id": "r5c9",
+      "args": [
+        ")()()((()))(()())(()"
+      ],
+      "expected": 16,
+      "target_bug": "reset_without_base",
+      "kills": [
+        "count_adjacent_pairs",
+        "max_depth",
+        "no_concat",
+        "reset_without_base",
+        "total_pairs"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 5/6（count_adjacent_pairs, max_depth, no_concat, reset_without_base, total_pairs）；移除它 TNR 0.6730→0.6759，保留可提高密度"
+    }
+  ]
+}
