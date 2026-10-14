@@ -73,19 +73,15 @@ const loading     = ref(false)
 const error       = ref(null)
 
 // 遮照填空：同一題連續 CLOZE_AFTER 次沒全部通過，就顯示標準答案挖洞的版本；通過就歸零。
-// 次數存在這台瀏覽器（重新整理不會歸零），讀寫失敗時只是不保存，不影響使用。
+// 這是最保守的「公佈答案」：必須在同一次開啟頁面時連續錯到門檻才出現，
+// 所以次數只記在記憶體裡，重新整理就歸零（不存瀏覽器）。換題再換回來會保留。
 const CLOZE_AFTER = 3
-const STREAK_KEY  = 'failStreaks'
-function loadStreaks() {
-  try { return JSON.parse(localStorage.getItem(STREAK_KEY)) ?? {} } catch { return {} }
-}
-const failStreaks    = ref(loadStreaks())
+const failStreaks    = ref({})
 const clozeByProblem = ref({})
 const currentStreak  = computed(() => failStreaks.value[problemId.value] ?? 0)
 
 function setStreak(id, n) {
   failStreaks.value = { ...failStreaks.value, [id]: n }
-  try { localStorage.setItem(STREAK_KEY, JSON.stringify(failStreaks.value)) } catch { /* 不保存也沒關係 */ }
 }
 
 async function loadClozeIfNeeded(id) {

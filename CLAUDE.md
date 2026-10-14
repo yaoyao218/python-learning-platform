@@ -65,7 +65,7 @@ python-learning-platform/
 │           ├── ProblemStatement.vue  # 題目、範例、限制條件、虛擬碼
 │           ├── CodeEditor.vue        # Monaco Editor（Python，vs-dark）
 │           ├── ResultPanel.vue       # 測試結果（到第一個失敗為止）+ AI 提示
-│           └── ClozePanel.vue        # 連續失敗 3 次後的填空提示（次數存在瀏覽器 localStorage）
+│           └── ClozePanel.vue        # 連續失敗 3 次後的填空提示（次數只在記憶體，重新整理歸零）
 └── backend/testgen/                 # 離線測資生成工具（論文方法的實作，不影響線上）
     ├── PROGRESS.md                   # 完整實驗紀錄（baseline→v4 四輪迭代）
     ├── QUICKSTART.md                 # 三道關卡的標準流程
