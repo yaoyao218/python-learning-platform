@@ -71,6 +71,7 @@ def parse_args():
     p.add_argument("--n-random", type=int, default=2000)
     p.add_argument("--effort", default="low", help="reasoning_effort（gpt-oss 可用 low/medium/high）")
     p.add_argument("--strict-format", action="store_true", help="軟規則（索引寫法、len( 等）也當格式不合格而重寫")
+    p.add_argument("--zh", action="store_true", help="要求寫手用繁體中文寫虛擬碼（變數名稱可保留英文）")
     p.add_argument("--out", default=None)
     return p.parse_args()
 
@@ -158,8 +159,9 @@ def main():
     print(f"題目 {pid}｜來源 S+ {src_path.name}｜探測輸入 {len(inputs)} 組｜來源通過官方範例：{off_ok}", flush=True)
 
     report = {"date": datetime.now().isoformat(timespec="seconds"), "problem": pid, "source": src_path.name,
-              "writer": a.writer, "implementer": a.impl, "k": a.k, "effort": a.effort, "n_inputs": len(inputs),
+              "writer": a.writer, "implementer": a.impl, "k": a.k, "effort": a.effort, "zh": a.zh, "n_inputs": len(inputs),
               "source_passes_official": off_ok, "attempts": []}
+    zh_rule = "- 用繁體中文書寫（變數名稱可保留英文）。\n" if a.zh else ""
     for attempt in range(1, a.tries + 1):
         wprompt = f"""以下是題目「{prob['title']}」的一份正確 Python 解法。請依它寫出『虛擬碼』，給具備基本程式能力的人閱讀。
 
@@ -168,7 +170,7 @@ def main():
 - 之後用編號步驟（1. 2. 3. …，最多 {MAX_STEPS} 步），每步一句話，用變數、條件、更新、回傳描述。
 - 不要使用任何程式語言的語法（不要出現 def、class、import、range(、len(，不要用 x[i] 的索引寫法，也不要用程式碼區塊或以冒號結尾的行）。
 - 語氣一致，不要重複描述同一件事。
-- 不要寫解釋或複雜度分析，只輸出虛擬碼。
+{zh_rule}- 不要寫解釋或複雜度分析，只輸出虛擬碼。
 
 ```python
 {src}

@@ -1,18 +1,17 @@
 {
-  "version": "49e59c5d5b5dcec9",
-  "text": "**Input:** a string `s` of parentheses.  \n**Output:** the length of the longest valid (well‑formed) parentheses substring.\n\n1. Create a list `stack` containing only `-1` (acts as a sentinel for the last invalid index).  \n2. Set `best` to `0`.  \n3. For each position `i` from `0` to the length of `s` minus one, do:  \n4.   Let `c` be the character at position `i`.  \n5.   If `c` is `'('`, push `i` onto `stack`.  \n6.   Otherwise (`c` is `')'`):  \n7.     Remove the top element from `stack`.  \n8.     If `stack` is now empty, push `i` onto `stack` (mark this position as the new reference for future lengths).  \n9.     Else, compute the distance `i - stack[top]` where `stack[top]` is the new top element.  \n10.    Update `best` to the larger of `best` and that distance.  \n11. After the loop, return `best`.",
+  "version": "5ffed9587a9896fe",
+  "text": "**輸入**：一個只包含 '(' 與 ')' 的字串 `s`。  \n**輸出**：一個整數，代表能組成的最長有效括號子字串長度。\n\n1. 建立堆疊 `stack`，並把數值 `-1` 放進去作為基準點。  \n2. 設定變數 `best` 為 0，用來記錄目前找到的最大長度。  \n3. 逐個讀取字串 `s`，同時取得其索引 `i` 與字元 `c`。  \n4. 若 `c` 為 '('，把索引 `i` 推進堆疊。  \n5. 若 `c` 為 ')'，先把堆疊頂端元素移除。  \n6. 移除後，檢查堆疊是否為空。  \n7. 若堆疊空，將索引 `i` 推進堆疊，作為新的基準點。  \n8. 若堆疊不空，計算距離 `i - stack[-1]`，即目前有效子字串長度。  \n9. 若此距離大於 `best`，就把 `best` 更新為此距離。  \n10. 重複步驟 3 至 9，直到讀完整個字串。  \n11. 回傳變數 `best` 作為最長有效括號長度。",
   "source_s_plus": "stack_index.py",
   "writer": "openai/gpt-oss-20b",
   "implementer": "openai/gpt-oss-120b",
   "k": 3,
   "attempts": 1,
   "passed": true,
-  "created_at": "2026-10-13T20:11:04",
+  "created_at": "2026-10-14T14:48:32",
   "format_warnings": [
-    "有以冒號結尾的行",
     "含索引寫法 x[i]",
-    "人工閱讀：全文為英文，平台介面是中文"
+    "人工閱讀：無明顯問題"
   ],
   "n_probe_inputs": 10194,
-  "note": "同系列模型（K7）；單次結果（K9）；格式軟規則只記錄警告、未改寫（K4）"
+  "note": "以 --zh 重新產生（要求繁體中文），取代 49e59c5d5b5dcec9；同系列模型（K7）；單次結果（K9）；格式軟規則只記錄警告、未改寫（K4）"
 }
