@@ -9,9 +9,21 @@
 ### 核心功能
 
 1. **程式碼編輯器**：Monaco Editor（與 VS Code 同款），語法高亮、自動縮排
-2. **自動判題**：提交後後端執行 17 組測試案例，即時回傳通過 / 失敗結果
-3. **AI 引導提示**：判題失敗時，Groq AI 分析錯誤類型，給予方向提示（不直接給答案）
-4. **錯誤分類**：語法錯誤 / 執行時錯誤 / 忘記 return / 答案錯誤，各有不同提示策略
+2. **多題目**：頂端下拉選單切換 5 題（見下方題目表），標示難度
+3. **自動判題**：提交後後端執行該題全部測試案例，即時回傳通過 / 失敗結果
+4. **AI 引導提示**：判題失敗時，AI 分析錯誤類型，給予方向提示（不直接給答案、不讀學生程式碼）
+5. **錯誤分類**：語法錯誤 / 執行時錯誤 / 執行超時 / 忘記 return / 答案錯誤，各有不同提示策略
+6. **虛擬碼**：有通過往返檢查的題目，在題目頁顯示可收合的虛擬碼，AI 提示可引用步驟編號
+
+### 題目
+
+| 題目 id | 題目 | 難度 | 測資數 | 虛擬碼 |
+|---|---|---|---|---|
+| `longest-substring` | Longest Substring Without Repeating Characters（LC #3） | 中 | 18 | 有 |
+| `valid-parentheses` | Valid Parentheses（LC #20） | 易 | 12 | 無 |
+| `median-two-sorted-arrays` | Median of Two Sorted Arrays（LC #4） | 難 | 11 | 無 |
+| `best-time-stock` | Best Time to Buy and Sell Stock（LC #121） | 易 | 10 | 有 |
+| `longest-valid-parentheses` | Longest Valid Parentheses（LC #32） | 難 | 54 | 有 |
 
 ---
 
@@ -19,38 +31,42 @@
 
 ```
 前端（Vue 3 + Vite）
-    POST /submit { code }
+    GET /problems、GET /problems/{id}、POST /submit { code, problem_id }
         ↓
 後端（FastAPI）
     ├── judge.py    → executor.py → subprocess（執行學生程式碼）
-    │   asyncio.gather 並行跑 17 組測資
-    └── ai.py       → Groq API（llama-3.1-8b-instant）
+    │   asyncio.gather 並行跑該題全部測資
+    └── ai.py       → Groq API（openai/gpt-oss-20b）→ masking.py 遮罩 → hint_guard.py 檢查
         ↓
-回傳 { results: [...17筆], hint: "..." }
+回傳 { results: [...], hint: "..." }
 ```
 
 ### 後端模組
 
 | 檔案 | 職責 |
 |---|---|
-| `main.py` | FastAPI，單一 endpoint `POST /submit` |
+| `main.py` | FastAPI：`GET /problems`、`GET /problems/{id}`、`POST /submit` |
 | `executor.py` | AST 安全過濾 → 語法檢查 → ThreadPoolExecutor 執行 → timeout 處理 |
 | `judge.py` | `asyncio.gather` 並行跑全部測資 |
 | `ai.py` | 依 error_type 選 prompt 分支，呼叫 Groq API |
-| `problem.py` | 17 組 TEST_CASES（LC 官方 3 筆 + 論文方法生成 14 筆） |
+| `masking.py` | 提示夾帶能通過測資的完整解答時，遮蔽關鍵邏輯 |
+| `hint_guard.py` | 檢查提示品質（不給程式碼、不整段複述虛擬碼） |
+| `problem.py` | `PROBLEMS` 登錄表：5 題的題目敘述、範例、測資，並載入通過檢查的虛擬碼 |
 
 ### 前端元件
 
 | 元件 | 功能 |
 |---|---|
 | `App.vue` | 左右兩欄佈局、提交邏輯 |
-| `ProblemStatement.vue` | 題目描述 + 3 個範例卡片 |
+| `ProblemStatement.vue` | 題目描述、範例卡片、限制條件、虛擬碼（可收合） |
 | `CodeEditor.vue` | Monaco Editor（Python, vs-dark theme） |
 | `ResultPanel.vue` | 測試結果（顯示到第一個失敗）+ AI 提示卡 |
 
 ---
 
-## 17 個測試案例設計
+## Longest Substring 的測資設計
+
+以下是 longest-substring 人工迭代出的 17 筆測資；第 18 筆是 5×10⁴ 字元的壓力測資（擋 O(n²) 寫法）。best-time-stock 與 longest-valid-parentheses 的測資由 `backend/testgen/` 的 AI 輔助流程產生，紀錄在 `backend/testgen/rounds/`。
 
 ### 前 3 筆：LeetCode 官方範例（熱身）
 
@@ -198,11 +214,13 @@ pytest -v
 ```
 python-learning-platform/
 ├── backend/
-│   ├── main.py          # FastAPI app，POST /submit
+│   ├── main.py          # FastAPI app，GET /problems、GET /problems/{id}、POST /submit
 │   ├── executor.py      # ThreadPoolExecutor 執行學生程式碼 + AST 安全過濾
-│   ├── judge.py         # 17 組 test case 並行比對
-│   ├── ai.py            # Groq API，4 種 prompt 分支
-│   ├── problem.py       # 題目定義 + 17 組 TEST_CASES
+│   ├── judge.py         # 該題全部 test case 並行比對
+│   ├── ai.py            # Groq API，依錯誤類型分支
+│   ├── masking.py       # 提示遮罩
+│   ├── hint_guard.py    # 提示品質檢查
+│   ├── problem.py       # 5 題的題目定義與測資
 │   ├── requirements.txt
 │   └── tests/           # pytest 測試（含品質守門員）
 ├── frontend/

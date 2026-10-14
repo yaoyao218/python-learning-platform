@@ -15,7 +15,7 @@ npm run dev
 | 元件 | 功能 |
 |---|---|
 | `App.vue` | 左右兩欄佈局、提交邏輯、冷啟動偵測（>5秒顯示提示） |
-| `ProblemStatement.vue` | 題目描述 + 3 個 LeetCode 官方範例卡片 |
+| `ProblemStatement.vue` | 題目描述、LeetCode 官方範例卡片、限制條件、虛擬碼（可收合） |
 | `CodeEditor.vue` | Monaco Editor（Python, vs-dark theme） |
 | `ResultPanel.vue` | 測試結果（顯示到第一個 FAIL）+ AI 提示卡 |
 
