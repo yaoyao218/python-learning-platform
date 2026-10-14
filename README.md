@@ -35,6 +35,7 @@
 
 | 日期 | 內容 |
 |---|---|
+| 2026-10-14 | 新增 `backend/testgen/mask_demo.py`：故意讓提示夾帶完整正解，印出遮罩前後對照，方便展示遮罩功能 |
 | 2026-10-14 | 題目頁的「虛擬碼」收合列改成青綠色色塊，加上展開箭頭與「點開看解題步驟」提示，比較顯眼 |
 | 2026-10-14 | valid-parentheses、median-two-sorted-arrays 也改用 AI 輔助產生測資：各建 3 份正解、6 份訓練用錯解、3 份驗收用錯解，跑全自動流程後寫回 `problem.py`（12→19 道、11→45 道）。修正 `propose.py`：AI 回覆整份讀不出 JSON 時不再算成一輪 |
 | 2026-10-14 | valid-parentheses、median-two-sorted-arrays 補上虛擬碼（同一套往返檢查，第 1 次通過），五題都有虛擬碼；兩題各新增一份正解與輸入規格（`backend/testgen/problems/<id>/`），只用來產生虛擬碼，沒有跑測資流程 |
@@ -175,6 +176,7 @@ error_type
 - **語法預編譯**：`compile()` early return，避免 subprocess 卡住
 - **ThreadPoolExecutor**：跨平台相容（Windows / Linux），timeout 防止無限迴圈
 - **prompt 截斷**：超過 50 字元的輸入值截斷，避免壓力測試案例讓 AI prompt 過大
+- **提示遮罩**（`masking.py`）：AI 提示裡的程式碼若能通過任何一筆測資，就請 AI 把關鍵邏輯換成 `# TODO`；遮完仍能通過就整段換成一句提醒。想看實際效果：`cd backend && python -m testgen.mask_demo --problem best-time-stock`（需要 `backend/.env` 的 GROQ_API_KEY），會印出遮罩前後的對照
 
 ---
 
