@@ -20,8 +20,8 @@
 | 題目 id | 題目 | 難度 | 測資數 | 虛擬碼 |
 |---|---|---|---|---|
 | `longest-substring` | Longest Substring Without Repeating Characters（LC #3） | 中 | 18 | 有 |
-| `valid-parentheses` | Valid Parentheses（LC #20） | 易 | 12 | 有 |
-| `median-two-sorted-arrays` | Median of Two Sorted Arrays（LC #4） | 難 | 11 | 有 |
+| `valid-parentheses` | Valid Parentheses（LC #20） | 易 | 19 | 有 |
+| `median-two-sorted-arrays` | Median of Two Sorted Arrays（LC #4） | 難 | 45 | 有 |
 | `best-time-stock` | Best Time to Buy and Sell Stock（LC #121） | 易 | 10 | 有 |
 | `longest-valid-parentheses` | Longest Valid Parentheses（LC #32） | 難 | 54 | 有 |
 
@@ -35,19 +35,25 @@
 
 | 日期 | 內容 |
 |---|---|
+| 2026-10-14 | valid-parentheses、median-two-sorted-arrays 也改用 AI 輔助產生測資：各建 3 份正解、6 份訓練用錯解、3 份驗收用錯解，跑全自動流程後寫回 `problem.py`（12→19 道、11→45 道）。修正 `propose.py`：AI 回覆整份讀不出 JSON 時不再算成一輪 |
 | 2026-10-14 | valid-parentheses、median-two-sorted-arrays 補上虛擬碼（同一套往返檢查，第 1 次通過），五題都有虛擬碼；兩題各新增一份正解與輸入規格（`backend/testgen/problems/<id>/`），只用來產生虛擬碼，沒有跑測資流程 |
 | 2026-10-14 | longest-valid-parentheses、longest-substring 的虛擬碼改用中文重新產生，並重新通過往返檢查（原本一題是英文、一題有一步寫錯） |
 | 2026-10-14 | AI 輔助測資分支合併到 `main`：正式網站從 3 題變 5 題（新增 best-time-stock、longest-valid-parentheses）、題目頁顯示虛擬碼、AI 提示可引用虛擬碼步驟；GitHub 只保留 `main` |
 
-### 三題 AI 輔助測資的結果
+### AI 輔助測資的結果
 
-TPR 三題都是 1.0（不誤殺正解）；驗收池每題只跑一次。
+TPR 五題都是 1.0（不誤殺正解）；驗收池每題只跑一次（valid-parentheses 例外，見表下說明）。
 
 | 題目 | 測資數 | 訓練池 TNR | 驗收池 TNR |
 |---|---|---|---|
 | longest-substring | 18 | 0.8889 | 0.47 |
 | best-time-stock | 10 | 0.3833（補強前實驗紀錄 0.5833） | 0.4667，無漏網 |
 | longest-valid-parentheses | 54 | 0.6759 | 0.5370，無漏網 |
+| valid-parentheses | 19（原 12） | 0.2193（上限 0.5，達成率 0.44；原 0.1528） | 0.1228，無漏網 |
+| median-two-sorted-arrays | 45（原 11） | 0.5778（原 0.2576） | 0.6148，無漏網 |
+
+- **valid-parentheses**：第一次執行時，AI 第 1 輪的回覆格式錯誤，被工具誤判為「停滯」並用掉了驗收池（TNR 0.1389）。修正工具後重跑，所以驗收池是第二次使用；第一次的紀錄原樣保留在 `backend/testgen/problems/valid-parentheses/rounds/void_20261014/`。重跑的第 2 輪 AI 把字串多包了一層引號，12 筆全部不合法，流程依規則判定停滯，只跑了 2 輪。
+- 這兩題的錯解池由我們依常見錯誤手寫，各 9 份，先分好訓練／驗收再開始評測。
 
 ### 已知問題與待辦
 
@@ -55,6 +61,7 @@ TPR 三題都是 1.0（不誤殺正解）；驗收池每題只跑一次。
 - 遇到無窮迴圈要等 20～35 秒才顯示「執行超時」
 - 使用者說明（`docs/superpowers/specs/user-facing-draft.md`）的【待確認】欄位尚未填入
 - `docs/IEEE_Paper.md` 的題目表測資數過時
+- 字串輸入的題目，AI 提案偶爾會把字串多包一層引號，整輪被判不合法（valid-parentheses 第 2 輪）；提示詞尚未針對這點調整
 
 ---
 

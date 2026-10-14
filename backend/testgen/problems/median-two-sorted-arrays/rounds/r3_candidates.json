@@ -1,0 +1,385 @@
+{
+  "problem": "median-two-sorted-arrays",
+  "round": 3,
+  "pilot": false,
+  "meta": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.7,
+    "reasoning_effort": "low",
+    "max_tokens": 4000,
+    "n_requested": 12,
+    "prompt_version": "v2",
+    "created_at": "2026-10-14T15:02:56",
+    "elapsed_sec": 15.94,
+    "usage": {
+      "completion_tokens": 1305,
+      "prompt_tokens": 3727,
+      "total_tokens": 5032,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 51,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": null,
+      "queue_time": 0.211441497,
+      "prompt_time": 0.197025101,
+      "completion_time": 2.719375045,
+      "total_time": 2.916400146
+    }
+  },
+  "stats": {
+    "n_returned": 11,
+    "dropped_expected_fields": 0,
+    "unknown_target_bug": 0,
+    "n_accepted": 11,
+    "n_rejected": 0
+  },
+  "candidates": [
+    {
+      "id": "r3c1",
+      "args": [
+        [
+          1,
+          2,
+          2,
+          3,
+          5,
+          7,
+          9
+        ],
+        [
+          0,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16
+        ]
+      ],
+      "target_bug": "int_division",
+      "target_bug_raw": "int_division",
+      "rationale": "奇偶總長度為14，平均需用浮點除法且兩側都有剩餘元素，能同時觸發 int_division、merge_drop_remainder、no_sort_concat、upper_middle_even、mean_instead_of_median 以及 dedup_merge（因為有重複 2）"
+    },
+    {
+      "id": "r3c2",
+      "args": [
+        [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        [
+          -5,
+          -4,
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "target_bug": "merge_drop_remainder",
+      "target_bug_raw": "merge_drop_remainder",
+      "rationale": "兩陣列長度不同且交錯，合併時若忘記補剩餘會錯過多個元素，同時暴露 int_division、upper_middle_even、no_sort_concat、mean_instead_of_median、dedup_merge"
+    },
+    {
+      "id": "r3c3",
+      "args": [
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          2,
+          2,
+          2
+        ],
+        [
+          3,
+          3,
+          3,
+          4,
+          4,
+          5,
+          5,
+          6,
+          6,
+          7
+        ]
+      ],
+      "target_bug": "dedup_merge",
+      "target_bug_raw": "dedup_merge",
+      "rationale": "大量重複值會被 set 去除，且總長度為20 為偶數，會同時觸發 dedup_merge、int_division、upper_middle_even、mean_instead_of_median、merge_drop_remainder、no_sort_concat"
+    },
+    {
+      "id": "r3c4",
+      "args": [
+        [
+          -10,
+          -8,
+          -6,
+          -4,
+          -2,
+          0,
+          2,
+          4,
+          6,
+          8,
+          10
+        ],
+        [
+          -9,
+          -7,
+          -5,
+          -3,
+          -1,
+          1,
+          3,
+          5,
+          7,
+          9,
+          11,
+          13
+        ]
+      ],
+      "target_bug": "no_sort_concat",
+      "target_bug_raw": "no_sort_concat",
+      "rationale": "直接串接會得到未排序序列，且總長度為23 為奇數，會同時暴露 no_sort_concat、int_division（偶數子序列情況）、upper_middle_even、mean_instead_of_median、merge_drop_remainder、dedup_merge（無重複但測試完整性）"
+    },
+    {
+      "id": "r3c5",
+      "args": [
+        [
+          1,
+          3,
+          5,
+          7,
+          9,
+          11,
+          13,
+          15,
+          17,
+          19
+        ],
+        [
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20,
+          22,
+          24
+        ]
+      ],
+      "target_bug": "upper_middle_even",
+      "target_bug_raw": "upper_middle_even",
+      "rationale": "總長度 22 為偶數，需正確取左右兩中位數，測試會同時失敗於 upper_middle_even、int_division、merge_drop_remainder、no_sort_concat、mean_instead_of_median、dedup_merge（雖無重複但檢查完整性）"
+    },
+    {
+      "id": "r3c6",
+      "args": [
+        [
+          -100,
+          -50,
+          0,
+          50,
+          100
+        ],
+        [
+          -99,
+          -49,
+          1,
+          51,
+          101,
+          102
+        ]
+      ],
+      "target_bug": "int_division",
+      "target_bug_raw": "int_division",
+      "rationale": "總長度 11 為奇數，但子序列偶數會導致除法錯誤，並同時觸發 merge_drop_remainder、no_sort_concat、upper_middle_even、mean_instead_of_median、dedup_merge"
+    },
+    {
+      "id": "r3c7",
+      "args": [
+        [
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5
+        ],
+        [
+          5,
+          5,
+          5,
+          5,
+          5,
+          5
+        ]
+      ],
+      "target_bug": "dedup_merge",
+      "target_bug_raw": "dedup_merge",
+      "rationale": "全部相同會被 set 縮成單一元素，且長度為13（奇數），同時測出 dedup_merge、int_division、upper_middle_even、mean_instead_of_median、merge_drop_remainder、no_sort_concat"
+    },
+    {
+      "id": "r3c8",
+      "args": [
+        [
+          -7,
+          -5,
+          -3,
+          -1,
+          1,
+          3,
+          5,
+          7
+        ],
+        [
+          -6,
+          -4,
+          -2,
+          0,
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      ],
+      "target_bug": "merge_drop_remainder",
+      "target_bug_raw": "merge_drop_remainder",
+      "rationale": "交錯且長度不等，若合併時未補剩餘會錯過多個元素，並同時導致 int_division、upper_middle_even、no_sort_concat、mean_instead_of_median、dedup_merge"
+    },
+    {
+      "id": "r3c9",
+      "args": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        [
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21
+        ]
+      ],
+      "target_bug": "no_sort_concat",
+      "target_bug_raw": "no_sort_concat",
+      "rationale": "直接串接會產生未排序序列，且總長度 22 為偶數，會同時觸發 no_sort_concat、int_division、upper_middle_even、mean_instead_of_median、merge_drop_remainder、dedup_merge"
+    },
+    {
+      "id": "r3c10",
+      "args": [
+        [
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      ],
+      "target_bug": "mean_instead_of_median",
+      "target_bug_raw": "mean_instead_of_median",
+      "rationale": "大量重疊與不同長度會讓平均值與中位數差距大，且總長度 25 為奇數，會同時觸發 mean_instead_of_median、int_division、upper_middle_even、merge_drop_remainder、no_sort_concat、dedup_merge"
+    },
+    {
+      "id": "r3c11",
+      "args": [
+        [
+          100,
+          200,
+          300,
+          400,
+          500
+        ],
+        [
+          150,
+          250,
+          350,
+          450,
+          550,
+          650,
+          750
+        ]
+      ],
+      "target_bug": "int_division",
+      "target_bug_raw": "int_division",
+      "rationale": "總長度 12 為偶數，需要浮點平均，且合併後若遺漏剩餘會出錯，能同時捕獲 int_division、merge_drop_remainder、upper_middle_even、no_sort_concat、mean_instead_of_median、dedup_merge"
+    }
+  ],
+  "rejected": [],
+  "messages": [
+    {
+      "role": "system",
+      "content": "你是協助設計程式題測資的助理。目標是提出「能同時讓盡量多種初學者錯誤寫法答錯、但正確寫法一定答對」的測試輸入。\n評分方式：每筆輸入會拿去測全部的錯誤寫法，看它讓幾種錯誤答錯。一筆輸入讓越多種錯誤答錯越好；只針對單一種錯誤的輸入價值低。\n規則：\n1. 只提供輸入，不要提供預期輸出（預期輸出會由參考正解計算）。\n2. 輸入必須完全符合題目限制。\n3. 輸入長度盡量 ≤ 20，讓學生看到失敗時能看懂。\n4. target_bug 填這筆輸入最難抓、目前通過率最高的那一種錯誤；但整筆輸入的目標是同時抓到盡量多種。\n5. 不要重複目前已有的測資，也不要重複先前被丟棄的測資。\n6. 只回覆一個 JSON 物件，不要有其他文字。"
+    },
+    {
+      "role": "user",
+      "content": "# 題目：Median of Two Sorted Arrays\n給兩個已排序的陣列，回傳合併後的中位數（浮點數）。例如：nums1=[1,3], nums2=[2] → 2.0（合併後為 [1,2,3]）。\n\n## 函式簽名\n```python\nfrom typing import List\n\nclass Solution:\n    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:\n        # 在此撰寫你的解法\n        pass\n```\n\n## 限制\n- nums1.length + nums2.length ≥ 1\n- -10⁶ ≤ nums1[i], nums2[i] ≤ 10⁶\n- nums1 與 nums2 皆已由小到大排序\n\n## 參考正解\n```python\n# 正解（S*）：雙指標合併兩個已排序陣列，再取中間一個或中間兩個的平均，O(m+n)\nfrom typing import List\n\n\nclass Solution:\n    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:\n        merged = []\n        i = j = 0\n        while i < len(nums1) and j < len(nums2):\n            if nums1[i] <= nums2[j]:\n                merged.append(nums1[i])\n                i += 1\n            else:\n                merged.append(nums2[j])\n                j += 1\n        merged.extend(nums1[i:])\n        merged.extend(nums2[j:])\n        n = len(merged)\n        mid = n // 2\n        if n % 2 == 1:\n            return float(merged[mid])\n        return (merged[mid - 1] + merged[mid]) / 2\n```\n\n## 要抓的錯誤寫法（target_bug 必須是下列名稱之一）\n- dedup_merge：用 set 合併，把重複的數字去掉了\n- int_division：偶數長度時用整數除法 // 取平均，2.5 變成 2\n- mean_instead_of_median：把中位數當成平均數，回傳全部數字的平均\n- merge_drop_remainder：雙指標合併時，其中一邊走完就停，忘了把另一邊剩下的元素接上\n- no_sort_concat：直接把兩個陣列接起來就取中位數，忘了接起來之後不一定有排序\n- upper_middle_even：沒有區分奇偶，一律回傳 merged[n // 2]；偶數長度時取到的是右邊那個中間值\n\n## 目前的正式測資（第 2 輪結束時，共 25 筆）\n- #1：[1, 3], [2]\n- #2：[1, 2], [3, 4]\n- #3：[], [1]\n- #4：[2], []\n- #5：[0, 0], [0, 0]\n- #6：[1, 3, 5], [2, 4, 6]\n- #7：[1, 1, 1], [1, 1, 1]\n- #8：[-5, -3, -1], [-4, -2, 0]\n- #9：[1], [2, 3, 4, 5, 6]\n- #10：[0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, ...（共 10892 字元）\n- #11：[100000], [100000]\n- #12：[-10, -5, -3, -1, 0, 2, 4, 7, 9, 11], [-9, -6, -4, -2, 1, 3,...（共 73 字元）\n- #13：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [11, 12, 13, 14, 15, 16, 17...（共 73 字元）\n- #14：[1, 3, 5, 7, 9], [2, 4, 6, 8, 10, 12, 14, 16]\n- #15：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], [13, 14, 15, 16, 17...（共 89 字元）\n- #16：[1, 4, 7, 10, 13, 16], [2, 5, 8, 11, 14, 17, 20, 23]\n- #17：[5, 7, 9, 11, 13], [1, 2, 3, 4, 6, 8, 10, 12, 14]\n- #18：[1, 3, 5, 7, 9, 11], [2, 4, 6, 8, 10, 12]\n- #19：[-5, -3, -1, 1, 3, 5], [-4, -2, 0, 2, 4, 6]\n- #20：[10, 20, 30, 40, 50], [1, 2, 3, 4, 5, 6]\n- #21：[1, 2, 3, 4, 5, 5], [5, 6, 7, 8, 9, 10]\n- #22：[-100, -50, 0, 50, 100], [-99, -49, 1, 51, 101]\n- #23：[-3, -2, -1, 0, 1, 2, 3], [-3, -2, -1, 0, 1, 2, 3, 4]\n- #24：[-10, -5, 0, 5, 10], [-9, -4, 1, 6, 11]\n- #25：[2, 4, 6, 8, 10, 12], [1, 3, 5, 7, 9, 11, 13, 15]\n\n## 每種錯誤目前的狀況（通過率越高 = 越難被抓到）\n- dedup_merge：通過率 92%，被測資 [21, 23] 抓到\n- int_division：通過率 40%，被測資 [2, 6, 8, 9, 10, 12, 13, 15, 16, 17, 18, 19, 22, 24, 25] 抓到\n- mean_instead_of_median：通過率 72%，被測資 [12, 14, 16, 20, 21, 23, 25] 抓到\n- merge_drop_remainder：通過率 24%，被測資 [1, 2, 6, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 25] 抓到\n- no_sort_concat：通過率 68%，被測資 [1, 12, 14, 16, 17, 20, 23, 25] 抓到\n- upper_middle_even：通過率 40%，被測資 [2, 6, 8, 9, 10, 12, 13, 15, 16, 17, 18, 19, 22, 24, 25] 抓到\n\n## 單筆輸入抓到幾種錯誤（越多越好）\n- #1：抓到 2/6 種\n- #2：抓到 3/6 種\n- #3：抓到 0/6 種\n- #4：抓到 0/6 種\n- #5：抓到 0/6 種\n- #6：抓到 3/6 種\n- #7：抓到 0/6 種\n- #8：抓到 3/6 種\n- #9：抓到 3/6 種\n- #10：抓到 3/6 種\n- #11：抓到 0/6 種\n- #12：抓到 5/6 種\n- #13：抓到 3/6 種\n- #14：抓到 3/6 種\n- #15：抓到 3/6 種\n- #16：抓到 5/6 種\n- #17：抓到 4/6 種\n- #18：抓到 3/6 種\n- #19：抓到 3/6 種\n- #20：抓到 3/6 種\n- #21：抓到 3/6 種\n- #22：抓到 3/6 種\n- #23：抓到 3/6 種\n- #24：抓到 3/6 種\n- #25：抓到 5/6 種\n目前正式測資中，單筆最多抓到 5/6 種。\n\n## 第 2 輪的候選與人工裁決\ncaught 是實際評測抓到的錯誤；decision：keep=採用、drop=丟棄、edit=修改後採用。\n```json\n[\n {\n  \"input\": \"[5, 7, 9, 11, 13], [1, 2, 3, 4, 6, 8, 10, 12, 14]\",\n  \"target_bug\": \"int_division\",\n  \"caught\": [\n   \"int_division\",\n   \"merge_drop_remainder\",\n   \"no_sort_concat\",\n   \"upper_middle_even\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 4\n },\n {\n  \"input\": \"[1, 3, 5, 7, 9, 11], [2, 4, 6, 8, 10, 12]\",\n  \"target_bug\": \"upper_middle_even\",\n  \"caught\": [\n   \"int_division\",\n   \"merge_drop_remainder\",\n   \"upper_middle_even\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"[-5, -3, -1, 1, 3, 5], [-4, -2, 0, 2, 4, 6]\",\n  \"target_bug\": \"mean_instead_of_median\",\n  \"caught\": [\n   \"int_division\",\n   \"merge_drop_remainder\",\n   \"upper_middle_even\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"[10, 20, 30, 40, 50], [1, 2, 3, 4, 5, 6]\",\n  \"target_bug\": \"no_sort_concat\",\n  \"caught\": [\n   \"mean_instead_of_median\",\n   \"merge_drop_remainder\",\n   \"no_sort_concat\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"[1, 2, 3, 4, 5, 5], [5, 6, 7, 8, 9, 10]\",\n  \"target_bug\": \"dedup_merge\",\n  \"caught\": [\n   \"dedup_merge\",\n   \"mean_instead_of_median\",\n   \"merge_drop_remainder\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"[-100, -50, 0, 50, 100], [-99, -49, 1, 51, 101]\",\n  \"target_bug\": \"merge_drop_remainder\",\n  \"caught\": [\n   \"int_division\",\n   \"merge_drop_remainder\",\n   \"upper_middle_even\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"[-3, -2, -1, 0, 1, 2, 3], [-3, -2, -1, 0, 1, 2, 3, 4]\",\n  \"target_bug\": \"int_division\",\n  \"caught\": [\n   \"dedup_merge\",\n   \"mean_instead_of_median\",\n   \"no_sort_concat\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"[0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]\",\n  \"target_bug\": \"dedup_merge\",\n  \"caught\": [],\n  \"decision\": \"drop\",\n  \"n_caught\": 0\n },\n {\n  \"input\": \"[-10, -5, 0, 5, 10], [-9, -4, 1, 6, 11]\",\n  \"target_bug\": \"mean_instead_of_median\",\n  \"caught\": [\n   \"int_division\",\n   \"merge_drop_remainder\",\n   \"upper_middle_even\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"[2, 4, 6, 8, 10, 12], [1, 3, 5, 7, 9, 11, 13, 15]\",\n  \"target_bug\": \"merge_drop_remainder\",\n  \"caught\": [\n   \"int_division\",\n   \"mean_instead_of_median\",\n   \"merge_drop_remainder\",\n   \"no_sort_concat\",\n   \"upper_middle_even\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 5\n }\n]\n```\n上一輪候選中，單筆最多抓到 5/6 種。\n\n## 請回覆\n提出 12 筆新的候選測資。目標是讓「單筆輸入同時抓到的錯誤種類數」盡量高，至少要超過目前的 5 種；只抓到一兩種的輸入價值低。格式：\n```json\n{\"candidates\": [{\"args\": [<第 1 個參數>, ...], \"target_bug\": \"<錯誤名稱>\", \"rationale\": \"<一句話說明為什麼這筆會讓它答錯>\"}]}\n```\nargs 是呼叫 findMedianSortedArrays 時的位置參數列表（本題 2 個參數）。不要提供預期輸出。"
+    }
+  ],
+  "raw_response": "{\"candidates\":[{\"args\":[[1,2,2,3,5,7,9],[0,4,6,8,10,12,14,16]],\"target_bug\":\"int_division\",\"rationale\":\"奇偶總長度為14，平均需用浮點除法且兩側都有剩餘元素，能同時觸發 int_division、merge_drop_remainder、no_sort_concat、upper_middle_even、mean_instead_of_median 以及 dedup_merge（因為有重複 2）\"},{\"args\":[[ -3,-2,-1,0,1,2,3,4,5],[ -5,-4,-3,-2,-1,0,1,2,3,4]],\"target_bug\":\"merge_drop_remainder\",\"rationale\":\"兩陣列長度不同且交錯，合併時若忘記補剩餘會錯過多個元素，同時暴露 int_division、upper_middle_even、no_sort_concat、mean_instead_of_median、dedup_merge\"},{\"args\":[[0,0,0,0,1,1,1,2,2,2],[3,3,3,4,4,5,5,6,6,7]],\"target_bug\":\"dedup_merge\",\"rationale\":\"大量重複值會被 set 去除，且總長度為20 為偶數，會同時觸發 dedup_merge、int_division、upper_middle_even、mean_instead_of_median、merge_drop_remainder、no_sort_concat\"},{\"args\":[[ -10,-8,-6,-4,-2,0,2,4,6,8,10],[ -9,-7,-5,-3,-1,1,3,5,7,9,11,13]],\"target_bug\":\"no_sort_concat\",\"rationale\":\"直接串接會得到未排序序列，且總長度為23 為奇數，會同時暴露 no_sort_concat、int_division（偶數子序列情況）、upper_middle_even、mean_instead_of_median、merge_drop_remainder、dedup_merge（無重複但測試完整性）\"},{\"args\":[[1,3,5,7,9,11,13,15,17,19],[2,4,6,8,10,12,14,16,18,20,22,24]],\"target_bug\":\"upper_middle_even\",\"rationale\":\"總長度 22 為偶數，需正確取左右兩中位數，測試會同時失敗於 upper_middle_even、int_division、merge_drop_remainder、no_sort_concat、mean_instead_of_median、dedup_merge（雖無重複但檢查完整性）\"},{\"args\":[[ -100,-50,0,50,100],[ -99,-49,1,51,101,102]],\"target_bug\":\"int_division\",\"rationale\":\"總長度 11 為奇數，但子序列偶數會導致除法錯誤，並同時觸發 merge_drop_remainder、no_sort_concat、upper_middle_even、mean_instead_of_median、dedup_merge\"},{\"args\":[[5,5,5,5,5,5,5],[5,5,5,5,5,5]],\"target_bug\":\"dedup_merge\",\"rationale\":\"全部相同會被 set 縮成單一元素，且長度為13（奇數），同時測出 dedup_merge、int_division、upper_middle_even、mean_instead_of_median、merge_drop_remainder、no_sort_concat\"},{\"args\":[[ -7,-5,-3,-1,1,3,5,7],[ -6,-4,-2,0,2,4,6,8,10]],\"target_bug\":\"merge_drop_remainder\",\"rationale\":\"交錯且長度不等，若合併時未補剩餘會錯過多個元素，並同時導致 int_division、upper_middle_even、no_sort_concat、mean_instead_of_median、dedup_merge\"},{\"args\":[[0,1,2,3,4,5,6,7,8,9],[10,11,12,13,14,15,16,17,18,19,20,21]],\"target_bug\":\"no_sort_concat\",\"rationale\":\"直接串接會產生未排序序列，且總長度 22 為偶數，會同時觸發 no_sort_concat、int_division、upper_middle_even、mean_instead_of_median、merge_drop_remainder、dedup_merge\"},{\"args\":[[ -2,-1,0,1,2,3,4,5,6,7,8,9],[ -3,-2,-1,0,1,2,3,4,5,6,7,8,9,10]],\"target_bug\":\"mean_instead_of_median\",\"rationale\":\"大量重疊與不同長度會讓平均值與中位數差距大，且總長度 25 為奇數，會同時觸發 mean_instead_of_median、int_division、upper_middle_even、merge_drop_remainder、no_sort_concat、dedup_merge\"},{\"args\":[[100,200,300,400,500],[150,250,350,450,550,650,750]],\"target_bug\":\"int_division\",\"rationale\":\"總長度 12 為偶數，需要浮點平均，且合併後若遺漏剩餘會出錯，能同時捕獲 int_division、merge_drop_remainder、upper_middle_even、no_sort_concat、mean_instead_of_median、dedup_merge\"}]}"
+}

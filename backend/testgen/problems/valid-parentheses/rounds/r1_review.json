@@ -1,0 +1,222 @@
+{
+  "problem": "valid-parentheses",
+  "round": 1,
+  "reviewer": "AI（自動審核，非人工）",
+  "rule": "只看 TPR/TNR 數字，不看 AI 理由；上一輪正式測資全保留，候選以貪婪法依 TNR 加入",
+  "created_at": "2026-10-14T15:06:01",
+  "trace": [
+    [
+      "start",
+      null,
+      0.1528
+    ],
+    [
+      "add",
+      "r1c2",
+      0.1667
+    ],
+    [
+      "add",
+      "r1c3",
+      0.1786
+    ],
+    [
+      "add",
+      "r1c5",
+      0.1889
+    ],
+    [
+      "add",
+      "r1c7",
+      0.1979
+    ],
+    [
+      "add",
+      "r1c8",
+      0.2059
+    ],
+    [
+      "add",
+      "r1c9",
+      0.213
+    ],
+    [
+      "add",
+      "r1c12",
+      0.2193
+    ]
+  ],
+  "items": [
+    {
+      "id": "r1c1",
+      "args": [
+        "]()"
+      ],
+      "expected": false,
+      "target_bug": "early_return_true",
+      "kills": [
+        "pop_empty_crash"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 1/6（pop_empty_crash）；加入保留集 TNR 0.2193→0.2167（下降）"
+    },
+    {
+      "id": "r1c2",
+      "args": [
+        "({)}"
+      ],
+      "expected": false,
+      "target_bug": "early_return_true",
+      "kills": [
+        "count_only",
+        "match_any_type"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 2/6（count_only, match_any_type）；移除它 TNR 0.2130→0.2193，保留可提高密度"
+    },
+    {
+      "id": "r1c3",
+      "args": [
+        "([)]{}"
+      ],
+      "expected": false,
+      "target_bug": "early_return_true",
+      "kills": [
+        "count_only",
+        "match_any_type"
+      ],
+      "target_hit": false,
+      "decision": "keep",
+      "reason": "抓到 2/6（count_only, match_any_type）；移除它 TNR 0.2130→0.2193，保留可提高密度"
+    },
+    {
+      "id": "r1c4",
+      "args": [
+        "]({})"
+      ],
+      "expected": false,
+      "target_bug": "early_return_true",
+      "kills": [
+        "pop_empty_crash"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 1/6（pop_empty_crash）；加入保留集 TNR 0.2193→0.2167（下降）"
+    },
+    {
+      "id": "r1c5",
+      "args": [
+        "({})]"
+      ],
+      "expected": false,
+      "target_bug": "early_return_true",
+      "kills": [
+        "early_return_true",
+        "pop_empty_crash"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 2/6（early_return_true, pop_empty_crash）；移除它 TNR 0.2130→0.2193，保留可提高密度"
+    },
+    {
+      "id": "r1c6",
+      "args": [
+        "((]){})"
+      ],
+      "expected": false,
+      "target_bug": "early_return_true",
+      "kills": [],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 0/6（）；加入保留集 TNR 0.2193→0.2083（下降）"
+    },
+    {
+      "id": "r1c7",
+      "args": [
+        "[({})]("
+      ],
+      "expected": false,
+      "target_bug": "early_return_true",
+      "kills": [
+        "early_return_true",
+        "no_final_empty_check"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 2/6（early_return_true, no_final_empty_check）；移除它 TNR 0.2130→0.2193，保留可提高密度"
+    },
+    {
+      "id": "r1c8",
+      "args": [
+        "{[()]}]"
+      ],
+      "expected": false,
+      "target_bug": "early_return_true",
+      "kills": [
+        "early_return_true",
+        "pop_empty_crash"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 2/6（early_return_true, pop_empty_crash）；移除它 TNR 0.2130→0.2193，保留可提高密度"
+    },
+    {
+      "id": "r1c9",
+      "args": [
+        "({[]})]"
+      ],
+      "expected": false,
+      "target_bug": "early_return_true",
+      "kills": [
+        "early_return_true",
+        "pop_empty_crash"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 2/6（early_return_true, pop_empty_crash）；移除它 TNR 0.2130→0.2193，保留可提高密度"
+    },
+    {
+      "id": "r1c10",
+      "args": [
+        "]({[]})"
+      ],
+      "expected": false,
+      "target_bug": "early_return_true",
+      "kills": [
+        "pop_empty_crash"
+      ],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 1/6（pop_empty_crash）；加入保留集 TNR 0.2193→0.2167（下降）"
+    },
+    {
+      "id": "r1c11",
+      "args": [
+        "({[)]})"
+      ],
+      "expected": false,
+      "target_bug": "early_return_true",
+      "kills": [],
+      "target_hit": false,
+      "decision": "drop",
+      "reason": "抓到 0/6（）；加入保留集 TNR 0.2193→0.2083（下降）"
+    },
+    {
+      "id": "r1c12",
+      "args": [
+        "([]{})]"
+      ],
+      "expected": false,
+      "target_bug": "early_return_true",
+      "kills": [
+        "early_return_true",
+        "pop_empty_crash"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 2/6（early_return_true, pop_empty_crash）；移除它 TNR 0.2130→0.2193，保留可提高密度"
+    }
+  ]
+}

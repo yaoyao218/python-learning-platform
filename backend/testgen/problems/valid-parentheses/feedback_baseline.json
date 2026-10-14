@@ -1,0 +1,1267 @@
+{
+  "metrics": {
+    "TPR": 1.0,
+    "TNR": 0.2193,
+    "n_test_cases": 19,
+    "n_S_plus": 3,
+    "n_S_minus": 6
+  },
+  "S_plus_pass_rates": {
+    "push_expected.py": 1.0,
+    "replace_pairs.py": 1.0,
+    "stack_match.py": 1.0
+  },
+  "S_minus_pass_rates": {
+    "adjacent_pairs_only.py": 0.7895,
+    "count_only.py": 0.7895,
+    "early_return_true.py": 0.7368,
+    "match_any_type.py": 0.8421,
+    "no_final_empty_check.py": 0.8421,
+    "pop_empty_crash.py": 0.6842
+  },
+  "command_value": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 1,
+    "5": 1,
+    "6": 2,
+    "7": 1,
+    "8": 1,
+    "9": 2,
+    "10": 2,
+    "11": 2,
+    "12": 1,
+    "13": 1,
+    "14": 2,
+    "15": 2,
+    "16": 2,
+    "17": 2,
+    "18": 2,
+    "19": 1
+  },
+  "false_positives": [],
+  "false_negatives": [],
+  "tests_module": "problem.PROBLEMS['valid-parentheses']",
+  "problem": "valid-parentheses",
+  "S_minus_pool": "wrong",
+  "raw_S_plus": {
+    "push_expected.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "replace_pairs.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "stack_match.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      }
+    ]
+  },
+  "raw_S_minus": {
+    "adjacent_pairs_only.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": false,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": false,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": false,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": false,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "count_only.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": false,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": false,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": false,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": false,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "early_return_true.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": false,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": false,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": false,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": false,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": false,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "match_any_type.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": false,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": false,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": false,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "no_final_empty_check.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": false,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": false,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": false,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "pop_empty_crash.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": false,
+        "actual": null,
+        "error_type": "runtime_error",
+        "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 26, in <module>\n  File \"<student>\", line 8, in isValid\nIndexError: list index out of range"
+      },
+      {
+        "index": 6,
+        "passed": false,
+        "actual": null,
+        "error_type": "runtime_error",
+        "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 26, in <module>\n  File \"<student>\", line 8, in isValid\nIndexError: list index out of range"
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": false,
+        "actual": null,
+        "error_type": "runtime_error",
+        "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 26, in <module>\n  File \"<student>\", line 8, in isValid\nIndexError: list index out of range"
+      },
+      {
+        "index": 12,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": true,
+        "actual": "False",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": false,
+        "actual": null,
+        "error_type": "runtime_error",
+        "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 26, in <module>\n  File \"<student>\", line 8, in isValid\nIndexError: list index out of range"
+      },
+      {
+        "index": 17,
+        "passed": false,
+        "actual": null,
+        "error_type": "runtime_error",
+        "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 26, in <module>\n  File \"<student>\", line 8, in isValid\nIndexError: list index out of range"
+      },
+      {
+        "index": 18,
+        "passed": false,
+        "actual": null,
+        "error_type": "runtime_error",
+        "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 26, in <module>\n  File \"<student>\", line 8, in isValid\nIndexError: list index out of range"
+      },
+      {
+        "index": 19,
+        "passed": true,
+        "actual": "True",
+        "error_type": null,
+        "stderr": ""
+      }
+    ]
+  }
+}

@@ -7,6 +7,7 @@ small_args()      → 窮舉所有小型合法輸入
 import itertools
 
 MAX_LEN = 10 ** 4
+MIN_LEN = 0   # 題目限制寫 1 ≤ 長度，但 problem.py 原有手寫測資含空字串（期望 True），保留它所以放寬為 0
 CHARS = "()[]{}"
 
 
@@ -16,8 +17,8 @@ def validate(args: tuple) -> str | None:
     s = args[0]
     if not isinstance(s, str):
         return "s 必須是字串"
-    if not 1 <= len(s) <= MAX_LEN:
-        return f"s 長度必須在 1 到 {MAX_LEN} 之間，收到 {len(s)}"
+    if not MIN_LEN <= len(s) <= MAX_LEN:
+        return f"s 長度必須在 {MIN_LEN} 到 {MAX_LEN} 之間，收到 {len(s)}"
     bad = set(s) - set(CHARS)
     if bad:
         return f"s 只能包含 {CHARS}，收到 {sorted(bad)}"

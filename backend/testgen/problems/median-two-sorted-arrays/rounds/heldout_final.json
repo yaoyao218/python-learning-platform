@@ -1,0 +1,15 @@
+{
+  "problem": "median-two-sorted-arrays",
+  "round": 4,
+  "n_cases": 45,
+  "created_at": "2026-10-14T15:03:48",
+  "note": "驗收池（solutions_heldout）只在最後一輪結束後跑一次；不得依結果回頭修改測資",
+  "TPR": 1.0,
+  "heldout_TNR": 0.6148,
+  "heldout_pass_rates": {
+    "even_mid_shift": 0.2889,
+    "median_of_medians": 0.6667,
+    "only_nums1_remainder": 0.2
+  },
+  "heldout_uncaught": []
+}

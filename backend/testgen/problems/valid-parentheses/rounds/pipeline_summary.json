@@ -1,0 +1,78 @@
+{
+  "problem": "valid-parentheses",
+  "created_at": "2026-10-14T15:06:07",
+  "settings": {
+    "max_rounds": 4,
+    "target": 0.85,
+    "n": 12,
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.7,
+    "prompt_version": "v2",
+    "reasoning_effort": "low",
+    "max_tokens": 4000
+  },
+  "final_round": 2,
+  "stop_reason": "stalled",
+  "converged": false,
+  "rounds": [
+    {
+      "round": 0,
+      "n_cases": 12,
+      "TPR": 1.0,
+      "TNR": 0.1528,
+      "achievement": 0.3056,
+      "uncaught": [
+        "early_return_true"
+      ]
+    },
+    {
+      "round": 1,
+      "n_cases": 19,
+      "TPR": 1.0,
+      "TNR": 0.2193,
+      "achievement": 0.4386,
+      "uncaught": [],
+      "proposed": 23,
+      "invalid_or_dup": 11,
+      "model": "openai/gpt-oss-120b",
+      "prompt_version": "v2",
+      "reasoning_effort": "low",
+      "api_sec": 4.19,
+      "tokens": 2869,
+      "kept": 7,
+      "target_hit_rate": 0.4167
+    },
+    {
+      "round": 2,
+      "n_cases": 19,
+      "TPR": 1.0,
+      "TNR": 0.2193,
+      "achievement": 0.4386,
+      "uncaught": [],
+      "proposed": 12,
+      "invalid_or_dup": 12,
+      "model": "openai/gpt-oss-120b",
+      "prompt_version": "v2",
+      "reasoning_effort": "low",
+      "api_sec": 4.41,
+      "tokens": 3529,
+      "kept": 0,
+      "target_hit_rate": null
+    }
+  ],
+  "heldout": {
+    "problem": "valid-parentheses",
+    "round": 2,
+    "n_cases": 19,
+    "created_at": "2026-10-14T15:06:07",
+    "note": "驗收池（solutions_heldout）只在最後一輪結束後跑一次；不得依結果回頭修改測資",
+    "TPR": 1.0,
+    "heldout_TNR": 0.1228,
+    "heldout_pass_rates": {
+      "counter_per_type": 0.8421,
+      "mirror_check": 0.9474,
+      "replace_once": 0.8421
+    },
+    "heldout_uncaught": []
+  }
+}

@@ -9,8 +9,8 @@
 | 題目 id | 題目 | 難度 | 測資數 | 虛擬碼 |
 |---|---|---|---|---|
 | `longest-substring` | Longest Substring Without Repeating Characters（LC #3） | 中 | 18 | 有 |
-| `valid-parentheses` | Valid Parentheses（LC #20） | 易 | 12 | 有 |
-| `median-two-sorted-arrays` | Median of Two Sorted Arrays（LC #4） | 難 | 11 | 有 |
+| `valid-parentheses` | Valid Parentheses（LC #20） | 易 | 19 | 有 |
+| `median-two-sorted-arrays` | Median of Two Sorted Arrays（LC #4） | 難 | 45 | 有 |
 | `best-time-stock` | Best Time to Buy and Sell Stock（LC #121） | 易 | 10 | 有 |
 | `longest-valid-parentheses` | Longest Valid Parentheses（LC #32） | 難 | 54 | 有 |
 

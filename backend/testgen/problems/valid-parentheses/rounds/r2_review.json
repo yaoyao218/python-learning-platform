@@ -1,0 +1,15 @@
+{
+  "problem": "valid-parentheses",
+  "round": 2,
+  "reviewer": "AI（自動審核，非人工）",
+  "rule": "只看 TPR/TNR 數字，不看 AI 理由；上一輪正式測資全保留，候選以貪婪法依 TNR 加入",
+  "created_at": "2026-10-14T15:06:07",
+  "trace": [
+    [
+      "start",
+      null,
+      0.2193
+    ]
+  ],
+  "items": []
+}

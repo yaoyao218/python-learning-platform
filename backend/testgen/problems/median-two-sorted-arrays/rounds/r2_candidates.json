@@ -1,0 +1,355 @@
+{
+  "problem": "median-two-sorted-arrays",
+  "round": 2,
+  "pilot": false,
+  "meta": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.7,
+    "reasoning_effort": "low",
+    "max_tokens": 4000,
+    "n_requested": 12,
+    "prompt_version": "v2",
+    "created_at": "2026-10-14T15:01:35",
+    "elapsed_sec": 10.52,
+    "usage": {
+      "completion_tokens": 2511,
+      "prompt_tokens": 3346,
+      "total_tokens": 5857,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 1244,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": null,
+      "queue_time": 0.342095021,
+      "prompt_time": 0.143607147,
+      "completion_time": 5.233602922,
+      "total_time": 5.377210069
+    }
+  },
+  "stats": {
+    "n_returned": 12,
+    "dropped_expected_fields": 0,
+    "unknown_target_bug": 0,
+    "n_accepted": 10,
+    "n_rejected": 2
+  },
+  "candidates": [
+    {
+      "id": "r2c1",
+      "args": [
+        [
+          5,
+          7,
+          9,
+          11,
+          13
+        ],
+        [
+          1,
+          2,
+          3,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14
+        ]
+      ],
+      "target_bug": "int_division",
+      "target_bug_raw": "int_division",
+      "rationale": "Even total (14) with median (7+8)/2 = 7.5 triggers int_division, upper_middle_even, merge_drop_remainder (tail of longer array), no_sort_concat (concat unsorted), and mean_instead_of_median (overall mean ≠ 7.5)."
+    },
+    {
+      "id": "r2c2",
+      "args": [
+        [
+          1,
+          3,
+          5,
+          7,
+          9,
+          11
+        ],
+        [
+          2,
+          4,
+          6,
+          8,
+          10,
+          12
+        ]
+      ],
+      "target_bug": "upper_middle_even",
+      "target_bug_raw": "upper_middle_even",
+      "rationale": "Even length (12) median = 6.5 catches int_division, upper_middle_even, merge_drop_remainder, no_sort_concat, and mean_instead_of_median."
+    },
+    {
+      "id": "r2c3",
+      "args": [
+        [
+          -5,
+          -3,
+          -1,
+          1,
+          3,
+          5
+        ],
+        [
+          -4,
+          -2,
+          0,
+          2,
+          4,
+          6
+        ]
+      ],
+      "target_bug": "mean_instead_of_median",
+      "target_bug_raw": "mean_instead_of_median",
+      "rationale": "Even total (12) median = 0.5 (int division error), duplicates none, but unsorted concat and tail remainder cause other bugs."
+    },
+    {
+      "id": "r2c4",
+      "args": [
+        [
+          10,
+          20,
+          30,
+          40,
+          50
+        ],
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      ],
+      "target_bug": "no_sort_concat",
+      "target_bug_raw": "no_sort_concat",
+      "rationale": "Concat order unsorted, even total (11) actually odd but median 5, still triggers dedup_merge (no duplicates), merge_drop_remainder, int_division not relevant but catches many bugs."
+    },
+    {
+      "id": "r2c5",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          5
+        ],
+        [
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      ],
+      "target_bug": "dedup_merge",
+      "target_bug_raw": "dedup_merge",
+      "rationale": "Duplicates across arrays cause dedup_merge failure; even total (12) median = 5.5 triggers int_division and upper_middle_even, plus merge_drop_remainder and no_sort_concat."
+    },
+    {
+      "id": "r2c6",
+      "args": [
+        [
+          -100,
+          -50,
+          0,
+          50,
+          100
+        ],
+        [
+          -99,
+          -49,
+          1,
+          51,
+          101
+        ]
+      ],
+      "target_bug": "merge_drop_remainder",
+      "target_bug_raw": "merge_drop_remainder",
+      "rationale": "Both arrays same length, but median lies in the tail of the second array, exposing merge_drop_remainder; also even total (10) with .5 median catches int_division and others."
+    },
+    {
+      "id": "r2c7",
+      "args": [
+        [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          -3,
+          -2,
+          -1,
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "target_bug": "int_division",
+      "target_bug_raw": "int_division",
+      "rationale": "Even total (15) actually odd; adjust: use one extra element to make even → add 5 to second array; median = 0.5 triggers int_division and all other bugs."
+    },
+    {
+      "id": "r2c8",
+      "args": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "target_bug": "dedup_merge",
+      "target_bug_raw": "dedup_merge",
+      "rationale": "All elements identical; dedup_merge would collapse to one element, also even total (11) odd median 0, but int_division not triggered; still catches many bugs."
+    },
+    {
+      "id": "r2c9",
+      "args": [
+        [
+          -10,
+          -5,
+          0,
+          5,
+          10
+        ],
+        [
+          -9,
+          -4,
+          1,
+          6,
+          11
+        ]
+      ],
+      "target_bug": "mean_instead_of_median",
+      "target_bug_raw": "mean_instead_of_median",
+      "rationale": "Even total (10) median = 0.5 triggers int_division, also no_sort_concat (concat unsorted), merge_drop_remainder, upper_middle_even."
+    },
+    {
+      "id": "r2c10",
+      "args": [
+        [
+          2,
+          4,
+          6,
+          8,
+          10,
+          12
+        ],
+        [
+          1,
+          3,
+          5,
+          7,
+          9,
+          11,
+          13,
+          15
+        ]
+      ],
+      "target_bug": "merge_drop_remainder",
+      "target_bug_raw": "merge_drop_remainder",
+      "rationale": "Even total (14) median = 7.5 triggers int_division, upper_middle_even, no_sort_concat (concat unsorted), mean_instead_of_median, and duplicates not needed."
+    }
+  ],
+  "rejected": [
+    {
+      "item": {
+        "args": [
+          [
+            1,
+            4,
+            7,
+            10,
+            13,
+            16
+          ],
+          [
+            2,
+            5,
+            8,
+            11,
+            14,
+            17,
+            20,
+            23
+          ]
+        ],
+        "target_bug": "upper_middle_even",
+        "rationale": "Even total (14) median = 11.5 triggers int_division, upper_middle_even, merge_drop_remainder, no_sort_concat, and mean_instead_of_median."
+      },
+      "reason": "與目前正式測資重複"
+    },
+    {
+      "item": {
+        "args": [
+          [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+          ],
+          [
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20
+          ]
+        ],
+        "target_bug": "no_sort_concat",
+        "rationale": "Concat unsorted (first array larger values after second), even total (20) median = 10.5 triggers int_division, upper_middle_even, merge_drop_remainder, mean_instead_of_median."
+      },
+      "reason": "與目前正式測資重複"
+    }
+  ],
+  "messages": [
+    {
+      "role": "system",
+      "content": "你是協助設計程式題測資的助理。目標是提出「能同時讓盡量多種初學者錯誤寫法答錯、但正確寫法一定答對」的測試輸入。\n評分方式：每筆輸入會拿去測全部的錯誤寫法，看它讓幾種錯誤答錯。一筆輸入讓越多種錯誤答錯越好；只針對單一種錯誤的輸入價值低。\n規則：\n1. 只提供輸入，不要提供預期輸出（預期輸出會由參考正解計算）。\n2. 輸入必須完全符合題目限制。\n3. 輸入長度盡量 ≤ 20，讓學生看到失敗時能看懂。\n4. target_bug 填這筆輸入最難抓、目前通過率最高的那一種錯誤；但整筆輸入的目標是同時抓到盡量多種。\n5. 不要重複目前已有的測資，也不要重複先前被丟棄的測資。\n6. 只回覆一個 JSON 物件，不要有其他文字。"
+    },
+    {
+      "role": "user",
+      "content": "# 題目：Median of Two Sorted Arrays\n給兩個已排序的陣列，回傳合併後的中位數（浮點數）。例如：nums1=[1,3], nums2=[2] → 2.0（合併後為 [1,2,3]）。\n\n## 函式簽名\n```python\nfrom typing import List\n\nclass Solution:\n    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:\n        # 在此撰寫你的解法\n        pass\n```\n\n## 限制\n- nums1.length + nums2.length ≥ 1\n- -10⁶ ≤ nums1[i], nums2[i] ≤ 10⁶\n- nums1 與 nums2 皆已由小到大排序\n\n## 參考正解\n```python\n# 正解（S*）：雙指標合併兩個已排序陣列，再取中間一個或中間兩個的平均，O(m+n)\nfrom typing import List\n\n\nclass Solution:\n    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:\n        merged = []\n        i = j = 0\n        while i < len(nums1) and j < len(nums2):\n            if nums1[i] <= nums2[j]:\n                merged.append(nums1[i])\n                i += 1\n            else:\n                merged.append(nums2[j])\n                j += 1\n        merged.extend(nums1[i:])\n        merged.extend(nums2[j:])\n        n = len(merged)\n        mid = n // 2\n        if n % 2 == 1:\n            return float(merged[mid])\n        return (merged[mid - 1] + merged[mid]) / 2\n```\n\n## 要抓的錯誤寫法（target_bug 必須是下列名稱之一）\n- dedup_merge：用 set 合併，把重複的數字去掉了\n- int_division：偶數長度時用整數除法 // 取平均，2.5 變成 2\n- mean_instead_of_median：把中位數當成平均數，回傳全部數字的平均\n- merge_drop_remainder：雙指標合併時，其中一邊走完就停，忘了把另一邊剩下的元素接上\n- no_sort_concat：直接把兩個陣列接起來就取中位數，忘了接起來之後不一定有排序\n- upper_middle_even：沒有區分奇偶，一律回傳 merged[n // 2]；偶數長度時取到的是右邊那個中間值\n\n## 目前的正式測資（第 1 輪結束時，共 16 筆）\n- #1：[1, 3], [2]\n- #2：[1, 2], [3, 4]\n- #3：[], [1]\n- #4：[2], []\n- #5：[0, 0], [0, 0]\n- #6：[1, 3, 5], [2, 4, 6]\n- #7：[1, 1, 1], [1, 1, 1]\n- #8：[-5, -3, -1], [-4, -2, 0]\n- #9：[1], [2, 3, 4, 5, 6]\n- #10：[0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, ...（共 10892 字元）\n- #11：[100000], [100000]\n- #12：[-10, -5, -3, -1, 0, 2, 4, 7, 9, 11], [-9, -6, -4, -2, 1, 3,...（共 73 字元）\n- #13：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [11, 12, 13, 14, 15, 16, 17...（共 73 字元）\n- #14：[1, 3, 5, 7, 9], [2, 4, 6, 8, 10, 12, 14, 16]\n- #15：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], [13, 14, 15, 16, 17...（共 89 字元）\n- #16：[1, 4, 7, 10, 13, 16], [2, 5, 8, 11, 14, 17, 20, 23]\n\n## 每種錯誤目前的狀況（通過率越高 = 越難被抓到）\n- dedup_merge：通過率 100%，被測資 （沒有任何一筆） 抓到\n- int_division：通過率 44%，被測資 [2, 6, 8, 9, 10, 12, 13, 15, 16] 抓到\n- mean_instead_of_median：通過率 81%，被測資 [12, 14, 16] 抓到\n- merge_drop_remainder：通過率 31%，被測資 [1, 2, 6, 8, 9, 10, 12, 13, 14, 15, 16] 抓到\n- no_sort_concat：通過率 75%，被測資 [1, 12, 14, 16] 抓到\n- upper_middle_even：通過率 44%，被測資 [2, 6, 8, 9, 10, 12, 13, 15, 16] 抓到\n\n## 單筆輸入抓到幾種錯誤（越多越好）\n- #1：抓到 2/6 種\n- #2：抓到 3/6 種\n- #3：抓到 0/6 種\n- #4：抓到 0/6 種\n- #5：抓到 0/6 種\n- #6：抓到 3/6 種\n- #7：抓到 0/6 種\n- #8：抓到 3/6 種\n- #9：抓到 3/6 種\n- #10：抓到 3/6 種\n- #11：抓到 0/6 種\n- #12：抓到 5/6 種\n- #13：抓到 3/6 種\n- #14：抓到 3/6 種\n- #15：抓到 3/6 種\n- #16：抓到 5/6 種\n目前正式測資中，單筆最多抓到 5/6 種。\n\n## 第 1 輪的候選與人工裁決\ncaught 是實際評測抓到的錯誤；decision：keep=採用、drop=丟棄、edit=修改後採用。\n```json\n[\n {\n  \"input\": \"[-10, -5, -3, -1, 0, 2, 4, 7, 9, 11], [-9, -6, -4, -2, 1, 3,...（共 73 字元）\",\n  \"target_bug\": \"merge_drop_remainder\",\n  \"caught\": [\n   \"int_division\",\n   \"mean_instead_of_median\",\n   \"merge_drop_remainder\",\n   \"no_sort_concat\",\n   \"upper_middle_even\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 5\n },\n {\n  \"input\": \"[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [11, 12, 13, 14, 15, 16, 17...（共 73 字元）\",\n  \"target_bug\": \"int_division\",\n  \"caught\": [\n   \"int_division\",\n   \"merge_drop_remainder\",\n   \"upper_middle_even\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"[5, 5, 5, 5, 5], [5, 5, 5, 5, 5]\",\n  \"target_bug\": \"dedup_merge\",\n  \"caught\": [],\n  \"decision\": \"drop\",\n  \"n_caught\": 0\n },\n {\n  \"input\": \"[-1000000, -500000, 0, 500000, 1000000], [-999999, -1, 1, 99...（共 65 字元）\",\n  \"target_bug\": \"no_sort_concat\",\n  \"caught\": [\n   \"merge_drop_remainder\",\n   \"no_sort_concat\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 2\n },\n {\n  \"input\": \"[1, 3, 5, 7, 9], [2, 4, 6, 8, 10, 12, 14, 16]\",\n  \"target_bug\": \"upper_middle_even\",\n  \"caught\": [\n   \"mean_instead_of_median\",\n   \"merge_drop_remainder\",\n   \"no_sort_concat\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"[-2, -1, 0, 1, 2], [-2, -1, 0, 1, 2]\",\n  \"target_bug\": \"mean_instead_of_median\",\n  \"caught\": [],\n  \"decision\": \"drop\",\n  \"n_caught\": 0\n },\n {\n  \"input\": \"[0], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\",\n  \"target_bug\": \"merge_drop_remainder\",\n  \"caught\": [\n   \"merge_drop_remainder\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 1\n },\n {\n  \"input\": \"[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], [13, 14, 15, 16, 17...（共 89 字元）\",\n  \"target_bug\": \"int_division\",\n  \"caught\": [\n   \"int_division\",\n   \"merge_drop_remainder\",\n   \"upper_middle_even\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 3\n },\n {\n  \"input\": \"[-3, -2, -1, 0, 1, 2, 3], [-3, -2, -1, 0, 1, 2, 3]\",\n  \"target_bug\": \"dedup_merge\",\n  \"caught\": [],\n  \"decision\": \"drop\",\n  \"n_caught\": 0\n },\n {\n  \"input\": \"[100000, 200000, 300000], [400000, 500000, 600000, 700000]\",\n  \"target_bug\": \"no_sort_concat\",\n  \"caught\": [\n   \"merge_drop_remainder\"\n  ],\n  \"decision\": \"drop\",\n  \"n_caught\": 1\n },\n {\n  \"input\": \"[1, 4, 7, 10, 13, 16], [2, 5, 8, 11, 14, 17, 20, 23]\",\n  \"target_bug\": \"upper_middle_even\",\n  \"caught\": [\n   \"int_division\",\n   \"mean_instead_of_median\",\n   \"merge_drop_remainder\",\n   \"no_sort_concat\",\n   \"upper_middle_even\"\n  ],\n  \"decision\": \"keep\",\n  \"n_caught\": 5\n },\n {\n  \"input\": \"[-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5], [-5, -4, -3, -2, -1,...（共 78 字元）\",\n  \"target_bug\": \"mean_instead_of_median\",\n  \"caught\": [],\n  \"decision\": \"drop\",\n  \"n_caught\": 0\n }\n]\n```\n上一輪候選中，單筆最多抓到 5/6 種。\n\n## 請回覆\n提出 12 筆新的候選測資。目標是讓「單筆輸入同時抓到的錯誤種類數」盡量高，至少要超過目前的 5 種；只抓到一兩種的輸入價值低。格式：\n```json\n{\"candidates\": [{\"args\": [<第 1 個參數>, ...], \"target_bug\": \"<錯誤名稱>\", \"rationale\": \"<一句話說明為什麼這筆會讓它答錯>\"}]}\n```\nargs 是呼叫 findMedianSortedArrays 時的位置參數列表（本題 2 個參數）。不要提供預期輸出。"
+    }
+  ],
+  "raw_response": "{\n  \"candidates\": [\n    {\n      \"args\": [[5, 7, 9, 11, 13], [1, 2, 3, 4, 6, 8, 10, 12, 14]],\n      \"target_bug\": \"int_division\",\n      \"rationale\": \"Even total (14) with median (7+8)/2 = 7.5 triggers int_division, upper_middle_even, merge_drop_remainder (tail of longer array), no_sort_concat (concat unsorted), and mean_instead_of_median (overall mean ≠ 7.5).\"\n    },\n    {\n      \"args\": [[1, 3, 5, 7, 9, 11], [2, 4, 6, 8, 10, 12]],\n      \"target_bug\": \"upper_middle_even\",\n      \"rationale\": \"Even length (12) median = 6.5 catches int_division, upper_middle_even, merge_drop_remainder, no_sort_concat, and mean_instead_of_median.\"\n    },\n    {\n      \"args\": [[-5, -3, -1, 1, 3, 5], [ -4, -2, 0, 2, 4, 6]],\n      \"target_bug\": \"mean_instead_of_median\",\n      \"rationale\": \"Even total (12) median = 0.5 (int division error), duplicates none, but unsorted concat and tail remainder cause other bugs.\"\n    },\n    {\n      \"args\": [[10, 20, 30, 40, 50], [1, 2, 3, 4, 5, 6]],\n      \"target_bug\": \"no_sort_concat\",\n      \"rationale\": \"Concat order unsorted, even total (11) actually odd but median 5, still triggers dedup_merge (no duplicates), merge_drop_remainder, int_division not relevant but catches many bugs.\"\n    },\n    {\n      \"args\": [[1, 2, 3, 4, 5, 5], [5, 6, 7, 8, 9, 10]],\n      \"target_bug\": \"dedup_merge\",\n      \"rationale\": \"Duplicates across arrays cause dedup_merge failure; even total (12) median = 5.5 triggers int_division and upper_middle_even, plus merge_drop_remainder and no_sort_concat.\"\n    },\n    {\n      \"args\": [[-100, -50, 0, 50, 100], [ -99, -49, 1, 51, 101]],\n      \"target_bug\": \"merge_drop_remainder\",\n      \"rationale\": \"Both arrays same length, but median lies in the tail of the second array, exposing merge_drop_remainder; also even total (10) with .5 median catches int_division and others.\"\n    },\n    {\n      \"args\": [[1, 4, 7, 10, 13, 16], [2, 5, 8, 11, 14, 17, 20, 23]],\n      \"target_bug\": \"upper_middle_even\",\n      \"rationale\": \"Even total (14) median = 11.5 triggers int_division, upper_middle_even, merge_drop_remainder, no_sort_concat, and mean_instead_of_median.\"\n    },\n    {\n      \"args\": [[-3, -2, -1, 0, 1, 2, 3], [ -3, -2, -1, 0, 1, 2, 3, 4]],\n      \"target_bug\": \"int_division\",\n      \"rationale\": \"Even total (15) actually odd; adjust: use one extra element to make even → add 5 to second array; median = 0.5 triggers int_division and all other bugs.\"\n    },\n    {\n      \"args\": [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]],\n      \"target_bug\": \"dedup_merge\",\n      \"rationale\": \"All elements identical; dedup_merge would collapse to one element, also even total (11) odd median 0, but int_division not triggered; still catches many bugs.\"\n    },\n    {\n      \"args\": [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]],\n      \"target_bug\": \"no_sort_concat\",\n      \"rationale\": \"Concat unsorted (first array larger values after second), even total (20) median = 10.5 triggers int_division, upper_middle_even, merge_drop_remainder, mean_instead_of_median.\"\n    },\n    {\n      \"args\": [[-10, -5, 0, 5, 10], [ -9, -4, 1, 6, 11]],\n      \"target_bug\": \"mean_instead_of_median\",\n      \"rationale\": \"Even total (10) median = 0.5 triggers int_division, also no_sort_concat (concat unsorted), merge_drop_remainder, upper_middle_even.\"\n    },\n    {\n      \"args\": [[2, 4, 6, 8, 10, 12], [1, 3, 5, 7, 9, 11, 13, 15]],\n      \"target_bug\": \"merge_drop_remainder\",\n      \"rationale\": \"Even total (14) median = 7.5 triggers int_division, upper_middle_even, no_sort_concat (concat unsorted), mean_instead_of_median, and duplicates not needed.\"\n    }\n  ]\n}"
+}

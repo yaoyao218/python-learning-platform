@@ -1,0 +1,418 @@
+{
+  "problem": "median-two-sorted-arrays",
+  "round": 4,
+  "reviewer": "AI（自動審核，非人工）",
+  "rule": "只看 TPR/TNR 數字，不看 AI 理由；上一輪正式測資全保留，候選以貪婪法依 TNR 加入",
+  "created_at": "2026-10-14T15:03:47",
+  "trace": [
+    [
+      "start",
+      null,
+      0.4902
+    ],
+    [
+      "add",
+      "r4c2",
+      0.5048
+    ],
+    [
+      "add",
+      "r4c11",
+      0.5185
+    ],
+    [
+      "add",
+      "r4c1",
+      0.527
+    ],
+    [
+      "add",
+      "r4c3",
+      0.5351
+    ],
+    [
+      "add",
+      "r4c4",
+      0.5427
+    ],
+    [
+      "add",
+      "r4c6",
+      0.55
+    ],
+    [
+      "add",
+      "r4c7",
+      0.5569
+    ],
+    [
+      "add",
+      "r4c9",
+      0.5635
+    ],
+    [
+      "add",
+      "r4c10",
+      0.5698
+    ],
+    [
+      "add",
+      "r4c12",
+      0.5758
+    ],
+    [
+      "add",
+      "r4c8",
+      0.5778
+    ]
+  ],
+  "items": [
+    {
+      "id": "r4c1",
+      "args": [
+        [
+          1,
+          2,
+          2,
+          4
+        ],
+        [
+          3,
+          5,
+          6,
+          7
+        ]
+      ],
+      "expected": 3.5,
+      "target_bug": "merge_drop_remainder",
+      "kills": [
+        "dedup_merge",
+        "int_division",
+        "mean_instead_of_median",
+        "merge_drop_remainder",
+        "upper_middle_even"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 5/6（dedup_merge, int_division, mean_instead_of_median, merge_drop_remainder, upper_middle_even）；移除它 TNR 0.5720→0.5778，保留可提高密度"
+    },
+    {
+      "id": "r4c2",
+      "args": [
+        [
+          -5,
+          -3,
+          -3,
+          0
+        ],
+        [
+          -4,
+          -2,
+          1,
+          2
+        ]
+      ],
+      "expected": -2.5,
+      "target_bug": "merge_drop_remainder",
+      "kills": [
+        "dedup_merge",
+        "int_division",
+        "mean_instead_of_median",
+        "merge_drop_remainder",
+        "no_sort_concat",
+        "upper_middle_even"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 6/6（dedup_merge, int_division, mean_instead_of_median, merge_drop_remainder, no_sort_concat, upper_middle_even）；移除它 TNR 0.5682→0.5778，保留可提高密度"
+    },
+    {
+      "id": "r4c3",
+      "args": [
+        [
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          2,
+          3,
+          4,
+          4
+        ]
+      ],
+      "expected": 1.5,
+      "target_bug": "merge_drop_remainder",
+      "kills": [
+        "dedup_merge",
+        "int_division",
+        "mean_instead_of_median",
+        "merge_drop_remainder",
+        "upper_middle_even"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 5/6（dedup_merge, int_division, mean_instead_of_median, merge_drop_remainder, upper_middle_even）；移除它 TNR 0.5720→0.5778，保留可提高密度"
+    },
+    {
+      "id": "r4c4",
+      "args": [
+        [
+          -10,
+          -8,
+          -8,
+          -6
+        ],
+        [
+          -9,
+          -7,
+          -5,
+          -3
+        ]
+      ],
+      "expected": -7.5,
+      "target_bug": "merge_drop_remainder",
+      "kills": [
+        "dedup_merge",
+        "int_division",
+        "mean_instead_of_median",
+        "merge_drop_remainder",
+        "upper_middle_even"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 5/6（dedup_merge, int_division, mean_instead_of_median, merge_drop_remainder, upper_middle_even）；移除它 TNR 0.5720→0.5778，保留可提高密度"
+    },
+    {
+      "id": "r4c5",
+      "args": [
+        [
+          5,
+          5,
+          6,
+          8
+        ],
+        [
+          7,
+          9,
+          10,
+          10
+        ]
+      ],
+      "expected": 7.5,
+      "target_bug": "merge_drop_remainder",
+      "kills": [
+        "int_division",
+        "merge_drop_remainder",
+        "upper_middle_even"
+      ],
+      "target_hit": true,
+      "decision": "drop",
+      "reason": "抓到 3/6（int_division, merge_drop_remainder, upper_middle_even）；加入保留集 TNR 0.5778→0.5761（下降）"
+    },
+    {
+      "id": "r4c6",
+      "args": [
+        [
+          1,
+          3,
+          3,
+          5
+        ],
+        [
+          2,
+          4,
+          6,
+          8
+        ]
+      ],
+      "expected": 3.5,
+      "target_bug": "merge_drop_remainder",
+      "kills": [
+        "dedup_merge",
+        "int_division",
+        "mean_instead_of_median",
+        "merge_drop_remainder",
+        "upper_middle_even"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 5/6（dedup_merge, int_division, mean_instead_of_median, merge_drop_remainder, upper_middle_even）；移除它 TNR 0.5720→0.5778，保留可提高密度"
+    },
+    {
+      "id": "r4c7",
+      "args": [
+        [
+          -2,
+          -2,
+          0,
+          2
+        ],
+        [
+          -1,
+          1,
+          3,
+          5
+        ]
+      ],
+      "expected": 0.5,
+      "target_bug": "merge_drop_remainder",
+      "kills": [
+        "dedup_merge",
+        "int_division",
+        "mean_instead_of_median",
+        "merge_drop_remainder",
+        "upper_middle_even"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 5/6（dedup_merge, int_division, mean_instead_of_median, merge_drop_remainder, upper_middle_even）；移除它 TNR 0.5720→0.5778，保留可提高密度"
+    },
+    {
+      "id": "r4c8",
+      "args": [
+        [
+          100,
+          100,
+          200,
+          300
+        ],
+        [
+          150,
+          250,
+          350,
+          450
+        ]
+      ],
+      "expected": 225.0,
+      "target_bug": "merge_drop_remainder",
+      "kills": [
+        "dedup_merge",
+        "mean_instead_of_median",
+        "merge_drop_remainder",
+        "upper_middle_even"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 4/6（dedup_merge, mean_instead_of_median, merge_drop_remainder, upper_middle_even）；移除它 TNR 0.5758→0.5778，保留可提高密度"
+    },
+    {
+      "id": "r4c9",
+      "args": [
+        [
+          0,
+          1,
+          1,
+          2
+        ],
+        [
+          3,
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": 2.5,
+      "target_bug": "merge_drop_remainder",
+      "kills": [
+        "dedup_merge",
+        "int_division",
+        "mean_instead_of_median",
+        "merge_drop_remainder",
+        "upper_middle_even"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 5/6（dedup_merge, int_division, mean_instead_of_median, merge_drop_remainder, upper_middle_even）；移除它 TNR 0.5720→0.5778，保留可提高密度"
+    },
+    {
+      "id": "r4c10",
+      "args": [
+        [
+          -1,
+          -1,
+          0,
+          1
+        ],
+        [
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": 1.5,
+      "target_bug": "merge_drop_remainder",
+      "kills": [
+        "dedup_merge",
+        "int_division",
+        "mean_instead_of_median",
+        "merge_drop_remainder",
+        "upper_middle_even"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 5/6（dedup_merge, int_division, mean_instead_of_median, merge_drop_remainder, upper_middle_even）；移除它 TNR 0.5720→0.5778，保留可提高密度"
+    },
+    {
+      "id": "r4c11",
+      "args": [
+        [
+          7,
+          7,
+          8,
+          9
+        ],
+        [
+          5,
+          6,
+          10,
+          11
+        ]
+      ],
+      "expected": 7.5,
+      "target_bug": "merge_drop_remainder",
+      "kills": [
+        "dedup_merge",
+        "int_division",
+        "mean_instead_of_median",
+        "merge_drop_remainder",
+        "no_sort_concat",
+        "upper_middle_even"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 6/6（dedup_merge, int_division, mean_instead_of_median, merge_drop_remainder, no_sort_concat, upper_middle_even）；移除它 TNR 0.5682→0.5778，保留可提高密度"
+    },
+    {
+      "id": "r4c12",
+      "args": [
+        [
+          -100000,
+          -99999,
+          -99999,
+          -99998
+        ],
+        [
+          -99997,
+          -99996,
+          -99995,
+          -99994
+        ]
+      ],
+      "expected": -99997.5,
+      "target_bug": "merge_drop_remainder",
+      "kills": [
+        "dedup_merge",
+        "int_division",
+        "mean_instead_of_median",
+        "merge_drop_remainder",
+        "upper_middle_even"
+      ],
+      "target_hit": true,
+      "decision": "keep",
+      "reason": "抓到 5/6（dedup_merge, int_division, mean_instead_of_median, merge_drop_remainder, upper_middle_even）；移除它 TNR 0.5720→0.5778，保留可提高密度"
+    }
+  ]
+}

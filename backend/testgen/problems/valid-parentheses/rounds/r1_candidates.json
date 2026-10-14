@@ -1,0 +1,206 @@
+{
+  "problem": "valid-parentheses",
+  "round": 1,
+  "pilot": false,
+  "meta": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.7,
+    "reasoning_effort": "low",
+    "max_tokens": 4000,
+    "n_requested": 12,
+    "prompt_version": "v2",
+    "created_at": "2026-10-14T15:06:00",
+    "elapsed_sec": 4.19,
+    "usage": {
+      "completion_tokens": 1322,
+      "prompt_tokens": 1547,
+      "total_tokens": 2869,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 553,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": null,
+      "queue_time": 0.391170202,
+      "prompt_time": 0.359443455,
+      "completion_time": 2.741174007,
+      "total_time": 3.100617462
+    }
+  },
+  "stats": {
+    "n_returned": 23,
+    "dropped_expected_fields": 0,
+    "unknown_target_bug": 0,
+    "n_accepted": 12,
+    "n_rejected": 11
+  },
+  "candidates": [
+    {
+      "id": "r1c1",
+      "args": [
+        "]()"
+      ],
+      "target_bug": "early_return_true",
+      "target_bug_raw": "early_return_true",
+      "rationale": "先遇右括號造成 pop_empty_crash，隨後 \"()\" 使堆疊空且提前回傳 True，同時留下未檢查的左括號"
+    },
+    {
+      "id": "r1c2",
+      "args": [
+        "({)}"
+      ],
+      "target_bug": "early_return_true",
+      "target_bug_raw": "early_return_true",
+      "rationale": "括號順序錯誤會讓 match_any_type 直接彈出，堆疊在 \"}\" 前已空，導致提前回傳 True 且未檢查最後的 \"}\""
+    },
+    {
+      "id": "r1c3",
+      "args": [
+        "([)]{}"
+      ],
+      "target_bug": "early_return_true",
+      "target_bug_raw": "early_return_true",
+      "rationale": "前四個字元 \"([)]\" 使 match_any_type 錯誤彈出，堆疊在 \"{}\" 前已空，程式會提前回傳 True，且計數相等但順序錯"
+    },
+    {
+      "id": "r1c4",
+      "args": [
+        "]({})"
+      ],
+      "target_bug": "early_return_true",
+      "target_bug_raw": "early_return_true",
+      "rationale": "首字符右括號觸發 pop_empty_crash，隨後 \"({})\" 配對成功導致堆疊再次空，若有 early_return_true 會提前回傳 True"
+    },
+    {
+      "id": "r1c5",
+      "args": [
+        "({})]"
+      ],
+      "target_bug": "early_return_true",
+      "target_bug_raw": "early_return_true",
+      "rationale": "\"({})\" 正確配對後堆疊空，接著的 \"]\" 若有 early_return_true 會在此提前回傳 True，同時 match_any_type 會錯誤彈出"
+    },
+    {
+      "id": "r1c6",
+      "args": [
+        "((]){})"
+      ],
+      "target_bug": "early_return_true",
+      "target_bug_raw": "early_return_true",
+      "rationale": "中間的 \"]\" 使 match_any_type 直接彈出，堆疊在最後 \"{}\" 前已空，會提前回傳 True，且計數相等"
+    },
+    {
+      "id": "r1c7",
+      "args": [
+        "[({})]("
+      ],
+      "target_bug": "early_return_true",
+      "target_bug_raw": "early_return_true",
+      "rationale": "整體配對正確後最後的 \"(\" 留下未閉合左括號，若程式在堆疊空時提前回傳 True，會錯過最後的錯誤"
+    },
+    {
+      "id": "r1c8",
+      "args": [
+        "{[()]}]"
+      ],
+      "target_bug": "early_return_true",
+      "target_bug_raw": "early_return_true",
+      "rationale": "完整配對後額外的 \"]\" 使堆疊空時提前回傳 True，且 match_any_type 會錯誤彈出"
+    },
+    {
+      "id": "r1c9",
+      "args": [
+        "({[]})]"
+      ],
+      "target_bug": "early_return_true",
+      "target_bug_raw": "early_return_true",
+      "rationale": "正確嵌套後多餘的 \"]\" 讓堆疊空時提前回傳 True，亦會觸發 match_any_type 錯誤"
+    },
+    {
+      "id": "r1c10",
+      "args": [
+        "]({[]})"
+      ],
+      "target_bug": "early_return_true",
+      "target_bug_raw": "early_return_true",
+      "rationale": "開頭右括號觸發 pop_empty_crash，隨後完整配對使堆疊再次空，若有 early_return_true 會提前回傳 True"
+    },
+    {
+      "id": "r1c11",
+      "args": [
+        "({[)]})"
+      ],
+      "target_bug": "early_return_true",
+      "target_bug_raw": "early_return_true",
+      "rationale": "錯誤的順序使 match_any_type 直接彈出，堆疊在最後 \"}\" 前已空，會提前回傳 True，且計數相等"
+    },
+    {
+      "id": "r1c12",
+      "args": [
+        "([]{})]"
+      ],
+      "target_bug": "early_return_true",
+      "target_bug_raw": "early_return_true",
+      "rationale": "整體配對正確後多餘的 \"]\" 讓程式在堆疊空時提前回傳 True，亦同時揭露 no_final_empty_check 與 match_any_type 錯誤"
+    }
+  ],
+  "rejected": [
+    {
+      "item": "",
+      "reason": "缺少 args 或 args 不是 list"
+    },
+    {
+      "item": "",
+      "reason": "缺少 args 或 args 不是 list"
+    },
+    {
+      "item": "",
+      "reason": "缺少 args 或 args 不是 list"
+    },
+    {
+      "item": "",
+      "reason": "缺少 args 或 args 不是 list"
+    },
+    {
+      "item": "",
+      "reason": "缺少 args 或 args 不是 list"
+    },
+    {
+      "item": "",
+      "reason": "缺少 args 或 args 不是 list"
+    },
+    {
+      "item": "",
+      "reason": "缺少 args 或 args 不是 list"
+    },
+    {
+      "item": "",
+      "reason": "缺少 args 或 args 不是 list"
+    },
+    {
+      "item": "",
+      "reason": "缺少 args 或 args 不是 list"
+    },
+    {
+      "item": "",
+      "reason": "缺少 args 或 args 不是 list"
+    },
+    {
+      "item": "",
+      "reason": "缺少 args 或 args 不是 list"
+    }
+  ],
+  "messages": [
+    {
+      "role": "system",
+      "content": "你是協助設計程式題測資的助理。目標是提出「能同時讓盡量多種初學者錯誤寫法答錯、但正確寫法一定答對」的測試輸入。\n評分方式：每筆輸入會拿去測全部的錯誤寫法，看它讓幾種錯誤答錯。一筆輸入讓越多種錯誤答錯越好；只針對單一種錯誤的輸入價值低。\n規則：\n1. 只提供輸入，不要提供預期輸出（預期輸出會由參考正解計算）。\n2. 輸入必須完全符合題目限制。\n3. 輸入長度盡量 ≤ 20，讓學生看到失敗時能看懂。\n4. target_bug 填這筆輸入最難抓、目前通過率最高的那一種錯誤；但整筆輸入的目標是同時抓到盡量多種。\n5. 不要重複目前已有的測資，也不要重複先前被丟棄的測資。\n6. 只回覆一個 JSON 物件，不要有其他文字。"
+    },
+    {
+      "role": "user",
+      "content": "# 題目：Valid Parentheses\n給一個只含括號的字串，判斷括號是否成對且順序正確地閉合。例如：\"()[]{}\" → true，\"([)]\" → false（順序錯誤）。\n\n## 函式簽名\n```python\nclass Solution:\n    def isValid(self, s: str) -> bool:\n        # 在此撰寫你的解法\n        pass\n```\n\n## 限制\n- 1 ≤ s.length ≤ 10⁴\n- s 僅由括號字元 '()[]{}' 組成\n\n## 參考正解\n```python\n# 正解（S*）：堆疊；左括號推入，右括號必須與堆疊頂端配對，最後堆疊要是空的，O(n)\nclass Solution:\n    def isValid(self, s: str) -> bool:\n        pairs = {\")\": \"(\", \"]\": \"[\", \"}\": \"{\"}\n        stack = []\n        for c in s:\n            if c in pairs:\n                if not stack or stack[-1] != pairs[c]:\n                    return False\n                stack.pop()\n            else:\n                stack.append(c)\n        return not stack\n```\n\n## 要抓的錯誤寫法（target_bug 必須是下列名稱之一）\n- adjacent_pairs_only：以為有效字串一定是「兩兩相鄰配對」，只檢查第 0-1、2-3、… 個字元\n- count_only：只檢查三種括號的左右數量各自相等，忽略順序\n- early_return_true：配對完一次、堆疊變空時就提早回傳 True，沒有檢查後面的字元\n- match_any_type：遇到右括號只要堆疊不空就彈出，沒檢查括號種類是否相同\n- no_final_empty_check：迴圈中配對都檢查了，但結尾沒檢查堆疊是否為空，多出的左括號被當成有效\n- pop_empty_crash：遇到右括號直接看堆疊頂端，沒先檢查堆疊是否為空，開頭就是右括號時會 IndexError\n\n## 目前的正式測資（第 0 輪結束時，共 12 筆）\n- #1：'()'\n- #2：'()[]{}'\n- #3：'{[]}'\n- #4：'('\n- #5：'([)]'\n- #6：''\n- #7：']'\n- #8：'((()))'\n- #9：'(()'\n- #10：'([{}])'\n- #11：'}{'\n- #12：'(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((...（共 2002 字元）\n\n## 每種錯誤目前的狀況（通過率越高 = 越難被抓到）\n- adjacent_pairs_only：通過率 67%，被測資 [3, 8, 10, 12] 抓到\n- count_only：通過率 83%，被測資 [5, 11] 抓到\n- early_return_true：通過率 100%，被測資 （沒有任何一筆） 抓到\n- match_any_type：通過率 92%，被測資 [5] 抓到\n- no_final_empty_check：通過率 83%，被測資 [4, 9] 抓到\n- pop_empty_crash：通過率 83%，被測資 [7, 11] 抓到\n\n## 單筆輸入抓到幾種錯誤（越多越好）\n- #1：抓到 0/6 種\n- #2：抓到 0/6 種\n- #3：抓到 1/6 種\n- #4：抓到 1/6 種\n- #5：抓到 2/6 種\n- #6：抓到 0/6 種\n- #7：抓到 1/6 種\n- #8：抓到 1/6 種\n- #9：抓到 1/6 種\n- #10：抓到 1/6 種\n- #11：抓到 2/6 種\n- #12：抓到 1/6 種\n目前正式測資中，單筆最多抓到 2/6 種。\n\n## 請回覆\n提出 12 筆新的候選測資。目標是讓「單筆輸入同時抓到的錯誤種類數」盡量高，至少要超過目前的 2 種；只抓到一兩種的輸入價值低。格式：\n```json\n{\"candidates\": [{\"args\": [<第 1 個參數>], \"target_bug\": \"<錯誤名稱>\", \"rationale\": \"<一句話說明為什麼這筆會讓它答錯>\"}]}\n```\nargs 是呼叫 isValid 時的位置參數列表（本題 1 個參數）。不要提供預期輸出。"
+    }
+  ],
+  "raw_response": "{\"candidates\":[{\"args\":[\"]()\"],\"target_bug\":\"early_return_true\",\"rationale\":\"先遇右括號造成 pop_empty_crash，隨後 \\\"()\\\" 使堆疊空且提前回傳 True，同時留下未檢查的左括號\"},\"\",{\"args\":[\"({)}\"],\"target_bug\":\"early_return_true\",\"rationale\":\"括號順序錯誤會讓 match_any_type 直接彈出，堆疊在 \\\"}\\\" 前已空，導致提前回傳 True 且未檢查最後的 \\\"}\\\"\"},\"\",{\"args\":[\"([)]{}\"],\"target_bug\":\"early_return_true\",\"rationale\":\"前四個字元 \\\"([)]\\\" 使 match_any_type 錯誤彈出，堆疊在 \\\"{}\\\" 前已空，程式會提前回傳 True，且計數相等但順序錯\"},\"\",{\"args\":[\"]({})\"],\"target_bug\":\"early_return_true\",\"rationale\":\"首字符右括號觸發 pop_empty_crash，隨後 \\\"({})\\\" 配對成功導致堆疊再次空，若有 early_return_true 會提前回傳 True\"},\"\",{\"args\":[\"({})]\"],\"target_bug\":\"early_return_true\",\"rationale\":\"\\\"({})\\\" 正確配對後堆疊空，接著的 \\\"]\\\" 若有 early_return_true 會在此提前回傳 True，同時 match_any_type 會錯誤彈出\"},\"\",{\"args\":[\"((]){})\"],\"target_bug\":\"early_return_true\",\"rationale\":\"中間的 \\\"]\\\" 使 match_any_type 直接彈出，堆疊在最後 \\\"{}\\\" 前已空，會提前回傳 True，且計數相等\"},\"\",{\"args\":[\"[({})](\"],\"target_bug\":\"early_return_true\",\"rationale\":\"整體配對正確後最後的 \\\"(\\\" 留下未閉合左括號，若程式在堆疊空時提前回傳 True，會錯過最後的錯誤\"},\"\",{\"args\":[\"{[()]}]\"],\"target_bug\":\"early_return_true\",\"rationale\":\"完整配對後額外的 \\\"]\\\" 使堆疊空時提前回傳 True，且 match_any_type 會錯誤彈出\"},\"\",{\"args\":[\"({[]})]\"],\"target_bug\":\"early_return_true\",\"rationale\":\"正確嵌套後多餘的 \\\"]\\\" 讓堆疊空時提前回傳 True，亦會觸發 match_any_type 錯誤\"},\"\",{\"args\":[\"]({[]})\"],\"target_bug\":\"early_return_true\",\"rationale\":\"開頭右括號觸發 pop_empty_crash，隨後完整配對使堆疊再次空，若有 early_return_true 會提前回傳 True\"},\"\",{\"args\":[\"({[)]})\"],\"target_bug\":\"early_return_true\",\"rationale\":\"錯誤的順序使 match_any_type 直接彈出，堆疊在最後 \\\"}\\\" 前已空，會提前回傳 True，且計數相等\"},\"\",{\"args\":[\"([]{})]\"],\"target_bug\":\"early_return_true\",\"rationale\":\"整體配對正確後多餘的 \\\"]\\\" 讓程式在堆疊空時提前回傳 True，亦同時揭露 no_final_empty_check 與 match_any_type 錯誤\"}]}"
+}

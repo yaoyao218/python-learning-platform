@@ -301,6 +301,11 @@ def main():
                             args.max_tokens)
     elapsed = round(time.time() - t0, 2)
     accepted, rejected, stats = parse_candidates(args.problem, raw, args.round)
+    unparsed = stats["n_returned"] == 0 and any(r["reason"].startswith("回覆不是預期的 JSON 格式") for r in rejected)
+    if unparsed and not args.pilot:
+        # 整份回覆讀不出來是 API／格式失敗，不是「AI 沒提出有用的測資」：不寫成這一輪的提案，
+        # 否則 pipeline 會把它當成 0 筆保留而判定停滯、提早用掉驗收池。回覆另存備查。
+        out = out.with_name(f"{out.stem}.unparsed.{datetime.now().strftime('%Y%m%d-%H%M%S')}.json")
 
     rounds.write_json(out, {
         "problem": args.problem,
@@ -328,6 +333,8 @@ def main():
     if stats["unknown_target_bug"]:
         print(f"  ⚠ 有 {stats['unknown_target_bug']} 筆的 target_bug 不在 S- 清單裡（保留輸入，target 記為 None）")
     print(f"已寫入 {out.relative_to(BACKEND)}（AI 理由存在檔案裡，審核前不要先看）")
+    if unparsed and not args.pilot:
+        raise SystemExit("[propose] 回覆讀不出 JSON，不算這一輪；重跑會重新提案")
 
 
 if __name__ == "__main__":

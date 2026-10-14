@@ -1,0 +1,2931 @@
+{
+  "metrics": {
+    "TPR": 1.0,
+    "TNR": 0.5778,
+    "n_test_cases": 45,
+    "n_S_plus": 3,
+    "n_S_minus": 6
+  },
+  "S_plus_pass_rates": {
+    "binary_partition.py": 1.0,
+    "merge_two_pointer.py": 1.0,
+    "sort_concat.py": 1.0
+  },
+  "S_minus_pass_rates": {
+    "dedup_merge.py": 0.6667,
+    "int_division.py": 0.3556,
+    "mean_instead_of_median.py": 0.4444,
+    "merge_drop_remainder.py": 0.1333,
+    "no_sort_concat.py": 0.6222,
+    "upper_middle_even.py": 0.3111
+  },
+  "command_value": {
+    "1": 2,
+    "2": 3,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 3,
+    "8": 0,
+    "9": 3,
+    "10": 3,
+    "11": 5,
+    "12": 6,
+    "13": 5,
+    "14": 5,
+    "15": 5,
+    "16": 5,
+    "17": 4,
+    "18": 5,
+    "19": 5,
+    "20": 6,
+    "21": 5,
+    "22": 3,
+    "23": 3,
+    "24": 3,
+    "25": 3,
+    "26": 3,
+    "27": 3,
+    "28": 3,
+    "29": 4,
+    "30": 3,
+    "31": 5,
+    "32": 4,
+    "33": 5,
+    "34": 3,
+    "35": 4,
+    "36": 3,
+    "37": 5,
+    "38": 3,
+    "39": 5,
+    "40": 5,
+    "41": 3,
+    "42": 3,
+    "43": 3,
+    "44": 4,
+    "45": 3
+  },
+  "false_positives": [],
+  "false_negatives": [],
+  "tests_module": "problem.PROBLEMS['median-two-sorted-arrays']",
+  "problem": "median-two-sorted-arrays",
+  "S_minus_pool": "wrong",
+  "raw_S_plus": {
+    "binary_partition.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "100000.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "-2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": true,
+        "actual": "-2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "1.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": true,
+        "actual": "-7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "225.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": true,
+        "actual": "2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": true,
+        "actual": "1.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 20,
+        "passed": true,
+        "actual": "7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 21,
+        "passed": true,
+        "actual": "-99997.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 22,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 23,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 24,
+        "passed": true,
+        "actual": "6.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 25,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 26,
+        "passed": true,
+        "actual": "6.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 27,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 28,
+        "passed": true,
+        "actual": "5.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 29,
+        "passed": true,
+        "actual": "375.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 30,
+        "passed": true,
+        "actual": "7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 31,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 32,
+        "passed": true,
+        "actual": "7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 33,
+        "passed": true,
+        "actual": "7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 34,
+        "passed": true,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 35,
+        "passed": true,
+        "actual": "6.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 36,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 37,
+        "passed": true,
+        "actual": "1.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 38,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 39,
+        "passed": true,
+        "actual": "2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 40,
+        "passed": true,
+        "actual": "11.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 41,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 42,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 43,
+        "passed": true,
+        "actual": "12.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 44,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 45,
+        "passed": true,
+        "actual": "999.5",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "merge_two_pointer.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "100000.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "-2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": true,
+        "actual": "-2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "1.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": true,
+        "actual": "-7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "225.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": true,
+        "actual": "2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": true,
+        "actual": "1.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 20,
+        "passed": true,
+        "actual": "7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 21,
+        "passed": true,
+        "actual": "-99997.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 22,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 23,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 24,
+        "passed": true,
+        "actual": "6.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 25,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 26,
+        "passed": true,
+        "actual": "6.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 27,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 28,
+        "passed": true,
+        "actual": "5.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 29,
+        "passed": true,
+        "actual": "375.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 30,
+        "passed": true,
+        "actual": "7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 31,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 32,
+        "passed": true,
+        "actual": "7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 33,
+        "passed": true,
+        "actual": "7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 34,
+        "passed": true,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 35,
+        "passed": true,
+        "actual": "6.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 36,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 37,
+        "passed": true,
+        "actual": "1.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 38,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 39,
+        "passed": true,
+        "actual": "2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 40,
+        "passed": true,
+        "actual": "11.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 41,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 42,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 43,
+        "passed": true,
+        "actual": "12.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 44,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 45,
+        "passed": true,
+        "actual": "999.5",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "sort_concat.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "100000.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "-2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": true,
+        "actual": "-2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "1.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": true,
+        "actual": "-7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "225.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": true,
+        "actual": "2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": true,
+        "actual": "1.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 20,
+        "passed": true,
+        "actual": "7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 21,
+        "passed": true,
+        "actual": "-99997.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 22,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 23,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 24,
+        "passed": true,
+        "actual": "6.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 25,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 26,
+        "passed": true,
+        "actual": "6.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 27,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 28,
+        "passed": true,
+        "actual": "5.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 29,
+        "passed": true,
+        "actual": "375.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 30,
+        "passed": true,
+        "actual": "7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 31,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 32,
+        "passed": true,
+        "actual": "7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 33,
+        "passed": true,
+        "actual": "7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 34,
+        "passed": true,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 35,
+        "passed": true,
+        "actual": "6.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 36,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 37,
+        "passed": true,
+        "actual": "1.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 38,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 39,
+        "passed": true,
+        "actual": "2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 40,
+        "passed": true,
+        "actual": "11.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 41,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 42,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 43,
+        "passed": true,
+        "actual": "12.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 44,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 45,
+        "passed": true,
+        "actual": "999.5",
+        "error_type": null,
+        "stderr": ""
+      }
+    ]
+  },
+  "raw_S_minus": {
+    "dedup_merge.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "100000.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "-2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": false,
+        "actual": "4.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": false,
+        "actual": "-2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": false,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": false,
+        "actual": "-7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": false,
+        "actual": "4.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": false,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": false,
+        "actual": "250.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": false,
+        "actual": "3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": false,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 20,
+        "passed": false,
+        "actual": "8.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 21,
+        "passed": false,
+        "actual": "-99997.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 22,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 23,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 24,
+        "passed": true,
+        "actual": "6.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 25,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 26,
+        "passed": true,
+        "actual": "6.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 27,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 28,
+        "passed": false,
+        "actual": "5.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 29,
+        "passed": true,
+        "actual": "375.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 30,
+        "passed": true,
+        "actual": "7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 31,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 32,
+        "passed": true,
+        "actual": "7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 33,
+        "passed": true,
+        "actual": "7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 34,
+        "passed": false,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 35,
+        "passed": false,
+        "actual": "6.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 36,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 37,
+        "passed": true,
+        "actual": "1.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 38,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 39,
+        "passed": false,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 40,
+        "passed": true,
+        "actual": "11.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 41,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 42,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 43,
+        "passed": true,
+        "actual": "12.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 44,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 45,
+        "passed": true,
+        "actual": "999.5",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "int_division.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": false,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "100000.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": false,
+        "actual": "3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": false,
+        "actual": "-3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": false,
+        "actual": "3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": false,
+        "actual": "3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": false,
+        "actual": "-3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": false,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": false,
+        "actual": "-8.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": false,
+        "actual": "3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": false,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "225.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": false,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": false,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 20,
+        "passed": false,
+        "actual": "7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 21,
+        "passed": false,
+        "actual": "-99998.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 22,
+        "passed": false,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 23,
+        "passed": false,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 24,
+        "passed": true,
+        "actual": "6.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 25,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 26,
+        "passed": false,
+        "actual": "6.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 27,
+        "passed": false,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 28,
+        "passed": true,
+        "actual": "5.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 29,
+        "passed": true,
+        "actual": "375.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 30,
+        "passed": true,
+        "actual": "7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 31,
+        "passed": false,
+        "actual": "10.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 32,
+        "passed": false,
+        "actual": "7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 33,
+        "passed": false,
+        "actual": "7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 34,
+        "passed": true,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 35,
+        "passed": true,
+        "actual": "6.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 36,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 37,
+        "passed": false,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 38,
+        "passed": false,
+        "actual": "10.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 39,
+        "passed": false,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 40,
+        "passed": false,
+        "actual": "11.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 41,
+        "passed": false,
+        "actual": "10.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 42,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 43,
+        "passed": false,
+        "actual": "12.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 44,
+        "passed": false,
+        "actual": "3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 45,
+        "passed": false,
+        "actual": "999.0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "mean_instead_of_median.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "100000.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "-2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": false,
+        "actual": "3.75",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": false,
+        "actual": "-1.75",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": false,
+        "actual": "1.875",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": false,
+        "actual": "-7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": false,
+        "actual": "4.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": false,
+        "actual": "0.75",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": false,
+        "actual": "237.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": false,
+        "actual": "2.75",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": false,
+        "actual": "1.625",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 20,
+        "passed": false,
+        "actual": "7.875",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 21,
+        "passed": false,
+        "actual": "-99997.25",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 22,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 23,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 24,
+        "passed": false,
+        "actual": "15.545454545454545",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 25,
+        "passed": false,
+        "actual": "9.727272727272727",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 26,
+        "passed": true,
+        "actual": "6.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 27,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 28,
+        "passed": false,
+        "actual": "5.416666666666667",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 29,
+        "passed": false,
+        "actual": "387.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 30,
+        "passed": false,
+        "actual": "7.461538461538462",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 31,
+        "passed": false,
+        "actual": "10.785714285714286",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 32,
+        "passed": true,
+        "actual": "7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 33,
+        "passed": false,
+        "actual": "7.571428571428571",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 34,
+        "passed": false,
+        "actual": "0.26666666666666666",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 35,
+        "passed": false,
+        "actual": "6.6",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 36,
+        "passed": false,
+        "actual": "1.0588235294117647",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 37,
+        "passed": false,
+        "actual": "1.3",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 38,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 39,
+        "passed": false,
+        "actual": "2.75",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 40,
+        "passed": false,
+        "actual": "11.636363636363637",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 41,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 42,
+        "passed": false,
+        "actual": "1.0434782608695652",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 43,
+        "passed": true,
+        "actual": "12.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 44,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 45,
+        "passed": true,
+        "actual": "999.5",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "merge_drop_remainder.py": [
+      {
+        "index": 1,
+        "passed": false,
+        "actual": "1.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": false,
+        "actual": "1.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "100000.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": false,
+        "actual": "3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": false,
+        "actual": "-3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": false,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": false,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": false,
+        "actual": "-3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": false,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": false,
+        "actual": "-8.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": false,
+        "actual": "3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": false,
+        "actual": "-0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": false,
+        "actual": "175.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": false,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": false,
+        "actual": "-0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 20,
+        "passed": false,
+        "actual": "7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 21,
+        "passed": false,
+        "actual": "-99999.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 22,
+        "passed": false,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 23,
+        "passed": false,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 24,
+        "passed": false,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 25,
+        "passed": false,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 26,
+        "passed": false,
+        "actual": "6.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 27,
+        "passed": false,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 28,
+        "passed": false,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 29,
+        "passed": false,
+        "actual": "300.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 30,
+        "passed": false,
+        "actual": "5.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 31,
+        "passed": false,
+        "actual": "8.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 32,
+        "passed": false,
+        "actual": "7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 33,
+        "passed": false,
+        "actual": "6.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 34,
+        "passed": true,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 35,
+        "passed": false,
+        "actual": "4.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 36,
+        "passed": false,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 37,
+        "passed": false,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 38,
+        "passed": false,
+        "actual": "5.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 39,
+        "passed": false,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 40,
+        "passed": false,
+        "actual": "10.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 41,
+        "passed": false,
+        "actual": "4.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 42,
+        "passed": false,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 43,
+        "passed": false,
+        "actual": "6.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 44,
+        "passed": false,
+        "actual": "3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 45,
+        "passed": false,
+        "actual": "999.0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "no_sort_concat.py": [
+      {
+        "index": 1,
+        "passed": false,
+        "actual": "3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": true,
+        "actual": "2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "100000.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": true,
+        "actual": "-2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": false,
+        "actual": "-2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": true,
+        "actual": "1.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": true,
+        "actual": "-7.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": true,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": true,
+        "actual": "225.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": true,
+        "actual": "2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": true,
+        "actual": "1.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 20,
+        "passed": false,
+        "actual": "7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 21,
+        "passed": true,
+        "actual": "-99997.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 22,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 23,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 24,
+        "passed": false,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 25,
+        "passed": false,
+        "actual": "-99.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 26,
+        "passed": true,
+        "actual": "6.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 27,
+        "passed": true,
+        "actual": "0.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 28,
+        "passed": true,
+        "actual": "5.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 29,
+        "passed": false,
+        "actual": "200.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 30,
+        "passed": false,
+        "actual": "4.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 31,
+        "passed": false,
+        "actual": "3.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 32,
+        "passed": false,
+        "actual": "2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 33,
+        "passed": false,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 34,
+        "passed": false,
+        "actual": "-3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 35,
+        "passed": false,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 36,
+        "passed": false,
+        "actual": "-6.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 37,
+        "passed": false,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 38,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 39,
+        "passed": true,
+        "actual": "2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 40,
+        "passed": false,
+        "actual": "3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 41,
+        "passed": true,
+        "actual": "10.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 42,
+        "passed": false,
+        "actual": "-9.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 43,
+        "passed": true,
+        "actual": "12.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 44,
+        "passed": false,
+        "actual": "-2.5",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 45,
+        "passed": true,
+        "actual": "999.5",
+        "error_type": null,
+        "stderr": ""
+      }
+    ],
+    "upper_middle_even.py": [
+      {
+        "index": 1,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 2,
+        "passed": false,
+        "actual": "3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 3,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 4,
+        "passed": true,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 5,
+        "passed": true,
+        "actual": "100000.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 6,
+        "passed": true,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 7,
+        "passed": false,
+        "actual": "4.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 8,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 9,
+        "passed": false,
+        "actual": "-2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 10,
+        "passed": false,
+        "actual": "4.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 11,
+        "passed": false,
+        "actual": "4.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 12,
+        "passed": false,
+        "actual": "-2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 13,
+        "passed": false,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 14,
+        "passed": false,
+        "actual": "-7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 15,
+        "passed": false,
+        "actual": "4.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 16,
+        "passed": false,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 17,
+        "passed": false,
+        "actual": "250.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 18,
+        "passed": false,
+        "actual": "3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 19,
+        "passed": false,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 20,
+        "passed": false,
+        "actual": "8.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 21,
+        "passed": false,
+        "actual": "-99997.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 22,
+        "passed": false,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 23,
+        "passed": false,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 24,
+        "passed": true,
+        "actual": "6.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 25,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 26,
+        "passed": false,
+        "actual": "7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 27,
+        "passed": false,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 28,
+        "passed": true,
+        "actual": "5.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 29,
+        "passed": false,
+        "actual": "400.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 30,
+        "passed": true,
+        "actual": "7.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 31,
+        "passed": false,
+        "actual": "11.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 32,
+        "passed": false,
+        "actual": "8.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 33,
+        "passed": false,
+        "actual": "8.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 34,
+        "passed": true,
+        "actual": "0.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 35,
+        "passed": true,
+        "actual": "6.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 36,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 37,
+        "passed": false,
+        "actual": "2.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 38,
+        "passed": false,
+        "actual": "11.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 39,
+        "passed": false,
+        "actual": "3.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 40,
+        "passed": false,
+        "actual": "12.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 41,
+        "passed": false,
+        "actual": "11.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 42,
+        "passed": true,
+        "actual": "1.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 43,
+        "passed": false,
+        "actual": "13.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 44,
+        "passed": false,
+        "actual": "4.0",
+        "error_type": null,
+        "stderr": ""
+      },
+      {
+        "index": 45,
+        "passed": false,
+        "actual": "1000.0",
+        "error_type": null,
+        "stderr": ""
+      }
+    ]
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "problem": "valid-parentheses",
+  "seed": 0,
+  "verdict": "B",
+  "gate_2a_s_plus_consistency": {
+    "pass": true,
+    "n_inputs": 29330,
+    "mismatches": 0,
+    "example": null
+  },
+  "gate_2bcd_s_minus": {
+    "pass": true,
+    "n_s_minus": 6,
+    "effective": 6,
+    "equivalent": [],
+    "duplicates": [],
+    "subsumed": []
+  },
+  "heldout_validity": {
+    "pass": true,
+    "n_heldout": 3,
+    "equivalent": [],
+    "same_as_training": []
+  },
+  "gate_2e_test_cases": {
+    "pass": true,
+    "invalid_cases": [],
+    "expected_mismatch": []
+  },
+  "gate_3a_ceiling": {
+    "ceiling": 0.5,
+    "max_caught": 3,
+    "example": "('{}][}{)(',)",
+    "example_caught": [
+      "count_only",
+      "early_return_true",
+      "pop_empty_crash"
+    ],
+    "searched": {
+      "random": 20000,
+      "exhaustive_small": 9330
+    }
+  },
+  "gate_3b_round0": {
+    "n_cases": 12,
+    "tnr": 0.1528,
+    "achievement": 0.3056,
+    "caught": [
+      "adjacent_pairs_only",
+      "count_only",
+      "match_any_type",
+      "no_final_empty_check",
+      "pop_empty_crash"
+    ],
+    "missed": [
+      "early_return_true"
+    ]
+  },
+  "s_minus_descriptions": {
+    "adjacent_pairs_only": "錯誤：以為有效字串一定是「兩兩相鄰配對」，只檢查第 0-1、2-3、… 個字元",
+    "count_only": "錯誤：只檢查三種括號的左右數量各自相等，忽略順序",
+    "early_return_true": "錯誤：配對完一次、堆疊變空時就提早回傳 True，沒有檢查後面的字元",
+    "match_any_type": "錯誤：遇到右括號只要堆疊不空就彈出，沒檢查括號種類是否相同",
+    "no_final_empty_check": "錯誤：迴圈中配對都檢查了，但結尾沒檢查堆疊是否為空，多出的左括號被當成有效",
+    "pop_empty_crash": "錯誤：遇到右括號直接看堆疊頂端，沒先檢查堆疊是否為空，開頭就是右括號時會 IndexError"
+  }
+}

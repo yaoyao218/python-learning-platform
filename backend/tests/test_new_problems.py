@@ -63,9 +63,10 @@ async def test_valid_parentheses_correct_all_pass():
 
 
 @pytest.mark.asyncio
-async def test_valid_parentheses_count_only_bug_fails_at_5():
+async def test_valid_parentheses_count_only_bug_fails_at_6():
+    # 2026-10-14 測資改由匯出工具依長度排序後，第一筆抓到它的是第 6 道 "}{"（原本是第 5 道 "([)]"）
     results = await judge(VP_BUG_COUNT_ONLY, "valid-parentheses")
-    assert first_fail_index(results) == 5
+    assert first_fail_index(results) == 6
 
 
 @pytest.mark.asyncio

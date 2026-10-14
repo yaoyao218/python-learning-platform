@@ -30,9 +30,9 @@ TESTGEN_PROBLEMS: dict[str, dict] = {
     # 上限 5/6：no_clamp_zero 只在答案為 0 時答錯，這種輸入抓不到其他大多數 S-（assessment.json）
     "best-time-stock": {"reference": "one_pass.py", "ceiling": 5 / 6, "converged": False},
     "longest-valid-parentheses": {"reference": "stack_index.py", "ceiling": 1.0, "converged": False},
-    # 以下兩題只登記到能產生虛擬碼（S+ 與 spec.py）；沒有 S- 池，未跑過測資流程
-    "valid-parentheses": {"reference": "stack_match.py", "ceiling": None, "converged": False},
-    "median-two-sorted-arrays": {"reference": "merge_two_pointer.py", "ceiling": None, "converged": False},
+    # 上限 1/2：單筆輸入最多抓到 3 個 S-（assessment.json）
+    "valid-parentheses": {"reference": "stack_match.py", "ceiling": 0.5, "converged": False},
+    "median-two-sorted-arrays": {"reference": "merge_two_pointer.py", "ceiling": 1.0, "converged": False},
 }
 
 # 歷史紀錄留在 testgen/ 根目錄的題目

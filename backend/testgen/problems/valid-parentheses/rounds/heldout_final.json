@@ -1,0 +1,15 @@
+{
+  "problem": "valid-parentheses",
+  "round": 2,
+  "n_cases": 19,
+  "created_at": "2026-10-14T15:06:07",
+  "note": "驗收池（solutions_heldout）只在最後一輪結束後跑一次；不得依結果回頭修改測資",
+  "TPR": 1.0,
+  "heldout_TNR": 0.1228,
+  "heldout_pass_rates": {
+    "counter_per_type": 0.8421,
+    "mirror_check": 0.9474,
+    "replace_once": 0.8421
+  },
+  "heldout_uncaught": []
+}

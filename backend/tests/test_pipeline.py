@@ -40,3 +40,20 @@ def test_heldout_recorded_once_per_problem():
         held = json.loads((rounds.rounds_dir(pid) / "heldout_final.json").read_text(encoding="utf-8"))
         assert held["round"] == pipeline.last_round(pid)
         assert held["TPR"] == 1.0
+
+
+def test_unparsable_reply_is_not_recorded_as_a_round(tmp_path, monkeypatch):
+    """AI 回覆整份讀不出 JSON 時，propose 要失敗退出、不寫 rN_candidates.json，pipeline 才不會誤判停滯。"""
+    import shutil
+    import pytest
+    from testgen import propose
+    pid = "valid-parentheses"
+    shutil.copy(rounds.round_path(pid, 0, "tests"), tmp_path / "r0_tests.json")
+    monkeypatch.setattr(rounds, "rounds_dir", lambda problem_id: tmp_path)
+    monkeypatch.setattr(propose, "BACKEND", tmp_path)          # 只影響印出的相對路徑
+    monkeypatch.setattr(propose, "call_model", lambda *a, **kw: ('[{"candidates": []}]', None))
+    monkeypatch.setattr(sys, "argv", ["propose", "--problem", pid, "--round", "1"])
+    with pytest.raises(SystemExit):
+        propose.main()
+    assert not rounds.round_path(pid, 1, "candidates").exists()
+    assert len(list(tmp_path.glob("r1_candidates.unparsed.*.json"))) == 1
