@@ -59,6 +59,8 @@ def main():
               "platform": platform.platform(), "cpu_count": os.cpu_count(), "n_random": N_RANDOM, "seed": SEED,
               "repeats": a.repeats, "problems": {}}
     for pid in registry.TESTGEN_PROBLEMS:
+        if not registry.pool_dir(pid, "wrong").exists():
+            continue                            # 只登記到能產生虛擬碼的題目，沒有 S- 池
         times = []
         for _ in range(a.repeats):
             t0 = time.perf_counter()

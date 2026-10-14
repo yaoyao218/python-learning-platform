@@ -115,7 +115,10 @@ async def test_get_problem_includes_passed_pseudocode():
 
 
 @pytest.mark.asyncio
-async def test_get_problem_without_pseudocode_has_no_field():
+async def test_get_problem_without_pseudocode_has_no_field(monkeypatch):
+    from problem import PROBLEMS
+    problem = {k: v for k, v in PROBLEMS["valid-parentheses"].items() if k != "pseudocode"}
+    monkeypatch.setitem(PROBLEMS, "valid-parentheses", problem)
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as client:

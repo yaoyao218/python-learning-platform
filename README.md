@@ -13,15 +13,15 @@
 3. **自動判題**：提交後後端執行該題全部測試案例，即時回傳通過 / 失敗結果
 4. **AI 引導提示**：判題失敗時，AI 分析錯誤類型，給予方向提示（不直接給答案、不讀學生程式碼）
 5. **錯誤分類**：語法錯誤 / 執行時錯誤 / 執行超時 / 忘記 return / 答案錯誤，各有不同提示策略
-6. **虛擬碼**：有通過往返檢查的題目，在題目頁顯示可收合的虛擬碼，AI 提示可引用步驟編號
+6. **虛擬碼**：五題都有通過往返檢查的中文虛擬碼，在題目頁顯示（可收合），AI 提示可引用步驟編號
 
 ### 題目
 
 | 題目 id | 題目 | 難度 | 測資數 | 虛擬碼 |
 |---|---|---|---|---|
 | `longest-substring` | Longest Substring Without Repeating Characters（LC #3） | 中 | 18 | 有 |
-| `valid-parentheses` | Valid Parentheses（LC #20） | 易 | 12 | 無 |
-| `median-two-sorted-arrays` | Median of Two Sorted Arrays（LC #4） | 難 | 11 | 無 |
+| `valid-parentheses` | Valid Parentheses（LC #20） | 易 | 12 | 有 |
+| `median-two-sorted-arrays` | Median of Two Sorted Arrays（LC #4） | 難 | 11 | 有 |
 | `best-time-stock` | Best Time to Buy and Sell Stock（LC #121） | 易 | 10 | 有 |
 | `longest-valid-parentheses` | Longest Valid Parentheses（LC #32） | 難 | 54 | 有 |
 
@@ -35,6 +35,7 @@
 
 | 日期 | 內容 |
 |---|---|
+| 2026-10-14 | valid-parentheses、median-two-sorted-arrays 補上虛擬碼（同一套往返檢查，第 1 次通過），五題都有虛擬碼；兩題各新增一份正解與輸入規格（`backend/testgen/problems/<id>/`），只用來產生虛擬碼，沒有跑測資流程 |
 | 2026-10-14 | longest-valid-parentheses、longest-substring 的虛擬碼改用中文重新產生，並重新通過往返檢查（原本一題是英文、一題有一步寫錯） |
 | 2026-10-14 | AI 輔助測資分支合併到 `main`：正式網站從 3 題變 5 題（新增 best-time-stock、longest-valid-parentheses）、題目頁顯示虛擬碼、AI 提示可引用虛擬碼步驟；GitHub 只保留 `main` |
 

@@ -1,0 +1,17 @@
+{
+  "version": "320cdeb999d98cff",
+  "text": "**輸入**：兩個已排序整數陣列 `nums1`、`nums2`。  \n**輸出**：兩個陣列合併後的中位數，若總長度為偶數則取中間兩數平均。\n\n1. 建立空陣列 `merged`。  \n2. 設定指標 `i = 0`、`j = 0`。  \n3. 當 `i` 小於 `nums1` 長度且 `j` 小於 `nums2` 長度時，執行步驟 4–6。  \n4. 若 `nums1[i]` 小於等於 `nums2[j]`，將 `nums1[i]` 加入 `merged`，並將 `i` 加 1。  \n5. 否則將 `nums2[j]` 加入 `merged`，並將 `j` 加 1。  \n6. 回到步驟 3。  \n7. 把 `nums1` 從 `i` 到結尾的剩餘元素加入 `merged`。  \n8. 把 `nums2` 從 `j` 到結尾的剩餘元素加入 `merged`。  \n9. 計算 `merged` 的長度 `n`。  \n10. 計算中間索引 `mid = n // 2`。  \n11. 若 `n` 為奇數，回傳 `merged[mid]` 的浮點數。  \n12. 否則回傳 `(merged[mid-1] + merged[mid]) / 2` 的浮點數。",
+  "source_s_plus": "merge_two_pointer.py",
+  "writer": "openai/gpt-oss-20b",
+  "implementer": "openai/gpt-oss-120b",
+  "k": 3,
+  "attempts": 1,
+  "passed": true,
+  "created_at": "2026-10-14T14:54:44",
+  "format_warnings": [
+    "含索引寫法 x[i]",
+    "人工閱讀：第 10 步「mid = n // 2」用了程式寫法 //；第 6 步「回到步驟 3」與第 3 步的迴圈描述重疊"
+  ],
+  "n_probe_inputs": 3227,
+  "note": "以 --zh 產生（要求繁體中文）；S+ 與 spec.py 為本次新增，沒有 S- 池；同系列模型（K7）；單次結果（K9）；格式軟規則只記錄警告、未改寫（K4）"
+}

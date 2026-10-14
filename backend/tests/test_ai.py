@@ -305,7 +305,7 @@ def test_build_prompt_without_pseudocode_is_unchanged():
     assert "虛擬碼" not in build_prompt(results, TITLE, CONTEXT)
 
 
-@pytest.mark.parametrize("pid", ["longest-substring", "best-time-stock", "longest-valid-parentheses"])
+@pytest.mark.parametrize("pid", [pid for pid, p in PROBLEMS.items() if "pseudocode" in p])
 def test_pseudocode_itself_not_mistaken_for_code(pid):
     text = PROBLEMS[pid]["pseudocode"]["text"]
     problems = check_hint_quality(text + "\n你覺得呢？", pseudocode=text)

@@ -1,0 +1,17 @@
+{
+  "version": "5979f8d1b2f15b90",
+  "text": "輸入：一個只包含「()[]{}」的字串 s。  \n輸出：布林值，若 s 中所有括號配對正確則為 true，否則為 false。\n\n1. 建立一個映射 pairs，將右括號映射到其對應的左括號。  \n2. 建立一個空堆疊 stack。  \n3. 逐個讀取字串 s 的每個字元 c。  \n4. 若 c 是右括號（存在於 pairs 中）：  \n   5. 若 stack 為空或 stack 之頂端字元不等於 pairs[c]，則回傳 false。  \n   6. 否則從 stack 中移除頂端字元。  \n7. 否則（c 為左括號）：  \n   8. 將 c 推入 stack。  \n9. 讀完所有字元後，若 stack 為空，則回傳 true；否則回傳 false。",
+  "source_s_plus": "stack_match.py",
+  "writer": "openai/gpt-oss-20b",
+  "implementer": "openai/gpt-oss-120b",
+  "k": 3,
+  "attempts": 1,
+  "passed": true,
+  "created_at": "2026-10-14T14:54:39",
+  "format_warnings": [
+    "含索引寫法 x[i]",
+    "人工閱讀：步驟 5、6、8 縮排在上一步底下，編號仍連續；第 4、7 步以全形冒號結尾"
+  ],
+  "n_probe_inputs": 11333,
+  "note": "以 --zh 產生（要求繁體中文）；S+ 與 spec.py 為本次新增，沒有 S- 池；同系列模型（K7）；單次結果（K9）；格式軟規則只記錄警告、未改寫（K4）"
+}
