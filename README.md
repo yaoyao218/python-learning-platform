@@ -27,6 +27,36 @@
 
 ---
 
+## 目前進度
+
+> GitHub 上的 `main` 就是組上最新的進度；推到 `main` 會自動部署到正式網站。
+
+### 更新紀錄
+
+| 日期 | 內容 |
+|---|---|
+| 2026-10-14 | longest-valid-parentheses、longest-substring 的虛擬碼改用中文重新產生，並重新通過往返檢查（原本一題是英文、一題有一步寫錯） |
+| 2026-10-14 | AI 輔助測資分支合併到 `main`：正式網站從 3 題變 5 題（新增 best-time-stock、longest-valid-parentheses）、題目頁顯示虛擬碼、AI 提示可引用虛擬碼步驟；GitHub 只保留 `main` |
+
+### 三題 AI 輔助測資的結果
+
+TPR 三題都是 1.0（不誤殺正解）；驗收池每題只跑一次。
+
+| 題目 | 測資數 | 訓練池 TNR | 驗收池 TNR |
+|---|---|---|---|
+| longest-substring | 18 | 0.8889 | 0.47 |
+| best-time-stock | 10 | 0.3833（補強前實驗紀錄 0.5833） | 0.4667，無漏網 |
+| longest-valid-parentheses | 54 | 0.6759 | 0.5370，無漏網 |
+
+### 已知問題與待辦
+
+- AI 提示裡的 `**粗體**` 會直接顯示星號
+- 遇到無窮迴圈要等 20～35 秒才顯示「執行超時」
+- 使用者說明（`docs/superpowers/specs/user-facing-draft.md`）的【待確認】欄位尚未填入
+- `docs/IEEE_Paper.md` 的題目表測資數過時
+
+---
+
 ## 技術架構
 
 ```
