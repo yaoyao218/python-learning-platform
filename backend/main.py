@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from judge import judge
 from ai import get_hint, build_prompt
 from problem import PROBLEMS
+from cloze import cloze_for
 
 # 可選 session logger：TESTGEN_SESSION_LOG=1 才啟用，預設不影響線上行為
 try:
@@ -56,6 +57,18 @@ async def get_problem(problem_id: str):
     if "pseudocode" in problem:
         detail["pseudocode"] = problem["pseudocode"]
     return detail
+
+
+@app.get("/problems/{problem_id}/cloze")
+async def get_cloze(problem_id: str):
+    """遮照填空：標準答案挖掉關鍵部分的版本。前端在學生連續失敗 3 次後才拿來顯示。
+    只送挖洞後的程式碼與空格數，答案不送。"""
+    if problem_id not in PROBLEMS:
+        raise HTTPException(status_code=404, detail="Problem not found")
+    cloze = cloze_for(problem_id)
+    if cloze is None:
+        raise HTTPException(status_code=404, detail="No cloze for this problem")
+    return {"code": cloze.code, "blanks": len(cloze.answers)}
 
 
 @app.post("/submit")

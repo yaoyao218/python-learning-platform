@@ -22,3 +22,8 @@ export async function submitCode(code, problemId) {
   )
   return response.data  // { results: [...], hint: string|null }
 }
+
+export async function fetchCloze(problemId) {
+  const response = await axios.get(`${BASE_URL}/problems/${problemId}/cloze`)
+  return response.data  // { code, blanks }：標準答案挖洞後的版本，不含答案
+}

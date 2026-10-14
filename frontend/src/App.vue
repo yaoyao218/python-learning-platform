@@ -38,18 +38,25 @@
 
       <div class="right-col">
         <ResultPanel :results="results" :hint="hint" :loading="loading" />
+        <ClozePanel
+          v-if="!loading"
+          :streak="currentStreak"
+          :threshold="CLOZE_AFTER"
+          :cloze="clozeByProblem[problemId] ?? null"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Play, Loader2, X } from 'lucide-vue-next'
 import ProblemStatement from './components/ProblemStatement.vue'
 import CodeEditor from './components/CodeEditor.vue'
 import ResultPanel from './components/ResultPanel.vue'
-import { fetchProblemList, fetchProblem, submitCode } from './api.js'
+import ClozePanel from './components/ClozePanel.vue'
+import { fetchProblemList, fetchProblem, submitCode, fetchCloze } from './api.js'
 
 const DIFF_LABELS = { easy: '低', medium: '中', hard: '高' }
 function diffLabel(difficulty) {
@@ -64,6 +71,32 @@ const results     = ref([])
 const hint        = ref(null)
 const loading     = ref(false)
 const error       = ref(null)
+
+// 遮照填空：同一題連續 CLOZE_AFTER 次沒全部通過，就顯示標準答案挖洞的版本；通過就歸零。
+// 次數存在這台瀏覽器（重新整理不會歸零），讀寫失敗時只是不保存，不影響使用。
+const CLOZE_AFTER = 3
+const STREAK_KEY  = 'failStreaks'
+function loadStreaks() {
+  try { return JSON.parse(localStorage.getItem(STREAK_KEY)) ?? {} } catch { return {} }
+}
+const failStreaks    = ref(loadStreaks())
+const clozeByProblem = ref({})
+const currentStreak  = computed(() => failStreaks.value[problemId.value] ?? 0)
+
+function setStreak(id, n) {
+  failStreaks.value = { ...failStreaks.value, [id]: n }
+  try { localStorage.setItem(STREAK_KEY, JSON.stringify(failStreaks.value)) } catch { /* 不保存也沒關係 */ }
+}
+
+async function loadClozeIfNeeded(id) {
+  if ((failStreaks.value[id] ?? 0) < CLOZE_AFTER || clozeByProblem.value[id]) return
+  try {
+    const data = await fetchCloze(id)
+    clozeByProblem.value = { ...clozeByProblem.value, [id]: data }
+  } catch (err) {
+    console.error('Load cloze error:', err)   // 拿不到就不顯示填空，不打擾學生
+  }
+}
 
 // 非同步請求的編號：回來時若編號已經不是最新的，代表使用者已經換題或
 // 重新提交，結果直接丟掉，避免舊題的結果蓋到新題上
@@ -104,6 +137,7 @@ async function selectProblem(id) {
     results.value   = []
     hint.value       = null
     error.value      = null
+    loadClozeIfNeeded(id)
   } catch (err) {
     if (seq !== problemSeq) return
     console.error('Load problem error:', err)
@@ -128,6 +162,12 @@ async function handleSubmit() {
     if (seq !== submitSeq) return
     results.value = data.results
     hint.value    = data.hint
+    if (data.results.length) {
+      const id = problemId.value
+      const allPassed = data.results.every((r) => r.passed)
+      setStreak(id, allPassed ? 0 : (failStreaks.value[id] ?? 0) + 1)
+      loadClozeIfNeeded(id)
+    }
   } catch (err) {
     if (seq !== submitSeq) return
     console.error('Submit error:', err)

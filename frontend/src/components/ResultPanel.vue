@@ -144,7 +144,7 @@ const allPassed = computed(() =>
 
 <style scoped>
 .panel {
-  min-height: 100%;
+  /* 不撐滿右欄高度：下方還有填空提示（ClozePanel）要緊接著顯示 */
 }
 
 /* Empty state */

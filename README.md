@@ -14,6 +14,7 @@
 4. **AI 引導提示**：判題失敗時，AI 分析錯誤類型，給予方向提示（不直接給答案、不讀學生程式碼）
 5. **錯誤分類**：語法錯誤 / 執行時錯誤 / 執行超時 / 忘記 return / 答案錯誤，各有不同提示策略
 6. **虛擬碼**：五題都有通過往返檢查的中文虛擬碼，在題目頁顯示（可收合），AI 提示可引用步驟編號
+7. **遮照填空**：同一題連續 3 次沒通過，AI 提示下方會出現「填空提示」——標準答案把關鍵部分（條件、迴圈範圍、關鍵變數更新）挖成編號空格，讓學生自己補；通過後收起。次數記在學生自己的瀏覽器
 
 ### 題目
 
@@ -35,6 +36,7 @@
 
 | 日期 | 內容 |
 |---|---|
+| 2026-10-14 | 新增遮照填空（`extension-plan.md` 第 2 節的設計）：同一題連續 3 次沒通過就顯示標準答案挖洞的填空題，通過後收起；五題都驗證過「填回答案測資全過、挖洞版本過不了」 |
 | 2026-10-14 | 新增 `backend/testgen/mask_demo.py`：故意讓提示夾帶完整正解，印出遮罩前後對照，方便展示遮罩功能 |
 | 2026-10-14 | 題目頁的「虛擬碼」收合列改成青綠色色塊，加上展開箭頭與「點開看解題步驟」提示，比較顯眼 |
 | 2026-10-14 | valid-parentheses、median-two-sorted-arrays 也改用 AI 輔助產生測資：各建 3 份正解、6 份訓練用錯解、3 份驗收用錯解，跑全自動流程後寫回 `problem.py`（12→19 道、11→45 道）。修正 `propose.py`：AI 回覆整份讀不出 JSON 時不再算成一輪 |
@@ -71,7 +73,8 @@ TPR 五題都是 1.0（不誤殺正解）；驗收池每題只跑一次（valid-
 
 ```
 前端（Vue 3 + Vite）
-    GET /problems、GET /problems/{id}、POST /submit { code, problem_id }
+    GET /problems、GET /problems/{id}、GET /problems/{id}/cloze、POST /submit
+    （POST /submit 送 { code, problem_id }）
         ↓
 後端（FastAPI）
     ├── judge.py    → executor.py → subprocess（執行學生程式碼）
@@ -85,12 +88,13 @@ TPR 五題都是 1.0（不誤殺正解）；驗收池每題只跑一次（valid-
 
 | 檔案 | 職責 |
 |---|---|
-| `main.py` | FastAPI：`GET /problems`、`GET /problems/{id}`、`POST /submit` |
+| `main.py` | FastAPI：`GET /problems`、`GET /problems/{id}`、`GET /problems/{id}/cloze`、`POST /submit` |
 | `executor.py` | AST 安全過濾 → 語法檢查 → ThreadPoolExecutor 執行 → timeout 處理 |
 | `judge.py` | `asyncio.gather` 並行跑全部測資 |
 | `ai.py` | 依 error_type 選 prompt 分支，呼叫 Groq API |
 | `masking.py` | 提示夾帶能通過測資的完整解答時，遮蔽關鍵邏輯 |
 | `hint_guard.py` | 檢查提示品質（不給程式碼、不整段複述虛擬碼） |
+| `cloze.py` | 遮照填空：用 AST 從標準答案挑關鍵部分挖成編號空格（不經 AI，每次結果相同；答案不送前端） |
 | `problem.py` | `PROBLEMS` 登錄表：5 題的題目敘述、範例、測資，並載入通過檢查的虛擬碼 |
 
 ### 前端元件
@@ -101,6 +105,7 @@ TPR 五題都是 1.0（不誤殺正解）；驗收池每題只跑一次（valid-
 | `ProblemStatement.vue` | 題目描述、範例卡片、限制條件、虛擬碼（可收合） |
 | `CodeEditor.vue` | Monaco Editor（Python, vs-dark theme） |
 | `ResultPanel.vue` | 測試結果（顯示到第一個失敗）+ AI 提示卡 |
+| `ClozePanel.vue` | 連續失敗倒數，與第 3 次後的填空提示 |
 
 ---
 
@@ -255,12 +260,13 @@ pytest -v
 ```
 python-learning-platform/
 ├── backend/
-│   ├── main.py          # FastAPI app，GET /problems、GET /problems/{id}、POST /submit
+│   ├── main.py          # FastAPI app，GET /problems、GET /problems/{id}、GET /problems/{id}/cloze、POST /submit
 │   ├── executor.py      # ThreadPoolExecutor 執行學生程式碼 + AST 安全過濾
 │   ├── judge.py         # 該題全部 test case 並行比對
 │   ├── ai.py            # Groq API，依錯誤類型分支
 │   ├── masking.py       # 提示遮罩
 │   ├── hint_guard.py    # 提示品質檢查
+│   ├── cloze.py         # 遮照填空（標準答案挖洞）
 │   ├── problem.py       # 5 題的題目定義與測資
 │   ├── requirements.txt
 │   └── tests/           # pytest 測試（含品質守門員）
@@ -272,6 +278,7 @@ python-learning-platform/
 │       └── components/
 │           ├── ProblemStatement.vue
 │           ├── CodeEditor.vue
-│           └── ResultPanel.vue
+│           ├── ResultPanel.vue
+│           └── ClozePanel.vue
 └── backend/testgen/     # 離線測資生成工具（論文方法實作）
 ```

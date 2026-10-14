@@ -39,12 +39,13 @@ npm run dev
 ```
 python-learning-platform/
 ├── backend/
-│   ├── main.py          # FastAPI app，GET /problems、GET /problems/{id}、POST /submit
+│   ├── main.py          # FastAPI app，GET /problems、GET /problems/{id}、GET /problems/{id}/cloze、POST /submit
 │   ├── executor.py      # ThreadPoolExecutor 執行學生程式碼 + AST 安全過濾（跨平台）
 │   ├── judge.py         # 依 problem_id 比對該題 test case，回傳完整 results 陣列
 │   ├── ai.py            # Groq / Gemini 自動切換，4 種 prompt 分支
 │   ├── masking.py       # 提示夾帶完整解答時遮蔽
 │   ├── hint_guard.py    # 提示品質檢查
+│   ├── cloze.py         # 遮照填空：標準答案挖洞（AST，不經 AI）
 │   ├── problem.py       # 5 題的題目定義與測資（PROBLEMS）
 │   ├── requirements.txt
 │   ├── pytest.ini
@@ -63,7 +64,8 @@ python-learning-platform/
 │       └── components/
 │           ├── ProblemStatement.vue  # 題目、範例、限制條件、虛擬碼
 │           ├── CodeEditor.vue        # Monaco Editor（Python，vs-dark）
-│           └── ResultPanel.vue       # 測試結果（到第一個失敗為止）+ AI 提示
+│           ├── ResultPanel.vue       # 測試結果（到第一個失敗為止）+ AI 提示
+│           └── ClozePanel.vue        # 連續失敗 3 次後的填空提示（次數存在瀏覽器 localStorage）
 └── backend/testgen/                 # 離線測資生成工具（論文方法的實作，不影響線上）
     ├── PROGRESS.md                   # 完整實驗紀錄（baseline→v4 四輪迭代）
     ├── QUICKSTART.md                 # 三道關卡的標準流程
