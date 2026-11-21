@@ -136,9 +136,12 @@ allow_origin_regex=r"http://localhost:\d+|https://.*\.vercel\.app"
 
 ## 前端樣式
 
-- **設計：** Warm Terminal 美學，IBM Plex Mono 統一全站字型
-- **配色：** CSS 變數定義在 App.vue `<style>`，amber accent（`--amber: #dfa050`）
-- **佈局：** 左欄（題目+編輯器+提交），右欄 sticky 500px（結果+AI 提示）
+- **設計：** 2026-11 改版為「手作貼紙／筆記本」風格＋吉祥物「派派」（Python 藍黃配色的小蛇，`Mascot.vue`，SVG 繪製，6 種表情：idle／wave／think／happy／sad／sleep）。粗黑邊、硬陰影、奶油紙底；淺色／深色雙主題（預設跟隨系統，記在 localStorage）。字型：Huninn（標題）、Noto Sans TC（內文）、JetBrains Mono（程式）
+- **派派的台詞：** `src/explain.js` 依判題結果決定表情與白話提示；AI 提示以「便利貼」顯示
+- **配色：** CSS 變數定義在 `src/style.css`（`<html data-theme>` 切換）；Monaco 有對應的 `pylp-light` / `pylp-dark` 主題
+- **佈局：** 全螢幕工作台。左欄是「題目／虛擬碼」分頁；右欄上方編輯器、下方結果面板（結果、AI 提示、填空提示）；兩條分隔線可拖曳（寬度／高度記在 localStorage，雙擊還原）。≤900px 改上下排、整頁捲動
+- **新增的前端功能：** 新手導覽（第一次自動出現，右上角「？」重看）、連續練習天數（只存日期）、過關紙花特效、題目切換（上一關／下一關／關卡清單、通過打星、進度 n/5）、每題程式碼草稿自動存（重設按鈕還原）、Ctrl/⌘+Enter 提交、通過後「下一題」按鈕。填空的連續失敗次數仍只在記憶體（不受影響）
+- **目錄：** `src/composables/`（storage、useTheme、useResizer）、`src/components/AppHeader.vue`
 - **開發/線上 URL 切換：** `api.js` 用 `import.meta.env.DEV` 自動判斷
 
 ## 部署

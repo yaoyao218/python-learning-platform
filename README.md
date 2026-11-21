@@ -131,10 +131,14 @@ TPR 五題都是 1.0（不誤殺正解）；驗收池每題只跑一次（valid-
 
 | 元件 | 功能 |
 |---|---|
-| `App.vue` | 左右兩欄佈局、提交邏輯 |
-| `ProblemStatement.vue` | 題目描述、範例卡片、限制條件、虛擬碼（可收合） |
-| `CodeEditor.vue` | Monaco Editor（Python, vs-dark theme） |
-| `ResultPanel.vue` | 測試結果（顯示到第一個失敗）+ AI 提示卡 |
+| `App.vue` | 工作台佈局（可拖曳分隔線）、提交邏輯、草稿與通過紀錄 |
+| `AppHeader.vue` | 品牌列、關卡切換（上一關／下一關／清單）、連續天數、過關星星、導覽與深淺色切換 |
+| `Mascot.vue` | 吉祥物「派派」（SVG 小蛇，6 種表情） |
+| `Tour.vue` | 新手導覽（第一次進來自動出現） |
+| `Confetti.vue` | 過關紙花 |
+| `ProblemStatement.vue` | 「題目／虛擬碼」分頁：題目描述、範例卡片、限制條件、虛擬碼（預設不顯示） |
+| `CodeEditor.vue` | Monaco Editor（Python，配合深淺色主題）、重設、Ctrl+Enter 提交 |
+| `ResultPanel.vue` | 派派說話＋白話對照（哪裡不一樣）、分段進度、測資清單、AI 提示便利貼、下一關 |
 | `ClozePanel.vue` | 連續失敗倒數，與第 3 次後的填空提示 |
 
 ---

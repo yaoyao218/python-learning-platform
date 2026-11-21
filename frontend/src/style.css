@@ -1,1 +1,146 @@
+/* 全站設計 token。主題由 <html data-theme="light|dark"> 切換。
+   風格：手作貼紙／筆記本。粗黑邊、硬陰影、奶油色紙張、Python 藍＋黃。 */
+:root {
+  --font-display: 'Huninn', 'Noto Sans TC', system-ui, sans-serif;
+  --font-sans: 'Noto Sans TC', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Noto Sans TC', ui-monospace, 'Cascadia Code', Consolas, monospace;
 
+  --radius-sm: 8px;
+  --radius:    14px;
+  --radius-lg: 20px;
+  --topbar-h:  64px;
+  --bw: 2px;                       /* 邊框粗細 */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+:root, :root[data-theme='light'] {
+  color-scheme: light;
+  --bg:         #fbf3df;
+  --dot:        rgba(43, 42, 51, 0.09);
+  --surface:    #fffdf7;
+  --surface-2:  #f8efd9;
+  --surface-3:  #efe3c4;
+  --ink:        #2b2a33;
+  --line:       #e4d8b8;           /* 柔和分隔線 */
+  --text:       #2b2a33;
+  --text-2:     #5b5866;
+  --text-3:     #8d8996;
+
+  --sun:        #ffd43b;
+  --sun-hi:     #ffe073;
+  --on-sun:     #2b2a33;
+  --blue:       #306998;
+  --blue-soft:  #dcebf7;
+  --green:      #1f8a5b;
+  --green-soft: #d6f1e2;
+  --red:        #d6393f;
+  --red-soft:   #ffe1df;
+  --amber:      #9a5f00;
+  --amber-soft: #ffefbf;
+
+  --code-bg: #fffaf0;
+  --shadow-hard: 3px 3px 0 var(--ink);
+  --shadow-sm:   2px 2px 0 var(--ink);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg:         #1b1f2c;
+  --dot:        rgba(255, 255, 255, 0.05);
+  --surface:    #262b3b;
+  --surface-2:  #2e3446;
+  --surface-3:  #3a4157;
+  --ink:        #0a0c13;
+  --line:       #3a4157;
+  --text:       #f2edde;
+  --text-2:     #bab6a9;
+  --text-3:     #848077;
+
+  --sun:        #ffd43b;
+  --sun-hi:     #ffe073;
+  --on-sun:     #2b2a33;
+  --blue:       #8fc2ee;
+  --blue-soft:  #243a52;
+  --green:      #62d6a3;
+  --green-soft: #1b3b2d;
+  --red:        #ff8084;
+  --red-soft:   #4a2327;
+  --amber:      #ffcf5c;
+  --amber-soft: #463a12;
+
+  --code-bg: #1d2130;
+  --shadow-hard: 3px 3px 0 var(--ink);
+  --shadow-sm:   2px 2px 0 var(--ink);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #app { height: 100%; }
+
+body {
+  background-color: var(--bg);
+  background-image: radial-gradient(var(--dot) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: inherit; }
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--surface-3);
+  color: var(--blue);
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+strong { font-weight: 700; }
+
+::selection { background: var(--sun); color: var(--on-sun); }
+
+* { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+
+:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* 共用：貼紙按鈕（黃底、黑邊、按下去會陷下去） */
+.btn-sticker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 20px;
+  border: var(--bw) solid var(--ink);
+  border-radius: 12px;
+  background: var(--sun);
+  color: var(--on-sun);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 400;
+  cursor: pointer;
+  box-shadow: var(--shadow-hard);
+  transition: transform 0.12s var(--ease), box-shadow 0.12s var(--ease), background 0.15s;
+}
+.btn-sticker:hover:not(:disabled) { background: var(--sun-hi); transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+.btn-sticker:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--ink); }
+.btn-sticker:disabled { background: var(--surface-3); color: var(--text-3); cursor: not-allowed; box-shadow: none; }
+
+@media (max-width: 900px) {
+  html, body, #app { height: auto; min-height: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
