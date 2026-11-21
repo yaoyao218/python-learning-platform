@@ -2,14 +2,11 @@
   <section class="editor">
     <div class="toolbar">
       <div class="file">
-        <FileCode2 :size="15" />
+        <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
         <span class="file-name">solution.py</span>
-        <span class="lang">Python 3</span>
       </div>
       <div class="actions">
-        <button class="ghost" title="還原成起始程式碼" @click="$emit('reset')">
-          <RotateCcw :size="14" />重設
-        </button>
+        <button class="ghost" title="還原成起始程式碼" @click="$emit('reset')">重設</button>
         <slot name="actions" />
       </div>
     </div>
@@ -30,7 +27,6 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { VueMonacoEditor } from '@guolao/vue-monaco-editor'
-import { FileCode2, RotateCcw } from 'lucide-vue-next'
 
 const props = defineProps({
   modelValue: { type: String, required: true },
@@ -45,8 +41,8 @@ watch(() => props.modelValue, (val) => {
 })
 
 const editorOptions = {
-  fontSize: 14,
-  lineHeight: 23,
+  fontSize: 15,
+  lineHeight: 25,
   fontFamily: "'JetBrains Mono', Consolas, monospace",
   fontLigatures: true,
   minimap: { enabled: false },
@@ -56,7 +52,7 @@ const editorOptions = {
   insertSpaces: true,
   quickSuggestions: true,
   wordBasedSuggestions: 'currentDocument',
-  padding: { top: 14, bottom: 14 },
+  padding: { top: 16, bottom: 16 },
   lineNumbers: 'on',
   renderLineHighlight: 'line',
   smoothScrolling: true,
@@ -66,40 +62,42 @@ const editorOptions = {
   scrollbar: { verticalScrollbarSize: 8, horizontalScrollbarSize: 8 },
 }
 
-// 兩個跟全站配色一致的 Monaco 主題
+// 兩個跟全站配色一致的 Monaco 主題（奶油紙／深藍夜）
 function defineThemes(monaco) {
   monaco.editor.defineTheme('pylp-light', {
     base: 'vs',
     inherit: true,
     rules: [
-      { token: 'comment', foreground: '8a919c', fontStyle: 'italic' },
-      { token: 'keyword', foreground: '4f46e5' },
-      { token: 'string', foreground: '17935a' },
-      { token: 'number', foreground: 'b86e00' },
+      { token: 'comment', foreground: '9a9484', fontStyle: 'italic' },
+      { token: 'keyword', foreground: 'c2410c' },
+      { token: 'string', foreground: '1f8a5b' },
+      { token: 'number', foreground: '306998' },
     ],
     colors: {
-      'editor.background': '#ffffff',
-      'editor.lineHighlightBackground': '#f6f5f1',
-      'editorLineNumber.foreground': '#b5b9c1',
-      'editorLineNumber.activeForeground': '#545b66',
-      'editorIndentGuide.background1': '#ecebe5',
+      'editor.background': '#fffdf7',
+      'editor.lineHighlightBackground': '#fff3c4',
+      'editorLineNumber.foreground': '#c5bca2',
+      'editorLineNumber.activeForeground': '#5b5866',
+      'editorIndentGuide.background1': '#efe3c4',
+      'editorCursor.foreground': '#2b2a33',
     },
   })
   monaco.editor.defineTheme('pylp-dark', {
     base: 'vs-dark',
     inherit: true,
     rules: [
-      { token: 'comment', foreground: '6e7687', fontStyle: 'italic' },
-      { token: 'keyword', foreground: '8f91ff' },
-      { token: 'string', foreground: '4cc38a' },
-      { token: 'number', foreground: 'e9b350' },
+      { token: 'comment', foreground: '848077', fontStyle: 'italic' },
+      { token: 'keyword', foreground: 'ffb36b' },
+      { token: 'string', foreground: '62d6a3' },
+      { token: 'number', foreground: '8fc2ee' },
     ],
     colors: {
-      'editor.background': '#161920',
-      'editor.lineHighlightBackground': '#1b1f27',
-      'editorLineNumber.foreground': '#464d5c',
-      'editorLineNumber.activeForeground': '#a4abba',
-      'editorIndentGuide.background1': '#232833',
+      'editor.background': '#262b3b',
+      'editor.lineHighlightBackground': '#2e3446',
+      'editorLineNumber.foreground': '#555d75',
+      'editorLineNumber.activeForeground': '#bab6a9',
+      'editorIndentGuide.background1': '#343b50',
+      'editorCursor.foreground': '#ffd43b',
     },
   })
 }
@@ -117,8 +115,9 @@ function onMount(editor, monaco) {
   height: 100%;
   min-height: 0;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: var(--bw) solid var(--ink);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-hard);
   overflow: hidden;
 }
 
@@ -127,47 +126,41 @@ function onMount(editor, monaco) {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  height: 46px;
+  height: 52px;
   padding: 0 10px 0 16px;
   background: var(--surface-2);
-  border-bottom: 1px solid var(--border);
+  border-bottom: var(--bw) solid var(--ink);
   flex-shrink: 0;
 }
 
-.file { display: flex; align-items: center; gap: 8px; color: var(--text-2); min-width: 0; }
-.file-name { font-family: var(--font-mono); font-size: 12.5px; font-weight: 500; color: var(--text); }
-.lang {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--accent);
-  background: var(--accent-soft);
-  padding: 1px 8px;
-  border-radius: 999px;
-}
+.file { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.lights { display: flex; gap: 6px; }
+.lights i { width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid var(--ink); }
+.lights i:nth-child(1) { background: #ff7a7a; }
+.lights i:nth-child(2) { background: var(--sun); }
+.lights i:nth-child(3) { background: #5fd3a0; }
+.file-name { font-family: var(--font-mono); font-size: 13px; color: var(--text-2); }
 
-.actions { display: flex; align-items: center; gap: 8px; }
+.actions { display: flex; align-items: center; gap: 10px; }
 
 .ghost {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  height: 30px;
-  padding: 0 10px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
+  height: 32px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 8px;
   background: transparent;
   color: var(--text-2);
-  font-size: 12.5px;
+  font-size: 13px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  text-decoration: underline dotted;
+  text-underline-offset: 4px;
 }
-.ghost:hover { background: var(--surface-3); color: var(--text); }
+.ghost:hover { color: var(--text); background: var(--surface-3); }
 
 .monaco-wrap { flex: 1; min-height: 0; }
 .monaco-wrap :deep(> div) { height: 100%; }
 
 @media (max-width: 900px) {
   .editor { height: 380px; }
-  .toolbar { padding-left: 12px; }
 }
 </style>

@@ -1,47 +1,26 @@
 <template>
   <section class="panel">
     <div class="panel-head">
-      <div class="head-left">
-        <ListChecks :size="16" />
-        <span class="head-title">測試結果</span>
-      </div>
+      <span class="head-title">檢查結果</span>
       <span v-if="results.length" class="count" :class="allPassed ? 'ok' : 'warn'">
-        {{ passCount }} / {{ results.length }} 通過
+        {{ passCount }} / {{ results.length }}
       </span>
-      <span v-else class="shortcut">Ctrl + Enter 提交</span>
+      <span v-else class="shortcut"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> 也能提交</span>
     </div>
 
     <div class="body">
-      <!-- 還沒提交 -->
-      <div v-if="results.length === 0 && !loading" class="empty">
-        <div class="empty-icon"><Terminal :size="22" /></div>
-        <p>提交程式碼後，測試結果會顯示在這裡</p>
+      <!-- 派派說話 -->
+      <div class="say-row">
+        <Mascot :mood="state.mood" :size="84" />
+        <div class="bubble" :key="state.say">{{ state.say }}</div>
       </div>
 
-      <!-- 判題中（還沒有結果） -->
-      <div v-else-if="results.length === 0 && loading" class="empty">
-        <Loader2 :size="22" class="spin" />
-        <p>正在執行你的程式…</p>
-      </div>
+      <!-- 判題中的骨架 -->
+      <div v-if="loading" class="progress-wait" aria-hidden="true"><i></i></div>
 
-      <template v-else>
-        <!-- 總結橫幅 -->
-        <div class="banner" :class="allPassed ? 'banner-ok' : 'banner-fail'">
-          <div class="banner-icon">
-            <CheckCircle2 v-if="allPassed" :size="22" />
-            <XCircle v-else :size="22" />
-          </div>
-          <div class="banner-text">
-            <strong>{{ allPassed ? '全部通過' : '還沒通過' }}</strong>
-            <span>{{ allPassed ? `${results.length} 個測試案例都過了` : `通過 ${passCount} / ${results.length}，下面是第一個沒過的案例` }}</span>
-          </div>
-          <button v-if="allPassed && hasNext" class="next-btn" @click="$emit('next')">
-            下一題<ArrowRight :size="14" />
-          </button>
-        </div>
-
-        <!-- 每個測資一格的進度條 -->
-        <div class="segments" aria-hidden="true">
+      <template v-if="results.length">
+        <!-- 每個測資一格 -->
+        <div class="segments" aria-label="每個測資的結果">
           <span
             v-for="r in results"
             :key="r.index"
@@ -50,75 +29,61 @@
           ></span>
         </div>
 
-        <ul class="cases">
-          <li
-            v-for="(result, i) in visibleResults"
-            :key="result.index"
-            :class="['case', result.passed ? 'pass' : 'fail']"
-            :style="{ animationDelay: `${Math.min(i, 12) * 40}ms` }"
-          >
-            <span class="case-badge">
-              <Check v-if="result.passed" :size="12" :stroke-width="3.2" />
-              <X v-else :size="12" :stroke-width="3.2" />
-            </span>
-            <span class="case-no">#{{ result.index }}</span>
-            <code class="case-input" :title="String(result.input)">{{ result.input }}</code>
-            <span class="case-values">
-              <span class="val-expected">預期 {{ result.expected }}</span>
-              <span v-if="!result.passed" class="val-got">
-                實際 <strong>{{ result.actual ?? ERROR_LABELS[result.error_type] ?? 'Error' }}</strong>
-              </span>
-            </span>
-          </li>
-        </ul>
+        <!-- 哪裡不對：用白話對照第一個沒過的測資 -->
+        <div v-if="fail && !fail.hasError" class="card diff">
+          <div class="card-title">第 {{ fail.index }} 筆測資哪裡不一樣</div>
+          <dl>
+            <div><dt>給的輸入</dt><dd class="v-in">{{ fail.input }}</dd></div>
+            <div><dt>正確答案</dt><dd class="v-ok">{{ fail.expected }}</dd></div>
+            <div><dt>你的程式</dt><dd class="v-bad">{{ fail.actual }}</dd></div>
+          </dl>
+        </div>
 
         <!-- 錯誤訊息：語法錯誤 / 執行錯誤 / 沒有回傳值時，直接給學生看 -->
-        <div v-if="errorDetail" class="error">
-          <div class="error-head">
-            <Bug :size="15" />
-            <strong>{{ errorDetail.label }}</strong>
-            <span class="error-case">測資 #{{ errorDetail.index }}</span>
-          </div>
-          <pre class="error-body">{{ errorDetail.message }}</pre>
+        <div v-if="errorDetail" class="card err">
+          <div class="card-title">{{ errorDetail.label }}<span class="err-case">第 {{ errorDetail.index }} 筆測資</span></div>
+          <pre class="err-body">{{ errorDetail.message }}</pre>
         </div>
+
+        <!-- 測資清單（到第一個失敗為止） -->
+        <details class="card list" :open="!allPassed && visibleResults.length <= 6">
+          <summary>看每一筆測資 <span class="muted">（{{ visibleResults.length }} 筆）</span></summary>
+          <ul>
+            <li
+              v-for="(r, i) in visibleResults"
+              :key="r.index"
+              :class="[r.passed ? 'pass' : 'fail']"
+              :style="{ animationDelay: `${Math.min(i, 14) * 45}ms` }"
+            >
+              <span class="mark">{{ r.passed ? '✓' : '✗' }}</span>
+              <span class="no">#{{ r.index }}</span>
+              <code class="inp" :title="String(r.input)">{{ r.input }}</code>
+              <span class="exp">→ {{ r.expected }}</span>
+            </li>
+          </ul>
+        </details>
 
         <!-- AI 提示沒拿到（API 失敗或額度用完），讓學生知道不是自己的問題 -->
-        <div v-if="!allPassed && !hint && !loading" class="notice">
-          <Info :size="15" />AI 提示暫時無法取得，可以先看上面的測資結果自己找找看。
-        </div>
+        <p v-if="!allPassed && !hint && !loading" class="notice">
+          派派的提示暫時送不過來（不是你的問題），先看上面的對照自己找找看。
+        </p>
 
-        <!-- 全部通過、沒有提示 -->
-        <div v-if="allPassed && !hint" class="success">
-          <PartyPopper :size="18" />
-          <div>
-            <strong>太棒了！</strong>你的解法通過了所有 {{ results.length }} 個測試案例。
-            試試看能不能讓解法更有效率？
-          </div>
-        </div>
-
-        <!-- AI 提示：骨架 -->
-        <div v-if="loading && !hint" class="hint hint-loading">
-          <div class="hint-head">
-            <Sparkles :size="15" />
-            <strong>AI 分析中</strong>
-            <span class="dots"><span></span><span></span><span></span></span>
-          </div>
-          <div class="skeleton">
-            <i style="width: 82%"></i><i style="width: 64%"></i><i style="width: 92%"></i><i style="width: 48%"></i>
-          </div>
+        <!-- 全過：下一題 -->
+        <div v-if="allPassed" class="done">
+          <p>試試看能不能讓解法更有效率？</p>
+          <button v-if="hasNext" class="btn-sticker" @click="$emit('next')">
+            下一關 <ArrowRight :size="16" />
+          </button>
+          <p v-else class="all-done">五題全部破關，太厲害了！</p>
         </div>
 
         <!-- AI 提示 -->
-        <div v-if="hint" class="hint">
-          <div class="hint-head">
-            <Sparkles :size="15" />
-            <strong>AI 提示</strong>
-          </div>
+        <div v-if="hint" class="note hint">
+          <div class="note-title">派派的提示</div>
           <div class="hint-body" v-html="hintHtml"></div>
         </div>
       </template>
 
-      <!-- 骨架：已有結果但 AI 還在跑時，上面的 hint-loading 會顯示；這裡放插槽給填空提示 -->
       <slot />
     </div>
   </section>
@@ -126,11 +91,10 @@
 
 <script setup>
 import { computed } from 'vue'
-import {
-  ListChecks, Terminal, Loader2, CheckCircle2, XCircle, ArrowRight,
-  Check, X, Bug, Info, Sparkles, PartyPopper,
-} from 'lucide-vue-next'
+import { ArrowRight } from 'lucide-vue-next'
+import Mascot from './Mascot.vue'
 import { renderLite } from '../markdown.js'
+import { summarize, describeFirstFail } from '../explain.js'
 
 const props = defineProps({
   results: { type: Array,    default: () => [] },
@@ -139,6 +103,9 @@ const props = defineProps({
   hasNext: { type: Boolean,  default: false },
 })
 defineEmits(['next'])
+
+const state = computed(() => summarize({ results: props.results, loading: props.loading }))
+const fail = computed(() => describeFirstFail(props.results))
 
 const visibleResults = computed(() => {
   const firstFailIdx = props.results.findIndex((r) => !r.passed)
@@ -157,7 +124,7 @@ const ERROR_LABELS = {
 
 const NO_RETURN_MESSAGE = '函式執行完回傳了 None。檢查看看：算出來的答案有沒有用 return 傳出去？'
 
-// 只顯示第一個失敗的錯誤，跟測試結果列表「顯示到第一個失敗為止」一致
+// 只顯示第一個失敗的錯誤，跟測資清單「顯示到第一個失敗為止」一致
 const errorDetail = computed(() => {
   const firstFail = props.results.find((r) => !r.passed)
   if (!firstFail || !firstFail.error_type) return null
@@ -183,8 +150,9 @@ const allPassed = computed(() =>
   height: 100%;
   min-height: 0;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: var(--bw) solid var(--ink);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-hard);
   overflow: hidden;
 }
 
@@ -192,255 +160,203 @@ const allPassed = computed(() =>
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 44px;
+  height: 42px;
   padding: 0 16px;
   background: var(--surface-2);
-  border-bottom: 1px solid var(--border);
+  border-bottom: var(--bw) solid var(--ink);
   flex-shrink: 0;
 }
-.head-left { display: flex; align-items: center; gap: 8px; color: var(--text-2); }
-.head-title { font-size: 13px; font-weight: 700; color: var(--text); }
+.head-title { font-family: var(--font-display); font-size: 15px; }
+.count {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 1px 10px;
+  border: 1.5px solid var(--ink);
+  border-radius: 8px;
+}
+.count.ok   { background: var(--green-soft); color: var(--green); }
+.count.warn { background: var(--amber-soft); color: var(--amber); }
+.shortcut { font-size: 12px; color: var(--text-3); }
+kbd {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 1px 5px;
+  border: 1.5px solid var(--text-3);
+  border-bottom-width: 3px;
+  border-radius: 5px;
+}
 
-.count { font-family: var(--font-mono); font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; }
-.count.ok   { color: var(--green); background: var(--green-soft); }
-.count.warn { color: var(--amber); background: var(--amber-soft); }
-.shortcut { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-3); }
-
-.body { flex: 1; min-height: 0; overflow-y: auto; padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 14px; }
-
-/* 空狀態 */
-.empty {
-  margin: auto;
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px 16px 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  color: var(--text-3);
-  font-size: 13px;
-  padding: 24px 0;
+  gap: 14px;
 }
-.empty-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  background: var(--surface-3);
-  color: var(--text-3);
-}
-.spin { animation: spin 0.9s linear infinite; color: var(--accent); }
-@keyframes spin { to { transform: rotate(360deg); } }
 
-/* 橫幅 */
-.banner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
+/* 內容比面板高時要捲動，不能被 flex 壓扁 */
+.body > :deep(*) { flex-shrink: 0; }
+
+/* 派派 + 對話框 */
+.say-row { display: flex; align-items: center; gap: 10px; }
+.bubble {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: var(--bw) solid var(--ink);
   border-radius: var(--radius);
-  animation: pop-in 0.35s var(--ease) both;
+  box-shadow: var(--shadow-sm);
+  font-size: 14.5px;
+  line-height: 1.7;
+  animation: bubble-in 0.35s var(--spring) both;
 }
-.banner-ok   { background: var(--green-soft); color: var(--green); }
-.banner-fail { background: var(--red-soft);   color: var(--red); }
-.banner-icon { flex-shrink: 0; display: grid; }
-.banner-text { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
-.banner-text strong { font-size: 15px; }
-.banner-text span { font-size: 12.5px; opacity: 0.85; color: var(--text-2); }
-
-.next-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  height: 32px;
-  padding: 0 14px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: var(--green);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: filter 0.15s, transform 0.1s;
-  flex-shrink: 0;
+.bubble::before, .bubble::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  border: 8px solid transparent;
+  transform: translateY(-50%);
 }
-.next-btn:hover { filter: brightness(1.08); }
-.next-btn:active { transform: scale(0.97); }
-
-@keyframes pop-in {
-  from { opacity: 0; transform: scale(0.97) translateY(4px); }
+.bubble::before { left: -17px; border-right-color: var(--ink); }
+.bubble::after  { left: -13px; border-right-color: var(--surface); }
+@keyframes bubble-in {
+  from { opacity: 0; transform: translateX(-8px) scale(0.96); }
   to   { opacity: 1; transform: none; }
 }
 
-/* 分段進度 */
-.segments { display: flex; gap: 2px; height: 6px; margin: -4px 0 -2px; }
-.seg { flex: 1; border-radius: 2px; min-width: 2px; }
+.progress-wait { height: 8px; border: 1.5px solid var(--ink); border-radius: 6px; background: var(--surface-2); overflow: hidden; }
+.progress-wait i { display: block; width: 40%; height: 100%; background: var(--sun); animation: slide 1.1s ease-in-out infinite; }
+@keyframes slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(260%); } }
+
+/* 每個測資一格 */
+.segments { display: flex; gap: 3px; height: 12px; }
+.seg { flex: 1; min-width: 3px; border: 1.5px solid var(--ink); border-radius: 4px; }
 .seg-pass { background: var(--green); }
 .seg-fail { background: var(--red); }
 .seg-skip { background: var(--surface-3); }
 
-/* 測資列 */
-.cases { list-style: none; display: flex; flex-direction: column; gap: 6px; }
-.case {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--border-hi);
-  border-radius: var(--radius-sm);
-  animation: row-in 0.25s var(--ease) both;
-  min-width: 0;
-}
-.case.pass { border-left-color: var(--green); }
-.case.fail { border-left-color: var(--red); background: var(--red-soft); border-color: transparent; border-left-color: var(--red); }
-@keyframes row-in {
-  from { opacity: 0; transform: translateX(-6px); }
-  to   { opacity: 1; transform: none; }
-}
-
-.case-badge {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  color: #fff;
-  flex-shrink: 0;
-}
-.pass .case-badge { background: var(--green); }
-.fail .case-badge { background: var(--red); }
-
-.case-no { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-3); flex-shrink: 0; }
-.case-input {
-  flex: 1;
-  min-width: 0;
-  background: none;
-  padding: 0;
-  color: var(--teal);
-  font-size: 12.5px;
+/* 卡片 */
+.card {
+  border: var(--bw) solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--surface);
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
-.case-values { display: flex; align-items: center; gap: 10px; flex-shrink: 0; font-family: var(--font-mono); font-size: 12px; }
-.val-expected { color: var(--text-3); }
-.val-got { color: var(--red); }
-.val-got strong { font-weight: 700; }
-
-/* 錯誤訊息 */
-.error { border: 1px solid var(--red-soft); border-radius: var(--radius); overflow: hidden; }
-.error-head {
+.card-title {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 9px 14px;
-  background: var(--red-soft);
-  color: var(--red);
-  font-size: 13px;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: var(--surface-2);
+  border-bottom: var(--bw) solid var(--ink);
+  font-family: var(--font-display);
+  font-size: 14px;
 }
-.error-case { margin-left: auto; font-family: var(--font-mono); font-size: 11.5px; opacity: 0.8; }
-.error-body {
+
+.diff dl { display: flex; flex-direction: column; }
+.diff dl > div { display: flex; align-items: baseline; gap: 14px; padding: 9px 14px; border-top: 1px dashed var(--line); }
+.diff dl > div:first-child { border-top: none; }
+.diff dt { width: 64px; flex-shrink: 0; font-size: 12.5px; color: var(--text-3); }
+.diff dd { font-family: var(--font-mono); font-size: 13px; min-width: 0; word-break: break-all; }
+.v-in  { color: var(--blue); }
+.v-ok  { color: var(--green); font-weight: 600; }
+.v-bad { color: var(--red); font-weight: 600; }
+
+.err .card-title { background: var(--red-soft); color: var(--red); }
+.err-case { font-family: var(--font-sans); font-size: 12px; opacity: 0.85; }
+.err-body {
   padding: 12px 14px;
   font-family: var(--font-mono);
   font-size: 12.5px;
   line-height: 1.65;
-  color: var(--text);
   background: var(--code-bg);
   white-space: pre-wrap;
   overflow-x: auto;
 }
 
-.notice {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: var(--radius);
-  background: var(--surface-3);
-  color: var(--text-2);
+/* 測資清單 */
+.list summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 9px 14px;
   font-size: 13px;
-  line-height: 1.6;
+  font-weight: 700;
+  user-select: none;
 }
-.notice svg { margin-top: 3px; flex-shrink: 0; }
-
-.success {
-  display: flex;
-  gap: 10px;
-  padding: 12px 14px;
-  border-radius: var(--radius);
-  background: var(--green-soft);
-  color: var(--green);
-  font-size: 13.5px;
-  line-height: 1.7;
-}
-.success svg { margin-top: 3px; flex-shrink: 0; }
-.success div { color: var(--text-2); }
-.success strong { color: var(--green); }
-
-/* AI 提示卡 */
-.hint {
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  border-radius: var(--radius);
-  background: var(--accent-soft);
-  overflow: hidden;
-  animation: pop-in 0.4s var(--ease) both;
-}
-.hint-head {
+.list summary::-webkit-details-marker { display: none; }
+.list summary::before { content: '▸'; display: inline-block; margin-right: 8px; transition: transform 0.15s; }
+.list[open] summary::before { transform: rotate(90deg); }
+.list summary:hover { background: var(--surface-2); }
+.muted { font-weight: 400; color: var(--text-3); }
+.list ul { list-style: none; border-top: 1px dashed var(--line); }
+.list li {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 14px 0;
-  color: var(--accent);
-  font-size: 13px;
+  gap: 10px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  animation: row-in 0.25s var(--ease) both;
 }
-.hint-body {
-  padding: 8px 14px 14px;
-  font-size: 14px;
-  line-height: 1.85;
-  color: var(--text);
-  white-space: pre-wrap;
+.list li + li { border-top: 1px dashed var(--line); }
+.list .mark { width: 14px; font-weight: 700; }
+.list .pass .mark { color: var(--green); }
+.list .fail .mark { color: var(--red); }
+.list .no { font-family: var(--font-mono); color: var(--text-3); }
+.list .inp { flex: 1; min-width: 0; background: none; padding: 0; color: var(--blue); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.list .exp { font-family: var(--font-mono); color: var(--text-3); flex-shrink: 0; }
+@keyframes row-in { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
+
+.notice { font-size: 13px; line-height: 1.7; color: var(--text-2); padding: 0 4px; }
+
+/* 過關 */
+.done {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: var(--bw) dashed var(--green);
+  border-radius: var(--radius);
+  background: var(--green-soft);
+  animation: bubble-in 0.4s var(--spring) both;
 }
-.hint-body :deep(strong) { color: var(--accent-hi); }
-.hint-body :deep(code) { background: var(--surface); color: var(--accent); }
+.done p { font-size: 13.5px; color: var(--text-2); }
+.done .all-done { font-family: var(--font-display); font-size: 15px; color: var(--green); }
+
+/* AI 提示：便利貼 */
+.note {
+  position: relative;
+  padding: 14px 16px 14px;
+  background: #fff3a8;
+  color: #2b2a33;
+  border: var(--bw) solid var(--ink);
+  border-radius: 6px 6px 6px 18px;
+  box-shadow: var(--shadow-sm);
+  transform: rotate(-0.4deg);
+  animation: bubble-in 0.4s var(--spring) both;
+}
+:root[data-theme='dark'] .note { background: #f3d96b; }
+.note-title { font-family: var(--font-display); font-size: 14px; margin-bottom: 6px; }
+.hint-body { font-size: 14px; line-height: 1.85; white-space: pre-wrap; }
+.hint-body :deep(strong) { font-weight: 700; background: linear-gradient(transparent 60%, rgba(255, 140, 60, 0.45) 60%); }
+.hint-body :deep(code) { background: rgba(43, 42, 51, 0.1); color: #2b2a33; }
 .hint-body :deep(.md-code) {
   margin: 8px 0;
   padding: 10px 12px;
-  background: var(--code-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  background: rgba(43, 42, 51, 0.88);
+  border-radius: 8px;
   overflow-x: auto;
   white-space: pre;
 }
-.hint-body :deep(.md-code code) { background: none; color: var(--text); padding: 0; }
-
-.dots { display: flex; gap: 4px; margin-left: 2px; }
-.dots span {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--accent);
-  animation: dot-pulse 1.2s ease-in-out infinite;
-}
-.dots span:nth-child(2) { animation-delay: 0.2s; }
-.dots span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes dot-pulse {
-  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
-  40% { opacity: 1; transform: scale(1); }
-}
-
-.skeleton { display: flex; flex-direction: column; gap: 10px; padding: 14px; }
-.skeleton i {
-  display: block;
-  height: 10px;
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--accent) 22%, transparent);
-  animation: shimmer 1.6s ease-in-out infinite;
-}
-@keyframes shimmer { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+.hint-body :deep(.md-code code) { background: none; color: #fff3a8; padding: 0; }
 
 @media (max-width: 900px) {
   .panel { height: auto; }
   .body { overflow: visible; }
-  .case { flex-wrap: wrap; }
-  .case-input { flex-basis: 60%; }
 }
 </style>

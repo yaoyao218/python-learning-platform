@@ -1,81 +1,85 @@
 <template>
   <header class="topbar">
     <div class="brand">
-      <span class="brand-mark" aria-hidden="true">
-        <Code2 :size="16" :stroke-width="2.6" />
-      </span>
-      <span class="brand-text">Python 學習平台</span>
+      <Mascot :mood="'idle'" :size="46" class="brand-mascot" />
+      <div class="brand-text">
+        <span class="brand-name">Python 學習平台</span>
+        <span class="brand-sub">跟派派一起練</span>
+      </div>
     </div>
 
     <div class="switcher" v-if="problems.length" ref="switcherEl">
       <button
         class="nav-btn"
         :disabled="index <= 0"
-        aria-label="上一題"
-        title="上一題"
+        aria-label="上一關"
+        title="上一關"
         @click="$emit('select', problems[index - 1].id)"
       >
-        <ChevronLeft :size="16" />
+        <ChevronLeft :size="18" :stroke-width="2.6" />
       </button>
 
-      <button
-        class="picker"
-        :aria-expanded="open"
-        aria-haspopup="listbox"
-        @click="open = !open"
-      >
-        <span class="picker-index">{{ index + 1 }}</span>
+      <button class="picker" :aria-expanded="open" aria-haspopup="listbox" @click="open = !open">
+        <span class="stage-no">第 {{ index + 1 }} 關</span>
         <span class="picker-title">{{ current?.title ?? '選擇題目' }}</span>
-        <span v-if="current" class="diff-pill" :class="`diff-${current.difficulty}`">{{ diffLabel(current.difficulty) }}</span>
-        <ChevronDown :size="15" class="picker-caret" :class="{ flipped: open }" />
+        <ChevronDown :size="16" :stroke-width="2.6" class="caret" :class="{ flipped: open }" />
       </button>
 
       <button
         class="nav-btn"
         :disabled="index < 0 || index >= problems.length - 1"
-        aria-label="下一題"
-        title="下一題"
+        aria-label="下一關"
+        title="下一關"
         @click="$emit('select', problems[index + 1].id)"
       >
-        <ChevronRight :size="16" />
+        <ChevronRight :size="18" :stroke-width="2.6" />
       </button>
 
       <Transition name="pop">
-        <ul v-if="open" class="menu" role="listbox">
-          <li
-            v-for="(p, i) in problems"
-            :key="p.id"
-            role="option"
-            :aria-selected="p.id === currentId"
-            :class="['menu-item', { active: p.id === currentId }]"
-            @click="choose(p.id)"
-          >
-            <span class="menu-no">{{ i + 1 }}</span>
-            <span class="menu-title">{{ p.title }}</span>
-            <span class="diff-pill" :class="`diff-${p.difficulty}`">{{ diffLabel(p.difficulty) }}</span>
-            <span class="menu-done" :class="{ on: solved.includes(p.id) }" :title="solved.includes(p.id) ? '已通過' : '尚未通過'">
-              <Check :size="13" :stroke-width="3" />
-            </span>
-          </li>
-        </ul>
+        <div v-if="open" class="menu" role="listbox">
+          <div class="menu-title">選一關</div>
+          <ul>
+            <li
+              v-for="(p, i) in problems"
+              :key="p.id"
+              role="option"
+              :aria-selected="p.id === currentId"
+              :class="['menu-item', { active: p.id === currentId, done: solved.includes(p.id) }]"
+              @click="choose(p.id)"
+            >
+              <span class="node">{{ solved.includes(p.id) ? '★' : i + 1 }}</span>
+              <span class="menu-name">{{ p.title }}</span>
+              <span class="level" :class="`lv-${p.difficulty}`" :title="`難度 ${diffLabel(p.difficulty)}`">
+                <i v-for="n in 3" :key="n" :class="{ on: n <= diffNum(p.difficulty) }"></i>
+              </span>
+            </li>
+          </ul>
+        </div>
       </Transition>
     </div>
 
     <div class="right">
-      <span v-if="problems.length" class="progress" :title="`已通過 ${solvedCount} / ${problems.length} 題`">
-        <span class="progress-track">
-          <span class="progress-fill" :style="{ width: (solvedCount / problems.length) * 100 + '%' }"></span>
-        </span>
-        <span class="progress-text">{{ solvedCount }}/{{ problems.length }}</span>
+      <span class="chip" :class="{ cold: !streak }" :title="streak ? `已連續練習 ${streak} 天` : '今天練一題，就開始累積連續天數'">
+        <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
+          <path d="M12 2c1 4-2 5-2 8 0 1.5 1 2.5 2 2.5 0-2 2-3 3-5 3 2 5 5 5 8a8 8 0 0 1-16 0c0-3 2-5 3-7 1 1 1 2 1.5 2.5C9 8 11 6 12 2z"
+                fill="currentColor" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round" />
+        </svg>
+        <b>{{ streak }}</b><span class="chip-unit">天</span>
       </span>
+
+      <span class="chip stars" :title="`已過 ${solvedCount} / ${problems.length} 關`">
+        <span class="star">★</span><b>{{ solvedCount }}</b><span class="chip-unit">/ {{ problems.length }}</span>
+      </span>
+
+      <button class="icon-btn" aria-label="新手導覽" title="新手導覽" @click="$emit('help')">?</button>
       <button
         class="icon-btn"
         :aria-label="theme === 'dark' ? '切換成淺色' : '切換成深色'"
         :title="theme === 'dark' ? '切換成淺色' : '切換成深色'"
         @click="$emit('toggle-theme')"
       >
-        <Sun v-if="theme === 'dark'" :size="17" />
-        <Moon v-else :size="17" />
+        <Sun v-if="theme === 'dark'" :size="17" :stroke-width="2.4" />
+        <Moon v-else :size="17" :stroke-width="2.4" />
       </button>
     </div>
   </header>
@@ -83,18 +87,22 @@
 
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
-import { Code2, ChevronLeft, ChevronRight, ChevronDown, Check, Sun, Moon } from 'lucide-vue-next'
+import { ChevronLeft, ChevronRight, ChevronDown, Sun, Moon } from 'lucide-vue-next'
+import Mascot from './Mascot.vue'
 
 const props = defineProps({
   problems:  { type: Array,  default: () => [] },   // [{ id, title, difficulty }]
   currentId: { type: [String, null], default: null },
   solved:    { type: Array,  default: () => [] },   // 通過過的題目 id
   theme:     { type: String, default: 'light' },
+  streak:    { type: Number, default: 0 },
 })
-const emit = defineEmits(['select', 'toggle-theme'])
+const emit = defineEmits(['select', 'toggle-theme', 'help'])
 
 const DIFF_LABELS = { easy: '低', medium: '中', hard: '高' }
+const DIFF_NUM = { easy: 1, medium: 2, hard: 3 }
 const diffLabel = (d) => DIFF_LABELS[d] ?? d
+const diffNum = (d) => DIFF_NUM[d] ?? 1
 
 const index = computed(() => props.problems.findIndex((p) => p.id === props.currentId))
 const current = computed(() => props.problems[index.value] ?? null)
@@ -135,161 +143,165 @@ onBeforeUnmount(() => {
   gap: 16px;
   padding: 0 20px;
   background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  border-bottom: var(--bw) solid var(--ink);
   position: relative;
   z-index: 50;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: 0.01em;
-  min-width: 0;
-}
-.brand-mark {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-  background: var(--accent);
-  color: var(--on-accent);
-  flex-shrink: 0;
-}
-.brand-text { white-space: nowrap; }
+.brand { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.brand-mascot { margin-top: 6px; }
+.brand-text { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.brand-name { font-family: var(--font-display); font-size: 17px; white-space: nowrap; }
+.brand-sub { font-size: 11.5px; color: var(--text-3); white-space: nowrap; }
 
-/* ── 題目切換 ── */
-.switcher {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  position: relative;
-  min-width: 0;
-}
+/* 關卡切換 */
+.switcher { display: flex; align-items: center; gap: 8px; position: relative; min-width: 0; }
 
 .nav-btn, .icon-btn {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   display: grid;
   place-items: center;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--text-2);
+  border: var(--bw) solid var(--ink);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 16px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.12s var(--ease), box-shadow 0.12s var(--ease), background 0.15s;
   flex-shrink: 0;
 }
-.nav-btn:hover:not(:disabled), .icon-btn:hover { background: var(--surface-3); color: var(--text); }
-.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.nav-btn:hover:not(:disabled), .icon-btn:hover { background: var(--sun); color: var(--on-sun); transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink); }
+.nav-btn:active:not(:disabled), .icon-btn:active { transform: translate(2px, 2px); box-shadow: none; }
+.nav-btn:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
 
 .picker {
   display: flex;
   align-items: center;
   gap: 10px;
-  height: 36px;
+  height: 40px;
   min-width: 0;
-  max-width: 460px;
-  padding: 0 12px;
+  max-width: 440px;
+  padding: 0 14px;
   background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border: var(--bw) solid var(--ink);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
   color: var(--text);
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
+  transition: transform 0.12s var(--ease), box-shadow 0.12s var(--ease);
 }
-.picker:hover { border-color: var(--border-hi); background: var(--surface-3); }
-
-.picker-index {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent);
-}
-.picker-title {
-  overflow: hidden;
-  text-overflow: ellipsis;
+.picker:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink); }
+.stage-no {
+  font-family: var(--font-display);
+  font-size: 13px;
+  padding: 1px 9px;
+  background: var(--sun);
+  color: var(--on-sun);
+  border: 1.5px solid var(--ink);
+  border-radius: 8px;
   white-space: nowrap;
-  min-width: 0;
 }
-.picker-caret { color: var(--text-3); transition: transform 0.2s var(--ease); flex-shrink: 0; }
-.picker-caret.flipped { transform: rotate(180deg); }
-
-.diff-pill {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 1px 8px;
-  border-radius: 999px;
-  flex-shrink: 0;
-}
-.diff-easy   { color: var(--green); background: var(--green-soft); }
-.diff-medium { color: var(--amber); background: var(--amber-soft); }
-.diff-hard   { color: var(--red);   background: var(--red-soft); }
+.picker-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.caret { flex-shrink: 0; transition: transform 0.2s var(--ease); }
+.caret.flipped { transform: rotate(180deg); }
 
 .menu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 12px);
   left: 50%;
   transform: translateX(-50%);
-  width: min(520px, 92vw);
-  list-style: none;
-  padding: 6px;
+  width: min(500px, 92vw);
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: var(--bw) solid var(--ink);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow), 0 12px 40px rgba(0, 0, 0, 0.12);
-  max-height: 70vh;
-  overflow-y: auto;
+  box-shadow: 5px 5px 0 var(--ink);
+  overflow: hidden;
 }
+.menu-title {
+  padding: 10px 16px;
+  background: var(--surface-2);
+  border-bottom: var(--bw) solid var(--ink);
+  font-family: var(--font-display);
+  font-size: 14px;
+}
+.menu ul { list-style: none; padding: 8px; max-height: 66vh; overflow-y: auto; }
 .menu-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
+  padding: 9px 10px;
+  border-radius: 12px;
   cursor: pointer;
-  font-size: 13.5px;
+  font-size: 14px;
   transition: background 0.12s;
 }
-.menu-item:hover { background: var(--surface-3); }
-.menu-item.active { background: var(--accent-soft); }
-.menu-no { font-family: var(--font-mono); font-size: 12px; color: var(--text-3); width: 16px; text-align: right; flex-shrink: 0; }
-.menu-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.menu-done {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
+.menu-item:hover { background: var(--surface-2); }
+.menu-item.active { background: var(--blue-soft); }
+.node {
+  width: 30px;
+  height: 30px;
   display: grid;
   place-items: center;
-  border: 1.5px solid var(--border-hi);
-  color: transparent;
+  border: var(--bw) solid var(--ink);
+  border-radius: 50%;
+  background: var(--surface);
+  font-family: var(--font-display);
+  font-size: 14px;
   flex-shrink: 0;
 }
-.menu-done.on { background: var(--green); border-color: var(--green); color: #fff; }
+.menu-item.done .node { background: var(--sun); color: var(--on-sun); }
+.menu-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.level { display: flex; gap: 3px; flex-shrink: 0; }
+.level i { width: 8px; height: 14px; border: 1.5px solid var(--ink); border-radius: 3px; background: var(--surface-3); }
+.level.lv-easy i.on   { background: var(--green); }
+.level.lv-medium i.on { background: var(--sun); }
+.level.lv-hard i.on   { background: var(--red); }
 
-.pop-enter-active, .pop-leave-active { transition: opacity 0.15s, transform 0.18s var(--ease); }
-.pop-enter-from, .pop-leave-to { opacity: 0; transform: translate(-50%, -6px); }
+.pop-enter-active, .pop-leave-active { transition: opacity 0.15s, transform 0.22s var(--spring); }
+.pop-enter-from, .pop-leave-to { opacity: 0; transform: translate(-50%, -8px) scale(0.97); }
 
-/* ── 右側 ── */
-.right { display: flex; align-items: center; justify-content: flex-end; gap: 14px; }
+/* 右側 */
+.right { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
 
-.progress { display: flex; align-items: center; gap: 8px; }
-.progress-track { width: 72px; height: 6px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
-.progress-fill { display: block; height: 100%; background: var(--green); border-radius: 999px; transition: width 0.5s var(--ease); }
-.progress-text { font-family: var(--font-mono); font-size: 12px; color: var(--text-2); }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 34px;
+  padding: 0 11px;
+  border: var(--bw) solid var(--ink);
+  border-radius: 10px;
+  background: var(--amber-soft);
+  color: #e8590c;
+  font-size: 14px;
+  box-shadow: var(--shadow-sm);
+}
+.chip b { font-family: var(--font-display); font-weight: 400; font-size: 16px; color: var(--text); }
+.chip-unit { font-size: 12px; color: var(--text-2); }
+.chip.cold { color: var(--text-3); background: var(--surface-2); }
+.chip.stars .star { color: #f5a300; font-size: 16px; -webkit-text-stroke: 1.2px var(--ink); }
+.chip.stars { background: var(--surface-2); }
+
+@media (max-width: 1100px) {
+  .brand-sub { display: none; }
+  .chip-unit { display: none; }
+}
 
 @media (max-width: 900px) {
-  .topbar { grid-template-columns: auto 1fr auto; padding: 0 12px; gap: 8px; }
+  .topbar { grid-template-columns: auto 1fr auto; padding: 0 10px; gap: 8px; height: 58px; }
   .brand-text { display: none; }
-  .progress { display: none; }
-  .picker { max-width: none; flex: 1; }
-  .switcher { min-width: 0; position: static; }
-  .menu { left: 12px; transform: none; width: calc(100vw - 24px); }
-  .pop-enter-from, .pop-leave-to { transform: translateY(-6px); }
+  .brand-mascot { margin-top: 4px; }
+  .chip { display: none; }
+  .picker { max-width: none; flex: 1; padding: 0 10px; }
+  .stage-no { display: none; }
+  .switcher { position: static; min-width: 0; }
+  .menu { left: 10px; transform: none; width: calc(100vw - 20px); }
+  .pop-enter-from, .pop-leave-to { transform: translateY(-8px); }
+  .icon-btn[title='新手導覽'] { display: none; }
 }
 </style>

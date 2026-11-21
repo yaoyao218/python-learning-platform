@@ -2,14 +2,8 @@
   <section class="problem">
     <!-- 分頁：題目 / 虛擬碼。虛擬碼預設不顯示，想自己想的人不會被劇透 -->
     <div class="tabs" role="tablist">
-      <button
-        class="tab"
-        role="tab"
-        :aria-selected="tab === 'desc'"
-        :class="{ active: tab === 'desc' }"
-        @click="tab = 'desc'"
-      >
-        <FileText :size="15" />題目
+      <button class="tab" role="tab" :aria-selected="tab === 'desc'" :class="{ active: tab === 'desc' }" @click="tab = 'desc'">
+        題目
       </button>
       <button
         v-if="problem.pseudocode"
@@ -19,15 +13,15 @@
         :class="{ active: tab === 'pseudo' }"
         @click="tab = 'pseudo'"
       >
-        <ListOrdered :size="15" />虛擬碼
-        <span class="tab-tip">解題步驟</span>
+        虛擬碼<span class="tab-tip">卡住再看</span>
       </button>
     </div>
 
     <div class="scroll">
       <article v-if="tab === 'desc'" :key="problem.id + ':desc'" class="pane">
-        <div class="meta">
-          <span class="diff-pill" :class="diffClass">難度 {{ diffLabel }}</span>
+        <div class="level-row">
+          <span class="level" :class="diffClass"><i v-for="n in 3" :key="n" :class="{ on: n <= diffNum }"></i></span>
+          <span class="level-text">難度 {{ diffLabel }}</span>
         </div>
         <h1 class="title">{{ problem.title }}</h1>
         <p class="desc" v-html="problem.description"></p>
@@ -53,15 +47,15 @@
         <template v-if="problem.constraints && problem.constraints.length">
           <h2 class="section-title">限制條件</h2>
           <ul class="constraints">
-            <li v-for="(c, i) in problem.constraints" :key="i"><code>{{ c }}</code></li>
+            <li v-for="(c, i) in problem.constraints" :key="i">{{ c }}</li>
           </ul>
         </template>
       </article>
 
       <article v-else :key="problem.id + ':pseudo'" class="pane">
         <div class="pseudo-note">
-          <Lightbulb :size="15" />
-          卡住再看就好。先自己想過一輪，學到的會比較多。
+          <Mascot mood="think" :size="52" />
+          <p>先自己想過一輪再看喔，學到的會比較多。這是解題的步驟，不是答案。</p>
         </div>
         <div class="pseudo-body" v-html="pseudocodeHtml"></div>
       </article>
@@ -71,7 +65,7 @@
 
 <script setup>
 import { computed, ref, watch } from 'vue'
-import { FileText, ListOrdered, Lightbulb } from 'lucide-vue-next'
+import Mascot from './Mascot.vue'
 import { renderLite } from '../markdown.js'
 
 const props = defineProps({
@@ -83,11 +77,12 @@ const tab = ref('desc')
 watch(() => props.problem.id, () => { tab.value = 'desc' })
 
 const DIFF_MAP = {
-  easy:   { label: '低', cls: 'diff-easy' },
-  medium: { label: '中', cls: 'diff-medium' },
-  hard:   { label: '高', cls: 'diff-hard' },
+  easy:   { label: '低', num: 1, cls: 'lv-easy' },
+  medium: { label: '中', num: 2, cls: 'lv-medium' },
+  hard:   { label: '高', num: 3, cls: 'lv-hard' },
 }
 const diffLabel = computed(() => DIFF_MAP[props.problem.difficulty]?.label ?? '—')
+const diffNum = computed(() => DIFF_MAP[props.problem.difficulty]?.num ?? 1)
 const diffClass = computed(() => DIFF_MAP[props.problem.difficulty]?.cls ?? '')
 
 // 虛擬碼是 AI 寫的文字：先跳脫 HTML，再只轉換少數標記（見 markdown.js）
@@ -101,160 +96,141 @@ const pseudocodeHtml = computed(() => renderLite(props.problem.pseudocode?.text 
   min-height: 0;
   height: 100%;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: var(--bw) solid var(--ink);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-hard);
   overflow: hidden;
 }
 
+/* 活頁夾分頁 */
 .tabs {
   display: flex;
-  gap: 4px;
-  padding: 8px 10px 0;
+  gap: 6px;
+  padding: 10px 12px 0;
   background: var(--surface-2);
-  border-bottom: 1px solid var(--border);
+  border-bottom: var(--bw) solid var(--ink);
   flex-shrink: 0;
 }
 .tab {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 9px 14px;
-  border: 1px solid transparent;
+  gap: 8px;
+  padding: 7px 18px 8px;
+  border: var(--bw) solid transparent;
   border-bottom: none;
-  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  border-radius: 12px 12px 0 0;
   background: transparent;
   color: var(--text-2);
-  font-size: 13px;
-  font-weight: 500;
+  font-family: var(--font-display);
+  font-size: 15px;
   cursor: pointer;
-  margin-bottom: -1px;
+  margin-bottom: calc(var(--bw) * -1);
   transition: color 0.15s, background 0.15s;
 }
 .tab:hover { color: var(--text); }
 .tab.active {
   background: var(--surface);
   color: var(--text);
-  border-color: var(--border);
-  font-weight: 700;
+  border-color: var(--ink);
+  padding-bottom: 10px;
 }
 .tab-tip {
-  font-size: 10.5px;
-  font-weight: 500;
-  color: var(--teal);
-  background: var(--teal-soft);
-  padding: 1px 7px;
-  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--blue);
 }
 
 .scroll { flex: 1; min-height: 0; overflow-y: auto; }
-.pane { padding: 24px 26px 32px; animation: fade-in 0.25s var(--ease) both; }
+.pane { padding: 22px 26px 34px; animation: fade-in 0.3s var(--ease) both; }
+@keyframes fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
 
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: none; }
-}
-
-.meta { margin-bottom: 12px; }
-.diff-pill {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 2px 10px;
-  border-radius: 999px;
-}
-.diff-easy   { color: var(--green); background: var(--green-soft); }
-.diff-medium { color: var(--amber); background: var(--amber-soft); }
-.diff-hard   { color: var(--red);   background: var(--red-soft); }
+.level-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.level { display: flex; gap: 3px; }
+.level i { width: 9px; height: 16px; border: 1.5px solid var(--ink); border-radius: 3px; background: var(--surface-3); }
+.level.lv-easy i.on   { background: var(--green); }
+.level.lv-medium i.on { background: var(--sun); }
+.level.lv-hard i.on   { background: var(--red); }
+.level-text { font-size: 12.5px; color: var(--text-2); }
 
 .title {
-  font-size: 22px;
-  line-height: 1.35;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 25px;
+  line-height: 1.4;
   margin-bottom: 14px;
 }
 
-.desc {
-  font-size: 15px;
-  line-height: 1.85;
-  color: var(--text-2);
-}
-.desc :deep(strong) { color: var(--text); }
+.desc { font-size: 15.5px; line-height: 1.95; color: var(--text-2); }
+.desc :deep(strong) { color: var(--text); background: linear-gradient(transparent 62%, color-mix(in srgb, var(--sun) 75%, transparent) 62%); }
 
 .section-title {
-  margin: 28px 0 12px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--text-3);
+  margin: 30px 0 12px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+.section-title::after { content: ''; flex: 1; border-top: 2px dashed var(--line); }
 
-.examples { display: flex; flex-direction: column; gap: 12px; }
+.examples { display: flex; flex-direction: column; gap: 14px; }
 
 .example {
   background: var(--surface-2);
-  border: 1px solid var(--border);
+  border: var(--bw) solid var(--ink);
   border-radius: var(--radius);
-  padding: 14px 16px;
+  padding: 12px 16px 14px;
+  box-shadow: var(--shadow-sm);
 }
-.example-head {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-3);
-  margin-bottom: 10px;
-}
+.example-head { font-family: var(--font-display); font-size: 13px; color: var(--text-3); margin-bottom: 9px; }
 .io { display: flex; flex-direction: column; gap: 8px; }
 .io-row { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
-.io-key { font-size: 12px; color: var(--text-3); width: 28px; flex-shrink: 0; }
+.io-key { font-size: 12.5px; color: var(--text-3); width: 30px; flex-shrink: 0; }
 .io-val {
-  font-size: 13px;
-  padding: 3px 9px;
+  font-size: 13.5px;
+  padding: 3px 10px;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
   white-space: pre-wrap;
   word-break: break-all;
 }
-.io-val.in  { color: var(--teal); }
-.io-val.out { color: var(--amber); }
+.io-val.in  { color: var(--blue); }
+.io-val.out { color: var(--green); font-weight: 600; }
 .example-note {
   margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px dashed var(--border-hi);
-  font-size: 13px;
-  line-height: 1.7;
+  padding-top: 11px;
+  border-top: 2px dashed var(--line);
+  font-size: 13.5px;
+  line-height: 1.75;
   color: var(--text-2);
 }
 
 .constraints { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-.constraints li { font-size: 13px; }
-.constraints code { color: var(--text-2); }
+.constraints li { position: relative; padding-left: 20px; font-family: var(--font-mono); font-size: 13px; color: var(--text-2); }
+.constraints li::before { content: '✦'; position: absolute; left: 0; color: var(--sun); -webkit-text-stroke: 1px var(--ink); }
 
 /* 虛擬碼 */
 .pseudo-note {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 14px;
-  margin-bottom: 18px;
+  padding: 8px 16px 8px 10px;
+  margin-bottom: 20px;
+  background: var(--blue-soft);
+  border: var(--bw) dashed var(--blue);
   border-radius: var(--radius);
-  background: var(--teal-soft);
-  color: var(--teal);
-  font-size: 13px;
-  font-weight: 500;
 }
-.pseudo-body {
-  font-size: 14px;
-  line-height: 2;
-  color: var(--text-2);
-  white-space: pre-wrap;
-}
+.pseudo-note p { font-size: 13.5px; line-height: 1.7; color: var(--text-2); }
+.pseudo-body { font-size: 15px; line-height: 2.05; color: var(--text-2); white-space: pre-wrap; }
 .pseudo-body :deep(strong) { color: var(--text); }
-.pseudo-body :deep(code) { color: var(--teal); }
+.pseudo-body :deep(code) { color: var(--blue); }
 .pseudo-body :deep(.md-code) {
   margin: 8px 0;
   padding: 12px 14px;
   background: var(--code-bg);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--ink);
   border-radius: var(--radius-sm);
   overflow-x: auto;
   white-space: pre;
@@ -264,6 +240,6 @@ const pseudocodeHtml = computed(() => renderLite(props.problem.pseudocode?.text 
 @media (max-width: 900px) {
   .problem { height: auto; }
   .scroll { overflow: visible; }
-  .pane { padding: 18px 16px 24px; }
+  .pane { padding: 18px 16px 26px; }
 }
 </style>

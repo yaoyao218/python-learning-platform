@@ -5,9 +5,13 @@
       :current-id="problemId"
       :solved="solved"
       :theme="theme"
+      :streak="streak"
       @select="selectProblem"
       @toggle-theme="toggleTheme"
+      @help="tourOpen = true"
     />
+    <Tour :open="tourOpen" @close="closeTour" />
+    <Confetti :fire="confettiFire" />
 
     <main class="workspace" :class="{ dragging: leftResizer.dragging.value || bottomResizer.dragging.value }">
       <div class="col-left" :style="leftStyle">
@@ -39,10 +43,10 @@
             @reset="resetCode"
           >
             <template #actions>
-              <button class="submit" :disabled="loading || !problemId" @click="handleSubmit">
-                <Loader2 v-if="loading" :size="15" class="spin" />
+              <button class="btn-sticker submit" :disabled="loading || !problemId" @click="handleSubmit">
+                <Loader2 v-if="loading" :size="16" class="spin" />
                 <Play v-else :size="14" fill="currentColor" />
-                <span>{{ loading ? '執行中…' : '提交' }}</span>
+                <span>{{ loading ? '檢查中…' : '提交' }}</span>
               </button>
             </template>
           </CodeEditor>
@@ -94,12 +98,26 @@ import ProblemStatement from './components/ProblemStatement.vue'
 import CodeEditor from './components/CodeEditor.vue'
 import ResultPanel from './components/ResultPanel.vue'
 import ClozePanel from './components/ClozePanel.vue'
+import Tour from './components/Tour.vue'
+import Confetti from './components/Confetti.vue'
+import { useStats } from './composables/useStats.js'
 import { fetchProblemList, fetchProblem, submitCode, fetchCloze } from './api.js'
 import { useTheme } from './composables/useTheme.js'
 import { useResizer } from './composables/useResizer.js'
 import { loadItem, saveItem, removeItem } from './composables/storage.js'
 
 const { theme, toggle: toggleTheme } = useTheme()
+const { streak, markToday } = useStats()
+
+// 新手導覽：第一次進來自動打開，之後從右上角「？」再開
+const tourOpen = ref(!loadItem('pylp:tour-done', false))
+function closeTour() {
+  tourOpen.value = false
+  saveItem('pylp:tour-done', true)
+}
+
+// 全部通過時噴紙花
+const confettiFire = ref(0)
 
 // ── 版面：左欄寬度、下方結果面板高度（可拖曳，記在瀏覽器）──
 const leftResizer = useResizer({
@@ -239,6 +257,8 @@ async function handleSubmit() {
     if (data.results.length) {
       const id = problemId.value
       const allPassed = data.results.every((r) => r.passed)
+      markToday()
+      if (allPassed) confettiFire.value++
       setStreak(id, allPassed ? 0 : (failStreaks.value[id] ?? 0) + 1)
       if (allPassed && !solved.value.includes(id)) {
         solved.value = [...solved.value, id]
@@ -273,10 +293,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
   flex: 1;
   min-height: 0;
   display: flex;
-  padding: 12px;
+  padding: 16px 18px 18px;
   gap: 0;
 }
-.workspace.dragging iframe,
 .workspace.dragging :deep(.monaco-editor) { pointer-events: none; }
 
 .col-left {
@@ -286,13 +305,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
   min-height: 0;
 }
 
-.col-right {
-  flex: 1;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
+.col-right { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; }
 
 .editor-box { flex: 1; min-height: 0; }
 .result-box {
@@ -301,7 +314,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 .result-box > :deep(.panel) { flex: 1; }
 
@@ -313,8 +326,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
   gap: 10px;
   color: var(--text-3);
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: var(--bw) solid var(--ink);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-hard);
 }
 
 /* ── 分隔線 ── */
@@ -323,36 +337,18 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
   content: '';
   position: absolute;
   border-radius: 999px;
-  background: var(--border-hi);
+  background: var(--ink);
   opacity: 0;
   transition: opacity 0.15s, background 0.15s;
 }
-.gutter:hover::after, .gutter:focus-visible::after, .workspace.dragging .gutter::after { opacity: 1; background: var(--accent); }
-.gutter-x { width: 12px; cursor: col-resize; }
-.gutter-x::after { top: 50%; left: 4px; width: 4px; height: 48px; transform: translateY(-50%); }
-.gutter-y { height: 12px; cursor: row-resize; }
-.gutter-y::after { left: 50%; top: 4px; height: 4px; width: 48px; transform: translateX(-50%); }
+.gutter:hover::after, .gutter:focus-visible::after, .workspace.dragging .gutter::after { opacity: 0.8; background: var(--sun); outline: 1.5px solid var(--ink); }
+.gutter-x { width: 18px; cursor: col-resize; }
+.gutter-x::after { top: 50%; left: 6px; width: 6px; height: 52px; transform: translateY(-50%); }
+.gutter-y { height: 18px; cursor: row-resize; }
+.gutter-y::after { left: 50%; top: 6px; height: 6px; width: 52px; transform: translateX(-50%); }
 
 /* ── 提交按鈕 ── */
-.submit {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  height: 32px;
-  padding: 0 18px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: var(--accent);
-  color: var(--on-accent);
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
-}
-.submit:hover:not(:disabled) { background: var(--accent-hi); box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 35%, transparent); }
-.submit:active:not(:disabled) { transform: scale(0.97); }
-.submit:disabled { background: var(--surface-3); color: var(--text-3); cursor: not-allowed; box-shadow: none; }
+.submit { height: 36px; padding: 0 20px; font-size: 15px; }
 
 .spin { animation: spin 0.9s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -362,7 +358,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 12px;
+  padding: 9px 14px;
+  border: var(--bw) solid var(--ink);
   border-radius: var(--radius);
   background: var(--red-soft);
   color: var(--red);
@@ -376,9 +373,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 /* ── 窄螢幕：上下排，整頁捲動 ── */
 @media (max-width: 900px) {
   .app { height: auto; min-height: 100%; }
-  .workspace { flex-direction: column; padding: 8px; gap: 8px; }
+  .workspace { flex-direction: column; padding: 10px; gap: 12px; }
   .col-left { width: 100%; }
-  .col-right { gap: 8px; }
+  .col-right { gap: 12px; }
   .editor-box { flex: none; }
   .result-box { height: auto; }
   .gutter { display: none; }
