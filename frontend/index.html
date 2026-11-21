@@ -3,10 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
     <title>Python 學習平台</title>
+    <!-- 先決定主題再畫畫面，避免深色使用者看到一閃而過的白底 -->
+    <script>
+      (function () {
+        var theme = 'light'
+        try {
+          var saved = localStorage.getItem('pylp:theme')
+          if (saved === 'light' || saved === 'dark') theme = saved
+          else if (window.matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark'
+        } catch (e) {}
+        document.documentElement.setAttribute('data-theme', theme)
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>

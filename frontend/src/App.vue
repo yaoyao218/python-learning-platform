@@ -1,68 +1,119 @@
 <template>
   <div class="app">
-    <header class="topbar">
-      <span class="topbar-brand">
-        <span class="brand-pip">◈</span>
-        <span class="brand-text">Python 學習平台</span>
-      </span>
-      <select
-        v-if="problemList.length"
-        class="problem-select"
-        :value="problemId"
-        @change="onProblemChange"
-      >
-        <option v-for="p in problemList" :key="p.id" :value="p.id">
-          {{ p.title }}（{{ diffLabel(p.difficulty) }}）
-        </option>
-      </select>
-    </header>
+    <AppHeader
+      :problems="problemList"
+      :current-id="problemId"
+      :solved="solved"
+      :theme="theme"
+      @select="selectProblem"
+      @toggle-theme="toggleTheme"
+    />
 
-    <div class="main-layout">
-      <div class="left-col">
+    <main class="workspace" :class="{ dragging: leftResizer.dragging.value || bottomResizer.dragging.value }">
+      <div class="col-left" :style="leftStyle">
         <ProblemStatement v-if="problem" :problem="problem" />
-        <CodeEditor v-model="code" />
-        <div class="submit-row">
-          <button class="submit-btn" :disabled="loading || !problemId" @click="handleSubmit">
-            <Loader2 v-if="loading" :size="14" class="btn-spinner" />
-            <Play v-else :size="14" />
-            <span>{{ loading ? '執行中...' : '提交程式碼' }}</span>
-          </button>
-          <span v-if="loading" class="loading-dots">
-            <span></span><span></span><span></span>
-          </span>
-        </div>
-        <div v-if="error" class="error-banner">
-          <X :size="12" />{{ error }}
+        <div v-else class="placeholder">
+          <Loader2 v-if="!error" :size="20" class="spin" />
+          <span>{{ error ? '' : '載入題目中…' }}</span>
         </div>
       </div>
 
-      <div class="right-col">
-        <ResultPanel :results="results" :hint="hint" :loading="loading" />
-        <ClozePanel
-          v-if="!loading"
-          :streak="currentStreak"
-          :threshold="CLOZE_AFTER"
-          :cloze="clozeByProblem[problemId] ?? null"
-        />
+      <div
+        class="gutter gutter-x"
+        role="separator"
+        aria-orientation="vertical"
+        tabindex="0"
+        title="拖曳調整寬度，雙擊還原"
+        @pointerdown.prevent="leftResizer.start"
+        @dblclick="leftResizer.reset"
+        @keydown.left.prevent="leftResizer.nudge(-24)"
+        @keydown.right.prevent="leftResizer.nudge(24)"
+      ></div>
+
+      <div class="col-right">
+        <div class="editor-box">
+          <CodeEditor
+            v-model="code"
+            :theme="theme"
+            @submit="handleSubmit"
+            @reset="resetCode"
+          >
+            <template #actions>
+              <button class="submit" :disabled="loading || !problemId" @click="handleSubmit">
+                <Loader2 v-if="loading" :size="15" class="spin" />
+                <Play v-else :size="14" fill="currentColor" />
+                <span>{{ loading ? '執行中…' : '提交' }}</span>
+              </button>
+            </template>
+          </CodeEditor>
+        </div>
+
+        <div
+          class="gutter gutter-y"
+          role="separator"
+          aria-orientation="horizontal"
+          tabindex="0"
+          title="拖曳調整高度，雙擊還原"
+          @pointerdown.prevent="bottomResizer.start"
+          @dblclick="bottomResizer.reset"
+          @keydown.up.prevent="bottomResizer.nudge(24)"
+          @keydown.down.prevent="bottomResizer.nudge(-24)"
+        ></div>
+
+        <div class="result-box" :style="bottomStyle">
+          <div v-if="error" class="error-banner" role="alert">
+            <AlertCircle :size="15" />
+            <span>{{ error }}</span>
+            <button class="close" aria-label="關閉" @click="error = null"><X :size="14" /></button>
+          </div>
+          <ResultPanel
+            :results="results"
+            :hint="hint"
+            :loading="loading"
+            :has-next="hasNext"
+            @next="goNext"
+          >
+            <ClozePanel
+              v-if="!loading"
+              :streak="currentStreak"
+              :threshold="CLOZE_AFTER"
+              :cloze="clozeByProblem[problemId] ?? null"
+            />
+          </ResultPanel>
+        </div>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { Play, Loader2, X } from 'lucide-vue-next'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { Play, Loader2, X, AlertCircle } from 'lucide-vue-next'
+import AppHeader from './components/AppHeader.vue'
 import ProblemStatement from './components/ProblemStatement.vue'
 import CodeEditor from './components/CodeEditor.vue'
 import ResultPanel from './components/ResultPanel.vue'
 import ClozePanel from './components/ClozePanel.vue'
 import { fetchProblemList, fetchProblem, submitCode, fetchCloze } from './api.js'
+import { useTheme } from './composables/useTheme.js'
+import { useResizer } from './composables/useResizer.js'
+import { loadItem, saveItem, removeItem } from './composables/storage.js'
 
-const DIFF_LABELS = { easy: '低', medium: '中', hard: '高' }
-function diffLabel(difficulty) {
-  return DIFF_LABELS[difficulty] ?? difficulty
-}
+const { theme, toggle: toggleTheme } = useTheme()
 
+// ── 版面：左欄寬度、下方結果面板高度（可拖曳，記在瀏覽器）──
+const leftResizer = useResizer({
+  key: 'pylp:left-w', initial: 520, min: 320,
+  max: () => Math.max(360, window.innerWidth - 440),
+})
+const bottomResizer = useResizer({
+  key: 'pylp:bottom-h', initial: Math.max(300, Math.round(window.innerHeight * 0.42)), min: 160, axis: 'y', invert: true,
+  max: () => Math.max(200, window.innerHeight - 56 - 220),
+})
+const leftStyle = computed(() => ({ '--left-w': leftResizer.size.value + 'px' }))
+const bottomStyle = computed(() => ({ '--bottom-h': bottomResizer.size.value + 'px' }))
+
+// ── 資料狀態 ──
 const problemList = ref([])   // [{ id, title, difficulty }]
 const problemId   = ref(null)
 const problem     = ref(null) // 目前選中題目的完整內容
@@ -71,6 +122,35 @@ const results     = ref([])
 const hint        = ref(null)
 const loading     = ref(false)
 const error       = ref(null)
+
+// 通過過的題目（只記「通過」這件事，方便標勾勾；跟填空的連續失敗次數無關）
+const solved = ref(loadItem('pylp:solved', []))
+
+const currentIndex = computed(() => problemList.value.findIndex((p) => p.id === problemId.value))
+const hasNext = computed(() => currentIndex.value >= 0 && currentIndex.value < problemList.value.length - 1)
+
+function goNext() {
+  if (hasNext.value) selectProblem(problemList.value[currentIndex.value + 1].id)
+}
+
+// ── 程式碼草稿：每題各存一份，重新整理不會丟 ──
+const draftKey = (id) => `pylp:draft:${id}`
+let draftTimer = null
+watch(code, (val) => {
+  if (!problemId.value || !problem.value) return
+  const id = problemId.value
+  clearTimeout(draftTimer)
+  draftTimer = setTimeout(() => {
+    if (val === problem.value?.starter_code) removeItem(draftKey(id))
+    else saveItem(draftKey(id), val)
+  }, 400)
+})
+
+function resetCode() {
+  if (!problem.value) return
+  if (code.value !== problem.value.starter_code && !window.confirm('要把程式碼還原成起始版本嗎？目前寫的內容會消失。')) return
+  code.value = problem.value.starter_code
+}
 
 // 遮照填空：同一題連續 CLOZE_AFTER 次沒全部通過，就顯示標準答案挖洞的版本；通過就歸零。
 // 這是最保守的「公佈答案」：必須在同一次開啟頁面時連續錯到門檻才出現，
@@ -121,15 +201,17 @@ onMounted(async () => {
 })
 
 async function selectProblem(id) {
+  if (id === problemId.value && problem.value) return
   const seq = ++problemSeq
   try {
     const data      = await fetchProblem(id)
     if (seq !== problemSeq) return
     submitSeq++            // 換題成功：丟棄還在跑的提交
+    clearTimeout(draftTimer)
     loading.value   = false
     problem.value   = data
     problemId.value = id
-    code.value      = data.starter_code
+    code.value      = loadItem(draftKey(id), null) ?? data.starter_code
     results.value   = []
     hint.value       = null
     error.value      = null
@@ -141,12 +223,8 @@ async function selectProblem(id) {
   }
 }
 
-function onProblemChange(event) {
-  selectProblem(event.target.value)
-}
-
 async function handleSubmit() {
-  if (!problemId.value) return
+  if (!problemId.value || loading.value) return
   const seq = ++submitSeq
   loading.value = true
   results.value = []
@@ -162,6 +240,10 @@ async function handleSubmit() {
       const id = problemId.value
       const allPassed = data.results.every((r) => r.passed)
       setStreak(id, allPassed ? 0 : (failStreaks.value[id] ?? 0) + 1)
+      if (allPassed && !solved.value.includes(id)) {
+        solved.value = [...solved.value, id]
+        saveItem('pylp:solved', solved.value)
+      }
       loadClozeIfNeeded(id)
     }
   } catch (err) {
@@ -172,225 +254,133 @@ async function handleSubmit() {
     if (seq === submitSeq) loading.value = false
   }
 }
+
+// 全域 Ctrl/⌘ + Enter（編輯器沒聚焦時也能提交；編輯器內由 Monaco 自己註冊）
+function onKeydown(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault()
+    handleSubmit()
+  }
+}
+onMounted(() => window.addEventListener('keydown', onKeydown))
+onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 </script>
 
-<style>
-:root {
-  --bg:        #0c0b09;
-  --surface:   #141210;
-  --surface-hi:#1d1b17;
-  --border:    #252220;
-  --border-hi: #36322c;
-  --text:      #ede4d0;
-  --text-2:    #9a9080;
-  --text-3:    #5a544c;
-  --amber:     #dfa050;
-  --amber-dim: #3a2b16;
-  --green:     #5cb87c;
-  --green-dim: #192e22;
-  --red:       #d96870;
-  --red-dim:   #391820;
-  --teal:      #5ab8b2;
-  --teal-dim:  #163230;
-  --font-mono: 'IBM Plex Mono', monospace;
-  --font-sans: 'IBM Plex Sans', sans-serif;
-}
+<style scoped>
+.app { height: 100%; display: flex; flex-direction: column; min-height: 0; }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html, body {
-  height: 100%;
-}
-
-body {
-  background-color: var(--bg);
-  background-image:
-    radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
-  background-size: 28px 28px;
-  font-family: var(--font-sans);
-  color: var(--text);
-  -webkit-font-smoothing: antialiased;
-}
-
-code {
-  font-family: var(--font-mono);
-  font-size: 0.875em;
-  background: var(--surface-hi);
-  color: var(--amber);
-  padding: 2px 7px;
-  border-radius: 3px;
-  border: 1px solid var(--border-hi);
-}
-
-strong { font-weight: 600; }
-
-.app { min-height: 100vh; display: flex; flex-direction: column; }
-
-/* ── Topbar ── */
-.topbar {
-  height: 52px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  flex-shrink: 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.topbar-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-mono);
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-.brand-pip {
-  color: var(--amber);
-  font-size: 18px;
-  line-height: 1;
-}
-
-.brand-text { color: var(--text); }
-
-.problem-select {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text);
-  background: var(--surface-hi);
-  border: 1px solid var(--border);
-  padding: 6px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  max-width: 380px;
-}
-
-.problem-select:hover {
-  border-color: var(--border-hi);
-}
-
-/* ── Layout ── */
-.main-layout {
-  display: flex;
+.workspace {
   flex: 1;
-  align-items: flex-start;
+  min-height: 0;
+  display: flex;
+  padding: 12px;
+  gap: 0;
+}
+.workspace.dragging iframe,
+.workspace.dragging :deep(.monaco-editor) { pointer-events: none; }
+
+.col-left {
+  width: var(--left-w, 520px);
+  flex-shrink: 0;
+  min-width: 0;
   min-height: 0;
 }
 
-.left-col {
+.col-right {
   flex: 1;
   min-width: 0;
-  border-right: 1px solid var(--border);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-.right-col {
-  width: 500px;
+.editor-box { flex: 1; min-height: 0; }
+.result-box {
+  height: var(--bottom-h, 340px);
   flex-shrink: 0;
-  height: calc(100vh - 52px);
-  overflow-y: auto;
-  position: sticky;
-  top: 52px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
+.result-box > :deep(.panel) { flex: 1; }
 
-/* ── Submit row ── */
-.submit-row {
-  padding: 20px 32px;
-  border-bottom: 1px solid var(--border);
+.placeholder {
+  height: 100%;
   display: flex;
   align-items: center;
-  gap: 20px;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
 }
 
-.submit-btn {
+/* ── 分隔線 ── */
+.gutter { flex-shrink: 0; position: relative; outline: none; }
+.gutter::after {
+  content: '';
+  position: absolute;
+  border-radius: 999px;
+  background: var(--border-hi);
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s;
+}
+.gutter:hover::after, .gutter:focus-visible::after, .workspace.dragging .gutter::after { opacity: 1; background: var(--accent); }
+.gutter-x { width: 12px; cursor: col-resize; }
+.gutter-x::after { top: 50%; left: 4px; width: 4px; height: 48px; transform: translateY(-50%); }
+.gutter-y { height: 12px; cursor: row-resize; }
+.gutter-y::after { left: 50%; top: 4px; height: 4px; width: 48px; transform: translateX(-50%); }
+
+/* ── 提交按鈕 ── */
+.submit {
   display: flex;
   align-items: center;
-  gap: 9px;
-  background: var(--amber);
-  color: var(--bg);
+  gap: 7px;
+  height: 32px;
+  padding: 0 18px;
   border: none;
-  padding: 11px 28px;
-  border-radius: 4px;
-  font-family: var(--font-mono);
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: var(--on-accent);
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
 }
+.submit:hover:not(:disabled) { background: var(--accent-hi); box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 35%, transparent); }
+.submit:active:not(:disabled) { transform: scale(0.97); }
+.submit:disabled { background: var(--surface-3); color: var(--text-3); cursor: not-allowed; box-shadow: none; }
 
-.submit-btn:hover:not(:disabled) { background: #f0b060; }
-.submit-btn:active:not(:disabled) { transform: scale(0.98); }
-.submit-btn:disabled { background: var(--surface-hi); color: var(--text-3); cursor: not-allowed; }
+.spin { animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-.btn-spinner {
-  animation: spin 0.8s linear infinite;
-  flex-shrink: 0;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-/* Loading dots */
-.loading-dots {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-}
-.loading-dots span {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--text-3);
-  animation: dot-pulse 1.2s ease-in-out infinite;
-}
-.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes dot-pulse {
-  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
-  40% { opacity: 1; transform: scale(1); }
-}
-
-/* ── Error ── */
+/* ── 錯誤列 ── */
 .error-banner {
-  padding: 12px 32px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--red);
-  background: var(--red-dim);
-  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 9px 12px;
+  border-radius: var(--radius);
+  background: var(--red-soft);
+  color: var(--red);
+  font-size: 13px;
+  flex-shrink: 0;
 }
+.error-banner span { flex: 1; min-width: 0; }
+.close { display: grid; place-items: center; border: none; background: none; color: inherit; cursor: pointer; opacity: 0.7; }
+.close:hover { opacity: 1; }
 
-
-/* 窄螢幕（手機、平板直向）：左右兩欄改成上下排，右欄不再固定 500px 寬與 sticky */
+/* ── 窄螢幕：上下排，整頁捲動 ── */
 @media (max-width: 900px) {
-  .topbar { padding: 0 16px; gap: 12px; }
-  .problem-select { min-width: 0; max-width: none; flex: 1; }
-  .main-layout { flex-direction: column; align-items: stretch; }
-  .right-col {
-    width: 100%;
-    height: auto;
-    position: static;
-    overflow: visible;
-    border-top: 1px solid var(--border);
-  }
-  .submit-row, .error-banner { padding-left: 16px; padding-right: 16px; }
-}
-@media (max-width: 480px) {
-  .brand-text { display: none; }
+  .app { height: auto; min-height: 100%; }
+  .workspace { flex-direction: column; padding: 8px; gap: 8px; }
+  .col-left { width: 100%; }
+  .col-right { gap: 8px; }
+  .editor-box { flex: none; }
+  .result-box { height: auto; }
+  .gutter { display: none; }
 }
 </style>

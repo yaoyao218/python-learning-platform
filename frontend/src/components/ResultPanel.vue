@@ -1,112 +1,144 @@
 <template>
-  <div class="panel">
-    <!-- Empty state -->
-    <div v-if="results.length === 0" class="empty-state">
-      <div class="empty-icon">◎</div>
-      <div class="empty-text">提交程式碼後<br>測試結果會顯示在這裡</div>
+  <section class="panel">
+    <div class="panel-head">
+      <div class="head-left">
+        <ListChecks :size="16" />
+        <span class="head-title">測試結果</span>
+      </div>
+      <span v-if="results.length" class="count" :class="allPassed ? 'ok' : 'warn'">
+        {{ passCount }} / {{ results.length }} 通過
+      </span>
+      <span v-else class="shortcut">Ctrl + Enter 提交</span>
     </div>
 
-    <!-- Results -->
-    <template v-else>
-      <div class="panel-section">
-        <div class="section-header">
-          <span class="section-label">測試結果</span>
-          <span class="result-summary">
-            <span :class="passCount === results.length ? 'summary-all' : 'summary-partial'">{{ passCount }}</span>
-            <span class="summary-sep"> / {{ results.length }} 通過</span>
-          </span>
-        </div>
-        <div class="progress-bar-wrap">
-          <div
-            class="progress-bar-fill"
-            :class="passCount === results.length ? 'fill-all' : 'fill-partial'"
-            :style="{ width: (passCount / results.length * 100) + '%' }"
-          ></div>
+    <div class="body">
+      <!-- 還沒提交 -->
+      <div v-if="results.length === 0 && !loading" class="empty">
+        <div class="empty-icon"><Terminal :size="22" /></div>
+        <p>提交程式碼後，測試結果會顯示在這裡</p>
+      </div>
+
+      <!-- 判題中（還沒有結果） -->
+      <div v-else-if="results.length === 0 && loading" class="empty">
+        <Loader2 :size="22" class="spin" />
+        <p>正在執行你的程式…</p>
+      </div>
+
+      <template v-else>
+        <!-- 總結橫幅 -->
+        <div class="banner" :class="allPassed ? 'banner-ok' : 'banner-fail'">
+          <div class="banner-icon">
+            <CheckCircle2 v-if="allPassed" :size="22" />
+            <XCircle v-else :size="22" />
+          </div>
+          <div class="banner-text">
+            <strong>{{ allPassed ? '全部通過' : '還沒通過' }}</strong>
+            <span>{{ allPassed ? `${results.length} 個測試案例都過了` : `通過 ${passCount} / ${results.length}，下面是第一個沒過的案例` }}</span>
+          </div>
+          <button v-if="allPassed && hasNext" class="next-btn" @click="$emit('next')">
+            下一題<ArrowRight :size="14" />
+          </button>
         </div>
 
-        <div class="result-list">
-          <div
+        <!-- 每個測資一格的進度條 -->
+        <div class="segments" aria-hidden="true">
+          <span
+            v-for="r in results"
+            :key="r.index"
+            class="seg"
+            :class="r.passed ? 'seg-pass' : (r.skipped ? 'seg-skip' : 'seg-fail')"
+          ></span>
+        </div>
+
+        <ul class="cases">
+          <li
             v-for="(result, i) in visibleResults"
             :key="result.index"
-            :class="['result-row', result.passed ? 'pass' : 'fail']"
-            :style="{ animationDelay: `${i * 50}ms` }"
+            :class="['case', result.passed ? 'pass' : 'fail']"
+            :style="{ animationDelay: `${Math.min(i, 12) * 40}ms` }"
           >
-            <span :class="['status-badge', result.passed ? 'badge-pass' : 'badge-fail']">
-              {{ result.passed ? 'PASS' : 'FAIL' }}
+            <span class="case-badge">
+              <Check v-if="result.passed" :size="12" :stroke-width="3.2" />
+              <X v-else :size="12" :stroke-width="3.2" />
             </span>
-            <span class="result-num">{{ result.index }}</span>
-            <span class="result-input">{{ result.input }}</span>
-            <div class="result-values">
-              <span class="val-expected">→ {{ result.expected }}</span>
+            <span class="case-no">#{{ result.index }}</span>
+            <code class="case-input" :title="String(result.input)">{{ result.input }}</code>
+            <span class="case-values">
+              <span class="val-expected">預期 {{ result.expected }}</span>
               <span v-if="!result.passed" class="val-got">
-                got <strong>{{ result.actual ?? ERROR_LABELS[result.error_type] ?? 'Error' }}</strong>
+                實際 <strong>{{ result.actual ?? ERROR_LABELS[result.error_type] ?? 'Error' }}</strong>
               </span>
-            </div>
+            </span>
+          </li>
+        </ul>
+
+        <!-- 錯誤訊息：語法錯誤 / 執行錯誤 / 沒有回傳值時，直接給學生看 -->
+        <div v-if="errorDetail" class="error">
+          <div class="error-head">
+            <Bug :size="15" />
+            <strong>{{ errorDetail.label }}</strong>
+            <span class="error-case">測資 #{{ errorDetail.index }}</span>
+          </div>
+          <pre class="error-body">{{ errorDetail.message }}</pre>
+        </div>
+
+        <!-- AI 提示沒拿到（API 失敗或額度用完），讓學生知道不是自己的問題 -->
+        <div v-if="!allPassed && !hint && !loading" class="notice">
+          <Info :size="15" />AI 提示暫時無法取得，可以先看上面的測資結果自己找找看。
+        </div>
+
+        <!-- 全部通過、沒有提示 -->
+        <div v-if="allPassed && !hint" class="success">
+          <PartyPopper :size="18" />
+          <div>
+            <strong>太棒了！</strong>你的解法通過了所有 {{ results.length }} 個測試案例。
+            試試看能不能讓解法更有效率？
           </div>
         </div>
-      </div>
 
-      <!-- 錯誤訊息：語法錯誤 / 執行錯誤 / 沒有回傳值時，直接給學生看 -->
-      <div v-if="errorDetail" class="panel-section error-section">
-        <div class="section-header">
-          <span class="section-label error-label">{{ errorDetail.label }}</span>
-          <span class="error-case">測資 #{{ errorDetail.index }}</span>
+        <!-- AI 提示：骨架 -->
+        <div v-if="loading && !hint" class="hint hint-loading">
+          <div class="hint-head">
+            <Sparkles :size="15" />
+            <strong>AI 分析中</strong>
+            <span class="dots"><span></span><span></span><span></span></span>
+          </div>
+          <div class="skeleton">
+            <i style="width: 82%"></i><i style="width: 64%"></i><i style="width: 92%"></i><i style="width: 48%"></i>
+          </div>
         </div>
-        <pre class="error-body">{{ errorDetail.message }}</pre>
-      </div>
 
-      <!-- AI 提示沒拿到（API 失敗或額度用完），讓學生知道不是自己的問題 -->
-      <div v-if="!allPassed && !hint && !loading" class="panel-section">
-        <div class="hint-unavailable">AI 提示暫時無法取得，可以先看上面的測資結果自己找找看。</div>
-      </div>
+        <!-- AI 提示 -->
+        <div v-if="hint" class="hint">
+          <div class="hint-head">
+            <Sparkles :size="15" />
+            <strong>AI 提示</strong>
+          </div>
+          <div class="hint-body" v-html="hintHtml"></div>
+        </div>
+      </template>
 
-      <!-- Success card (all passed, no hint) -->
-      <div v-if="allPassed && !hint" class="panel-section success-section">
-        <div class="section-header">
-          <span class="section-label success-label">全部通過</span>
-        </div>
-        <div class="success-body">
-          太棒了！你的解法通過了所有 {{ results.length }} 個測試案例。<br>
-          試試看能不能讓解法更有效率？
-        </div>
-      </div>
-
-      <!-- AI Hint skeleton -->
-      <div v-if="loading && !hint" class="panel-section hint-section">
-        <div class="section-header">
-          <span class="section-label hint-label">AI 分析中</span>
-          <span class="skeleton-dot-row">
-            <span></span><span></span><span></span>
-          </span>
-        </div>
-        <div class="hint-skeleton">
-          <div class="sk-line sk-line-80"></div>
-          <div class="sk-line sk-line-60"></div>
-          <div class="sk-line sk-line-90"></div>
-          <div class="sk-line sk-line-50"></div>
-        </div>
-      </div>
-
-      <!-- AI Hint -->
-      <div v-if="hint" class="panel-section hint-section">
-        <div class="section-header">
-          <span class="section-label hint-label">AI 分析</span>
-        </div>
-        <div class="hint-body" v-html="hintHtml"></div>
-      </div>
-    </template>
-  </div>
+      <!-- 骨架：已有結果但 AI 還在跑時，上面的 hint-loading 會顯示；這裡放插槽給填空提示 -->
+      <slot />
+    </div>
+  </section>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import {
+  ListChecks, Terminal, Loader2, CheckCircle2, XCircle, ArrowRight,
+  Check, X, Bug, Info, Sparkles, PartyPopper,
+} from 'lucide-vue-next'
 import { renderLite } from '../markdown.js'
 
 const props = defineProps({
   results: { type: Array,    default: () => [] },
   hint:    { type: [String, null], default: null },
   loading: { type: Boolean,  default: false },
+  hasNext: { type: Boolean,  default: false },
 })
+defineEmits(['next'])
 
 const visibleResults = computed(() => {
   const firstFailIdx = props.results.findIndex((r) => !r.passed)
@@ -114,9 +146,7 @@ const visibleResults = computed(() => {
   return props.results.slice(0, firstFailIdx + 1)
 })
 
-const passCount = computed(() =>
-  props.results.filter((r) => r.passed).length
-)
+const passCount = computed(() => props.results.filter((r) => r.passed).length)
 
 const ERROR_LABELS = {
   syntax_error:  '語法錯誤',
@@ -138,7 +168,7 @@ const errorDetail = computed(() => {
   }
 })
 
-// AI 提示：先跳脫 HTML，再轉換 **粗體**、`程式`、程式碼區塊（原本會直接顯示星號）
+// AI 提示：先跳脫 HTML，再轉換 **粗體**、`程式`、程式碼區塊
 const hintHtml = computed(() => renderLite(props.hint))
 
 const allPassed = computed(() =>
@@ -148,288 +178,269 @@ const allPassed = computed(() =>
 
 <style scoped>
 .panel {
-  /* 不撐滿右欄高度：下方還有填空提示（ClozePanel）要緊接著顯示 */
-}
-
-/* Empty state */
-.empty-state {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 32px;
-  gap: 16px;
+  height: 100%;
+  min-height: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
 
-.empty-icon {
-  font-size: 32px;
-  color: var(--border-hi);
-  line-height: 1;
-}
-
-.empty-text {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-3);
-  text-align: center;
-  line-height: 1.8;
-  letter-spacing: 0.02em;
-}
-
-/* Section */
-.panel-section {
-  border-bottom: 1px solid var(--border);
-}
-
-.section-header {
-  padding: 14px 20px 12px;
+.panel-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 44px;
+  padding: 0 16px;
+  background: var(--surface-2);
   border-bottom: 1px solid var(--border);
-  background: var(--surface);
+  flex-shrink: 0;
 }
+.head-left { display: flex; align-items: center; gap: 8px; color: var(--text-2); }
+.head-title { font-size: 13px; font-weight: 700; color: var(--text); }
 
-.section-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+.count { font-family: var(--font-mono); font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; }
+.count.ok   { color: var(--green); background: var(--green-soft); }
+.count.warn { color: var(--amber); background: var(--amber-soft); }
+.shortcut { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-3); }
+
+.body { flex: 1; min-height: 0; overflow-y: auto; padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 14px; }
+
+/* 空狀態 */
+.empty {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-3);
+  font-size: 13px;
+  padding: 24px 0;
+}
+.empty-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: var(--surface-3);
   color: var(--text-3);
 }
+.spin { animation: spin 0.9s linear infinite; color: var(--accent); }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-.hint-label { color: var(--teal); }
-
-.result-summary {
-  font-family: var(--font-mono);
-  font-size: 11px;
+/* 橫幅 */
+.banner {
   display: flex;
-  align-items: baseline;
-  gap: 2px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  animation: pop-in 0.35s var(--ease) both;
+}
+.banner-ok   { background: var(--green-soft); color: var(--green); }
+.banner-fail { background: var(--red-soft);   color: var(--red); }
+.banner-icon { flex-shrink: 0; display: grid; }
+.banner-text { display: flex; flex-direction: column; gap: 1px; flex: 1; min-width: 0; }
+.banner-text strong { font-size: 15px; }
+.banner-text span { font-size: 12.5px; opacity: 0.85; color: var(--text-2); }
+
+.next-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--green);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.15s, transform 0.1s;
+  flex-shrink: 0;
+}
+.next-btn:hover { filter: brightness(1.08); }
+.next-btn:active { transform: scale(0.97); }
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.97) translateY(4px); }
+  to   { opacity: 1; transform: none; }
 }
 
-.summary-all     { color: var(--green); font-weight: 600; font-size: 13px; }
-.summary-partial { color: var(--amber); font-weight: 600; font-size: 13px; }
-.summary-sep     { color: var(--text-3); }
+/* 分段進度 */
+.segments { display: flex; gap: 2px; height: 6px; margin: -4px 0 -2px; }
+.seg { flex: 1; border-radius: 2px; min-width: 2px; }
+.seg-pass { background: var(--green); }
+.seg-fail { background: var(--red); }
+.seg-skip { background: var(--surface-3); }
 
-/* Progress bar */
-.progress-bar-wrap {
-  height: 2px;
-  background: var(--border);
-}
-
-.progress-bar-fill {
-  height: 100%;
-  transition: width 0.4s ease;
-}
-
-.fill-all     { background: var(--green); }
-.fill-partial { background: var(--amber); }
-
-/* Result rows */
-.result-list { padding: 8px 0; }
-
-.result-row {
+/* 測資列 */
+.cases { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.case {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 20px;
-  border-left: 3px solid transparent;
-  animation: row-in 0.25s ease both;
-  transition: background 0.12s;
+  padding: 8px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border-hi);
+  border-radius: var(--radius-sm);
+  animation: row-in 0.25s var(--ease) both;
+  min-width: 0;
 }
-.result-row:hover { background: var(--surface); }
-.result-row.pass { border-left-color: var(--green); }
-.result-row.fail { border-left-color: var(--red); background: color-mix(in srgb, var(--red-dim) 40%, transparent); }
-
+.case.pass { border-left-color: var(--green); }
+.case.fail { border-left-color: var(--red); background: var(--red-soft); border-color: transparent; border-left-color: var(--red); }
 @keyframes row-in {
   from { opacity: 0; transform: translateX(-6px); }
-  to   { opacity: 1; transform: translateX(0); }
+  to   { opacity: 1; transform: none; }
 }
 
-.status-badge {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  padding: 2px 6px;
-  border-radius: 2px;
+.case-badge {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
   flex-shrink: 0;
 }
-.badge-pass { background: var(--green-dim); color: var(--green); }
-.badge-fail { background: var(--red-dim);   color: var(--red);   }
+.pass .case-badge { background: var(--green); }
+.fail .case-badge { background: var(--red); }
 
-.result-num {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-3);
-  width: 20px;
-  flex-shrink: 0;
-}
-
-.result-input {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--teal);
+.case-no { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-3); flex-shrink: 0; }
+.case-input {
   flex: 1;
+  min-width: 0;
+  background: none;
+  padding: 0;
+  color: var(--teal);
+  font-size: 12.5px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.case-values { display: flex; align-items: center; gap: 10px; flex-shrink: 0; font-family: var(--font-mono); font-size: 12px; }
+.val-expected { color: var(--text-3); }
+.val-got { color: var(--red); }
+.val-got strong { font-weight: 700; }
 
-.result-values {
+/* 錯誤訊息 */
+.error { border: 1px solid var(--red-soft); border-radius: var(--radius); overflow: hidden; }
+.error-head {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-shrink: 0;
-}
-
-.val-expected {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-3);
-}
-
-.val-got {
-  font-family: var(--font-mono);
-  font-size: 11px;
+  padding: 9px 14px;
+  background: var(--red-soft);
   color: var(--red);
+  font-size: 13px;
 }
-.val-got strong { color: var(--red); font-weight: 600; }
-
-/* Error detail */
-.error-label { color: var(--red); }
-
-.error-case {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-3);
-}
-
+.error-case { margin-left: auto; font-family: var(--font-mono); font-size: 11.5px; opacity: 0.8; }
 .error-body {
-  margin: 16px 20px;
-  padding: 14px 16px;
+  padding: 12px 14px;
   font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1.6;
+  font-size: 12.5px;
+  line-height: 1.65;
   color: var(--text);
-  background: var(--red-dim);
-  border-left: 2px solid var(--red);
-  border-radius: 0 4px 4px 0;
+  background: var(--code-bg);
   white-space: pre-wrap;
   overflow-x: auto;
 }
 
-.hint-unavailable {
-  margin: 16px 20px;
-  font-family: var(--font-sans);
-  font-size: 13px;
-  line-height: 1.7;
-  color: var(--text-3);
-}
-
-/* AI Hint skeleton */
-.skeleton-dot-row {
+.notice {
   display: flex;
-  gap: 4px;
-  align-items: center;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  background: var(--surface-3);
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.6;
 }
-.skeleton-dot-row span {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--teal);
+.notice svg { margin-top: 3px; flex-shrink: 0; }
+
+.success {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: var(--green-soft);
+  color: var(--green);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+.success svg { margin-top: 3px; flex-shrink: 0; }
+.success div { color: var(--text-2); }
+.success strong { color: var(--green); }
+
+/* AI 提示卡 */
+.hint {
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  overflow: hidden;
+  animation: pop-in 0.4s var(--ease) both;
+}
+.hint-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px 0;
+  color: var(--accent);
+  font-size: 13px;
+}
+.hint-body {
+  padding: 8px 14px 14px;
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+.hint-body :deep(strong) { color: var(--accent-hi); }
+.hint-body :deep(code) { background: var(--surface); color: var(--accent); }
+.hint-body :deep(.md-code) {
+  margin: 8px 0;
+  padding: 10px 12px;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  white-space: pre;
+}
+.hint-body :deep(.md-code code) { background: none; color: var(--text); padding: 0; }
+
+.dots { display: flex; gap: 4px; margin-left: 2px; }
+.dots span {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--accent);
   animation: dot-pulse 1.2s ease-in-out infinite;
 }
-.skeleton-dot-row span:nth-child(2) { animation-delay: 0.2s; }
-.skeleton-dot-row span:nth-child(3) { animation-delay: 0.4s; }
-
-.hint-skeleton {
-  margin: 16px 20px;
-  padding: 16px;
-  background: var(--teal-dim);
-  border-left: 2px solid var(--teal);
-  border-radius: 0 4px 4px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.sk-line {
-  height: 10px;
-  border-radius: 3px;
-  background: color-mix(in srgb, var(--teal) 20%, var(--teal-dim));
-  animation: shimmer 1.6s ease-in-out infinite;
-}
-.sk-line-80 { width: 80%; }
-.sk-line-60 { width: 60%; }
-.sk-line-90 { width: 90%; }
-.sk-line-50 { width: 50%; }
-
-@keyframes shimmer {
-  0%, 100% { opacity: 0.4; }
-  50%       { opacity: 0.9; }
-}
-
+.dots span:nth-child(2) { animation-delay: 0.2s; }
+.dots span:nth-child(3) { animation-delay: 0.4s; }
 @keyframes dot-pulse {
   0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
   40% { opacity: 1; transform: scale(1); }
 }
 
-/* AI Hint */
-.hint-section { border-bottom: none; }
-.hint-body :deep(strong) { color: var(--text); font-weight: 600; }
-.hint-body :deep(code) {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--teal);
-}
-.hint-body :deep(.md-code) {
-  margin: 8px 0;
-  padding: 10px 12px;
-  background: var(--bg);
+.skeleton { display: flex; flex-direction: column; gap: 10px; padding: 14px; }
+.skeleton i {
+  display: block;
+  height: 10px;
   border-radius: 4px;
-  overflow-x: auto;
-  white-space: pre;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  animation: shimmer 1.6s ease-in-out infinite;
 }
-.hint-body :deep(.md-code code) { color: var(--text); }
+@keyframes shimmer { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
 
-.hint-body {
-  padding: 20px;
-  font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.8;
-  color: var(--text-2);
-  white-space: pre-wrap;
-  border-left: 2px solid var(--teal);
-  margin: 16px 20px;
-  padding-left: 16px;
-  background: var(--teal-dim);
-  border-radius: 0 4px 4px 0;
-  animation: hint-in 0.4s ease both;
-}
-
-@keyframes hint-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* Success card */
-.success-section { border-bottom: none; }
-
-.success-label { color: var(--green); }
-
-.success-body {
-  font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 1.8;
-  color: var(--text-2);
-  border-left: 2px solid var(--green);
-  margin: 16px 20px;
-  padding: 16px;
-  background: var(--green-dim);
-  border-radius: 0 4px 4px 0;
-  animation: hint-in 0.4s ease both;
+@media (max-width: 900px) {
+  .panel { height: auto; }
+  .body { overflow: visible; }
+  .case { flex-wrap: wrap; }
+  .case-input { flex-basis: 60%; }
 }
 </style>

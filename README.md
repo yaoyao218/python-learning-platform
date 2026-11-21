@@ -131,10 +131,11 @@ TPR 五題都是 1.0（不誤殺正解）；驗收池每題只跑一次（valid-
 
 | 元件 | 功能 |
 |---|---|
-| `App.vue` | 左右兩欄佈局、提交邏輯 |
-| `ProblemStatement.vue` | 題目描述、範例卡片、限制條件、虛擬碼（可收合） |
-| `CodeEditor.vue` | Monaco Editor（Python, vs-dark theme） |
-| `ResultPanel.vue` | 測試結果（顯示到第一個失敗）+ AI 提示卡 |
+| `App.vue` | 工作台佈局（可拖曳分隔線）、提交邏輯、草稿與通過紀錄 |
+| `AppHeader.vue` | 品牌列、題目切換（上一題／下一題／清單）、完成進度、深淺色切換 |
+| `ProblemStatement.vue` | 「題目／虛擬碼」分頁：題目描述、範例卡片、限制條件、虛擬碼（預設不顯示） |
+| `CodeEditor.vue` | Monaco Editor（Python，配合深淺色主題）、重設、Ctrl+Enter 提交 |
+| `ResultPanel.vue` | 測試結果橫幅與分段進度（顯示到第一個失敗）+ AI 提示卡 + 下一題 |
 | `ClozePanel.vue` | 連續失敗倒數，與第 3 次後的填空提示 |
 
 ---
