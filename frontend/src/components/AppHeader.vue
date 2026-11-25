@@ -59,14 +59,6 @@
     </div>
 
     <div class="right">
-      <span class="chip" :class="{ cold: !streak }" :title="streak ? `已連續練習 ${streak} 天` : '今天練一題，就開始累積連續天數'">
-        <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
-          <path d="M12 2c1 4-2 5-2 8 0 1.5 1 2.5 2 2.5 0-2 2-3 3-5 3 2 5 5 5 8a8 8 0 0 1-16 0c0-3 2-5 3-7 1 1 1 2 1.5 2.5C9 8 11 6 12 2z"
-                fill="currentColor" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round" />
-        </svg>
-        <b>{{ streak }}</b><span class="chip-unit">天</span>
-      </span>
-
       <span class="chip stars" :title="`已過 ${solvedCount} / ${problems.length} 關`">
         <span class="star">★</span><b>{{ solvedCount }}</b><span class="chip-unit">/ {{ problems.length }}</span>
       </span>
@@ -95,7 +87,6 @@ const props = defineProps({
   currentId: { type: [String, null], default: null },
   solved:    { type: Array,  default: () => [] },   // 通過過的題目 id
   theme:     { type: String, default: 'light' },
-  streak:    { type: Number, default: 0 },
 })
 const emit = defineEmits(['select', 'toggle-theme', 'help'])
 

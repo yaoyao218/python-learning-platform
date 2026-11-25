@@ -5,7 +5,6 @@
       :current-id="problemId"
       :solved="solved"
       :theme="theme"
-      :streak="streak"
       @select="selectProblem"
       @toggle-theme="toggleTheme"
       @help="tourOpen = true"
@@ -107,7 +106,7 @@ import { useResizer } from './composables/useResizer.js'
 import { loadItem, saveItem, removeItem } from './composables/storage.js'
 
 const { theme, toggle: toggleTheme } = useTheme()
-const { streak, markToday } = useStats()
+const { markToday } = useStats()
 
 // 新手導覽：第一次進來自動打開，之後從右上角「？」再開
 const tourOpen = ref(!loadItem('pylp:tour-done', false))
